@@ -386,7 +386,7 @@
 
         // Ads Logic
         window.watchAd = () => {
-            if(window.adsWatched >= 10) return;
+            if(window.adsWatched >= 5) return;
             show_10361814().then(() => {
                 window.adsWatched++;
                 update(dbRef, { adsWatched: window.adsWatched });
@@ -400,7 +400,7 @@
 
             if(a < 10000 || a > window.coins) return alert("Invalid Amount");
 
-            if(window.withdrawAdsCounter < 10) {
+            if(window.withdrawAdsCounter < 5) {
                 if(confirm(`Progress: ${window.withdrawAdsCounter}/10 Watch Ads to withdraw.`)) {
                     show_10361814().then(() => {
                         window.withdrawAdsCounter++;
