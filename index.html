@@ -1,505 +1,555 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CoinMine - Professional Mining Hub</title>
-<!-- Telegram SDK -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- Monetag Ads SDK -->
-<script src='//libtl.com/sdk.js' data-zone='10361814' data-sdk='show_10361814'></script>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinMine - Professional Mining Hub</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
+        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
 
-/* Header */
-header{
-  display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
-  position:fixed; top:0; z-index:100;
-}
-.header-right { display: flex; gap: 15px; align-items: center; }
-.gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
-@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        /* Header */
+        header{
+            display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+            position:fixed; top:0; z-index:100;
+        }
+        .header-right { display: flex; gap: 15px; align-items: center; }
+        .gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-header .profile{display:flex;align-items:center;gap:10px}
-header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
-header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
+        header .profile{display:flex;align-items:center;gap:10px}
+        header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
+        header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
-/* Main */
-main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
-.section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-#home{display:block;}
+        /* Main */
+        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
+        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
+        #home{display:block;}
 
-/* Home */
-.balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
-.balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
-#totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        /* Home */
+        .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
+        .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
+        #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-.mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-.outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
-.mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
-.inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
-.mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
+        .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
+        .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
+        .inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
+        .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
 
-#miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
-.mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
-@keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
+        #miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
+        .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
+        @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
 
-/* --- NEW WATCH PAGE CSS --- */
-.ad-task-card { 
-    display: flex; align-items: center; padding: 15px; border-radius: 18px; 
-    margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1); 
-}
-.ad-task-img { width: 50px; height: 50px; border-radius: 10px; background: #fff; padding: 5px; object-fit: contain; }
-.ad-task-info { flex: 1; }
-.ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
-.ad-task-info p { font-size: 11px; opacity: 0.7; }
-.watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        /* --- NEW WATCH PAGE CSS --- */
+        .ad-task-card {
+            display: flex; align-items: center; padding: 15px; border-radius: 18px;
+            margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .ad-task-img { width: 50px; height: 50px; border-radius: 10px; background: #fff; padding: 5px; object-fit: contain; }
+        .ad-task-info { flex: 1; }
+        .ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
+        .ad-task-info p { font-size: 11px; opacity: 0.7; }
+        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-/* --- HISTORY SECTION CSS --- */
-.history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-.history-title { font-size: 14px; color: #ffd700; font-family: 'Orbitron'; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-.history-list { display: flex; flex-direction: column; gap: 10px; }
-.history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
-.h-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.h-status { font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
-.status-pending { background: #555; color: #fff; }
-.status-success { background: #32cd32; color: #000; }
-.status-rejected { background: #ff4d4d; color: #fff; }
-.status-returned { background: #ffa500; color: #000; }
-.admin-note { color: #90ee90; margin-top: 5px; font-style: italic; border-left: 2px solid #32cd32; padding-left: 8px; }
+        /* --- HISTORY SECTION CSS --- */
+        .history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        .history-title { font-size: 14px; color: #ffd700; font-family: 'Orbitron'; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .history-list { display: flex; flex-direction: column; gap: 10px; }
+        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+        .h-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .h-status { font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+        .status-pending { background: #555; color: #fff; }
+        .status-success { background: #32cd32; color: #000; }
+        .status-rejected { background: #ff4d4d; color: #fff; }
+        .status-returned { background: #ffa500; color: #000; }
+        .admin-note { color: #90ee90; margin-top: 5px; font-style: italic; border-left: 2px solid #32cd32; padding-left: 8px; }
 
-/* Promotion */
-.promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-.submission-form { background: #161616; padding: 20px; border-radius: 15px; border: 1px solid #333; }
-.submission-form input, .submission-form select { width: 100%; padding: 12px; margin: 10px 0 20px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
+        /* Promotion */
+        .promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .submission-form { background: #161616; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+        .submission-form input, .submission-form select { width: 100%; padding: 12px; margin: 10px 0 20px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
 
-/* Method Tabs */
-.method-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-.method-btn { background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-.method-btn.active { background: #32cd32; color: #000; border-color: #32cd32; }
+        /* Method Tabs */
+        .method-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .method-btn { background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .method-btn.active { background: #32cd32; color: #000; border-color: #32cd32; }
 
-/* Referral */
-.ref-info-card { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-.ref-step { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start; }
-.step-num { background: #ffd700; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 12px; }
+        /* Referral */
+        .ref-info-card { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .ref-step { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start; }
+        .step-num { background: #ffd700; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 12px; }
 
-/* Modal Styles */
-.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; align-items:center; justify-content:center; }
-.modal-content { background:#161616; padding:25px; border-radius:20px; width:90%; max-width:400px; border: 1px solid #333; }
+        /* Modal Styles */
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; align-items:center; justify-content:center; }
+        .modal-content { background:#161616; padding:25px; border-radius:20px; width:90%; max-width:400px; border: 1px solid #333; }
 
-/* Buttons & Nav */
-.action-btn { width: 100%; padding:15px; border-radius:12px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; }
-.mine-btn { background: #32cd32; color: #000; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
-.mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-.ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
-.navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
-.nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
-.nav-btn.active{opacity: 1; color: #32cd32;}
+        /* Buttons & Nav */
+        .action-btn { width: 100%; padding:15px; border-radius:12px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; }
+        .mine-btn { background: #32cd32; color: #000; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
+        .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+        .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
 
-@keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-</style>
+        .navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
+        .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
+        .nav-btn.active{opacity: 1; color: #32cd32;}
+
+        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
 </head>
 <body>
 
-<header>
-    <div class="profile" onclick="showProfile()">
-        <img id="profile-img" src="https://i.pravatar.cc/45" alt="Profile">
-        <span id="username">Loading...</span>
-    </div>
-    <div class="header-right">
-        <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
-        <div class="msg-icon" onclick="showMsg()">⚡</div>
-    </div>
-</header>
-
-<main>
-    <!-- HOME -->
-    <section id="home" class="section">
-        <div class="balance-card">
-            <h2>Net Balance</h2>
-            <div id="totalCoins">0</div>
+    <header>
+        <div class="profile">
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile">
+            <span id="username">Loading...</span>
         </div>
-        <div class="mining-visualizer" id="mineCircle">
-            <div class="outer-ring"></div>
-            <div class="inner-core">
-                <div id="miningEmoji">⛏️</div>
-                <span id="coinInsideCircle">0</span>
+        <div class="header-right">
+            <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="section">
+            <div class="balance-card">
+                <h2>Net Balance</h2>
+                <div id="totalCoins">0</div>
             </div>
-        </div>
-        <button class="action-btn ad-btn" id="watchAdBtn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
-        <div id="adStatus" style="text-align:center; color:#ffd700; margin-bottom:15px; font-size:12px;">Ads Required to Mine: 0/10</div>
-        <button class="action-btn mine-btn" id="mineBtn" onclick="startDailyMining()">🪙 Start Mining</button>
-        <div id="miningCountdown" style="text-align:center; color:#90ee90; font-size:12px; margin-top:10px;">Ready</div>
-    </section>
 
-    <!-- NEW WATCH PAGE -->
-    <section id="watch" class="section">
-        <h2 style="text-align:center; font-family:'Orbitron'; color:#00f2ff; margin-bottom:20px;">Watch Ads & Earn</h2>
-        <div id="adTasksContainer"></div>
-    </section>
-
-    <!-- PROMOTION -->
-    <section id="promotion" class="section">
-        <div style="text-align:center; margin-bottom:20px;">
-            <h2 style="font-family:'Orbitron'; color:#32cd32;">Creator Rewards</h2>
-            <p style="color:#aaa; font-size:12px;">Make a video & get up to 50,000 Coins!</p>
-        </div>
-        <div class="promo-card">
-            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;">
-                <span>YouTube Long (100+ views)</span> <b>50k Max</b>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:13px;">
-                <span>Shorts/Reels (1k+ views)</span> <b>50k Max</b>
-            </div>
-        </div>
-        <div class="submission-form">
-            <label style="font-size:12px; color:#aaa;">Platform</label>
-            <select id="promoPlatform"><option>YouTube</option><option>Instagram</option><option>Facebook</option></select>
-            <label style="font-size:12px; color:#aaa;">Content Type</label>
-            <select id="promoType"><option>Long Video</option><option>Shorts/Reels</option></select>
-            <input type="url" id="promoLink" placeholder="Paste your video link here">
-            <button class="action-btn mine-btn" onclick="submitPromotion()">Submit for Review</button>
-
-            <!-- PROMOTION HISTORY -->
-            <div class="history-container">
-                <div class="history-title">📜 Submission History</div>
-                <div id="promoHistory" class="history-list">
-                    <p style="font-size:10px; color:#555; text-align:center;">No history yet</p>
+            <div class="mining-visualizer" id="mineCircle">
+                <div class="outer-ring"></div>
+                <div class="inner-core">
+                    <div id="miningEmoji">⛏️</div>
+                    <div style="font-family:'Orbitron'; font-size:24px; color:#fff;" id="coinInsideCircle">0</div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- WALLET -->
-    <section id="wallet" class="section">
-        <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:25px;">Wallet</h2>
-        <div class="balance-card">
-            <div style="font-size:32px; color:#ffd700; font-family:'Orbitron';" id="walletCoins">0</div>
-            <div style="color:#90ee90;">≈ ₹ <span id="walletValue">0.00</span></div>
-        </div>
-        <div class="submission-form">
-            <h4 style="margin-bottom:15px; font-size:14px;">Withdraw Funds</h4>
-            <div class="method-tabs">
-                <button class="method-btn active" onclick="setMethod('upi', this)">UPI (India)</button>
-                <button class="method-btn" onclick="setMethod('paypal', this)">PayPal</button>
-                <button class="method-btn" onclick="setMethod('crypto', this)">Crypto (USDT)</button>
+            <div style="text-align:center; margin-bottom:20px;">
+                <button class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
+                <p id="adStatus" style="font-size:12px; color:#aaa; margin-top:5px;">Ads Required to Mine: 0/10</p>
             </div>
-            <input type="number" id="withdrawAmount" placeholder="Enter Coins (Min 10,000)">
-            <input type="text" id="withdrawAddress" placeholder="UPI ID / Email / Wallet Address">
-            <button class="action-btn mine-btn" onclick="handleWithdrawal()">Request Withdrawal</button>
 
-            <!-- WITHDRAWAL HISTORY -->
-            <div class="history-container">
-                <div class="history-title" id="historyTitle">📜 UPI History</div>
-                <div id="withdrawHistory" class="history-list">
-                    <p style="font-size:10px; color:#555; text-align:center;">No history yet</p>
+            <button id="mineBtn" class="action-btn mine-btn" onclick="startDailyMining()" disabled>
+                🪙 Start Mining
+            </button>
+            <p id="miningCountdown" style="text-align:center; margin-top:10px; font-size:12px; color:#90ee90;">Ready</p>
+        </section>
+
+        <section id="watch" class="section">
+            <h2 style="text-align:center; font-family:'Orbitron'; color:#00f2ff; margin-bottom:20px;">Watch Ads & Earn</h2>
+            <div id="adTasksContainer"></div>
+        </section>
+
+        <section id="promotion" class="section">
+            <div style="text-align:center; margin-bottom:20px;">
+                <h2 style="font-family:'Orbitron'; color:#32cd32;">Creator Rewards</h2>
+                <p style="color:#aaa; font-size:12px;">Make a video & get up to 50,000 Coins!</p>
+            </div>
+            
+            <div class="promo-card">
+                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;">
+                    <span>YouTube Long (100+ views)</span>
+                    <b>50k Max</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span>Shorts/Reels (1k+ views)</span>
+                    <b>50k Max</b>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- REFERRAL -->
-    <section id="referral" class="section">
-        <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
-        <div class="ref-info-card">
-            <div class="ref-step">
-                <div class="step-num">1</div>
-                <div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div>
-            </div>
-            <div class="ref-step">
-                <div class="step-num">2</div>
-                <div><b style="color:#ffd700;">700 Coins:</b> Get instantly when they signup.</div>
-            </div>
-            <div class="ref-step">
-                <div class="step-num">3</div>
-                <div><b style="color:#ffd700;">5% Commission:</b> Get lifetime reward from their mining!</div>
-            </div>
-        </div>
-        <div class="submission-form" style="text-align:center;">
-            <p id="refLink" style="font-size:11px; color:#ffd700; margin-bottom:15px; word-break:break-all;">Loading...</p>
-            <button class="action-btn ad-btn" onclick="shareReferralLink()">📢 Invite Friends Now</button>
-        </div>
-    </section>
-</main>
+            <div class="submission-form">
+                <label style="font-size:12px; color:#aaa;">Platform</label>
+                <select id="promoPlatform"><option>YouTube</option><option>Instagram</option><option>Facebook</option></select>
+                
+                <label style="font-size:12px; color:#aaa;">Content Type</label>
+                <select id="promoType"><option>Long Video</option><option>Shorts/Reels</option></select>
 
-<nav class="navbar">
-    <button class="nav-btn active" onclick="showSection('home', this)">🏠</button>
-    <button class="nav-btn" onclick="showSection('watch', this)">📺</button>
-    <button class="nav-btn" onclick="showSection('promotion', this)">🚀</button>
-    <button class="nav-btn" onclick="showSection('wallet', this)">💼</button>
-    <button class="nav-btn" onclick="showSection('referral', this)">🔗</button>
-</nav>
+                <input type="url" id="promoLink" placeholder="Paste your video link here">
+                <button class="action-btn mine-btn" onclick="submitPromotion()">Submit for Review</button>
 
-<!-- GIFT MODAL -->
-<div id="giftModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="font-family:'Orbitron'; color:#ffd700; text-align:center; margin-bottom:10px;">🎁 Redeem Gift</h3>
-        <p style="color:#aaa; font-size:11px; text-align:center; margin-bottom:15px;">Join our Telegram channel for daily gift codes!</p>
-        <button id="joinChannelBtn" class="action-btn ad-btn" style="margin-bottom:15px; font-size:12px; padding:10px;" onclick="window.open(this.dataset.link, '_blank')">📢 JOIN TELEGRAM</button>
-        <input type="text" id="giftCode" placeholder="Enter Gift Code" style="width:100%; padding:12px; background:#000; border:1px solid #444; color:#fff; border-radius:10px; text-align:center; margin-bottom:15px;">
-        <button class="action-btn mine-btn" onclick="redeemGift()">Redeem Now</button>
-        <button onclick="closeGiftModal()" style="width:100%; background:transparent; border:none; color:#777; margin-top:15px; font-size:12px;">Close</button>
+                <div class="history-container">
+                    <div class="history-title">📜 Submission History</div>
+                    <div id="promoHistory" class="history-list">
+                        <p style="font-size:10px; color:#555; text-align:center;">No history yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wallet" class="section">
+            <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:25px;">Wallet</h2>
+            
+            <div class="balance-card">
+                <div style="font-size:32px; color:#ffd700; font-family:'Orbitron';" id="walletCoins">0</div>
+                <div style="color:#90ee90;">≈ ₹ <span id="walletValue">0.00</span></div>
+            </div>
+
+            <div class="submission-form">
+                <h4 style="margin-bottom:15px; font-size:14px;">Withdraw Funds</h4>
+                
+                <div class="method-tabs">
+                    <button class="method-btn active" onclick="setMethod('upi', this)">UPI (India)</button>
+                    <button class="method-btn" onclick="setMethod('paypal', this)">PayPal</button>
+                    <button class="method-btn" onclick="setMethod('crypto', this)">Crypto (USDT)</button>
+                </div>
+
+                <input type="number" id="withdrawAmount" placeholder="Enter Coins (Min 10,000)">
+                <input type="text" id="withdrawAddress" placeholder="UPI ID / Email / Wallet Address">
+                
+                <button class="action-btn mine-btn" onclick="handleWithdrawal()">Request Withdrawal</button>
+
+                <div class="history-container">
+                    <div class="history-title" id="historyTitle">📜 UPI History</div>
+                    <div id="withdrawHistory" class="history-list">
+                        <p style="font-size:10px; color:#555; text-align:center;">No history yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="referral" class="section">
+            <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
+            
+            <div class="ref-info-card">
+                <div class="ref-step">
+                    <div class="step-num">1</div>
+                    <div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div>
+                </div>
+                <div class="ref-step">
+                    <div class="step-num">2</div>
+                    <div><b style="color:#ffd700;">700 Coins:</b> Get instantly when they signup.</div>
+                </div>
+                <div class="ref-step">
+                    <div class="step-num">3</div>
+                    <div><b style="color:#ffd700;">5% Commission:</b> Get lifetime reward from their mining!</div>
+                </div>
+            </div>
+
+            <div class="submission-form" style="text-align:center;">
+                <p id="refLink" style="font-size:11px; color:#ffd700; margin-bottom:15px; word-break:break-all;">Loading...</p>
+                <button class="action-btn ad-btn" onclick="shareReferralLink()">📢 Invite Friends Now</button>
+            </div>
+        </section>
+    </main>
+
+    <nav class="navbar">
+        <button class="nav-btn active" onclick="showSection('home', this)"><i class="fas fa-home"></i></button>
+        <button class="nav-btn" onclick="showSection('watch', this)"><i class="fas fa-tv"></i></button>
+        <button class="nav-btn" onclick="showSection('promotion', this)"><i class="fas fa-rocket"></i></button>
+        <button class="nav-btn" onclick="showSection('wallet', this)"><i class="fas fa-wallet"></i></button>
+        <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-link"></i></button>
+    </nav>
+
+    <div id="giftModal" class="modal-overlay">
+        <div class="modal-content" style="text-align:center;">
+            <h3 style="color:#ffd700; margin-bottom:15px;">🎁 Redeem Gift</h3>
+            <p style="font-size:12px; color:#aaa; margin-bottom:15px;">Join our Telegram channel for daily gift codes!</p>
+            <input type="text" id="giftCode" placeholder="Enter Code (e.g. GIFT2024)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#000; color:#fff; margin-bottom:15px;">
+            <button class="action-btn mine-btn" id="joinChannelBtn" data-link="https://t.me/YourChannel" onclick="window.open(this.dataset.link)">📢 JOIN TELEGRAM</button>
+            <button class="action-btn ad-btn" style="margin-top:10px;" onclick="redeemGift()">Redeem Now</button>
+            <button style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;" onclick="closeGiftModal()">Close</button>
+        </div>
     </div>
-</div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, update, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, update, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// SDK & Database Setup
-const tg = window.Telegram.WebApp;
-const TELEGRAM_USER_ID = tg.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
-const TELEGRAM_USER_NAME = tg.initDataUnsafe?.user?.first_name || "Miner";
-document.getElementById('username').innerText = TELEGRAM_USER_NAME;
+        // SDK & Database Setup
+        const tg = window.Telegram.WebApp;
+        const TELEGRAM_USER_ID = tg.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
+        const TELEGRAM_USER_NAME = tg.initDataUnsafe?.user?.first_name || "Miner";
+        document.getElementById('username').innerText = TELEGRAM_USER_NAME;
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC1I28Wki29kWzAgHh_SJ6GERzjoMIsrMI",
-  authDomain: "telegram-mini-bot-c5449.firebaseapp.com",
-  projectId: "telegram-mini-bot-c5449",
-  storageBucket: "telegram-mini-bot-c5449.firebasestorage.app",
-  messagingSenderId: "28692089044",
-  appId: "1:28692089044:web:49eaa714292a83c4fe1341"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1I28Wki29kWzAgHh_SJ6GERzjoMIsrMI",
+            authDomain: "telegram-mini-bot-c5449.firebaseapp.com",
+            projectId: "telegram-mini-bot-c5449",
+            storageBucket: "telegram-mini-bot-c5449.firebasestorage.app",
+            messagingSenderId: "28692089044",
+            appId: "1:28692089044:web:49eaa714292a83c4fe1341"
+        };
 
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
-const userPath = 'users/' + TELEGRAM_USER_ID;
-const dbRef = ref(database, userPath);
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const userPath = 'users/' + TELEGRAM_USER_ID;
+        const dbRef = ref(database, userPath);
 
-window.coins = 0;
-window.adsWatched = 0;
-window.isMiningActive = false;
-window.withdrawAdsCounter = 0;
-window.currentMethod = "upi";
-window.allWithdrawalData = null; // Caching logic to avoid pending issue
+        window.coins = 0;
+        window.adsWatched = 0;
+        window.isMiningActive = false;
+        window.withdrawAdsCounter = 0;
+        window.currentMethod = "upi";
+        window.allWithdrawalData = null; // Caching logic to avoid pending issue
 
-// Load Data
-function loadUserData() {
-    onValue(dbRef, (snap) => {
-        const data = snap.val();
-        if(data) {
-            window.coins = data.coins || 0;
-            window.adsWatched = data.adsWatched || 0;
-            window.miningStartTime = data.miningStartTime || 0;
-            window.miningEndTime = data.miningEndTime || 0;
-            document.getElementById('refLink').innerText = `https://t.me/YourBot?start=${TELEGRAM_USER_ID}`;
-            checkMiningStatus();
-        } else {
-            set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
+        // Load Data
+        function loadUserData() {
+            onValue(dbRef, (snap) => {
+                const data = snap.val();
+                if(data) {
+                    window.coins = data.coins || 0;
+                    window.adsWatched = data.adsWatched || 0;
+                    window.miningStartTime = data.miningStartTime || 0;
+                    window.miningEndTime = data.miningEndTime || 0;
+                    document.getElementById('refLink').innerText = `https://t.me/YourBot?start=${TELEGRAM_USER_ID}`;
+                    checkMiningStatus();
+                } else {
+                    set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
+                }
+            });
+            
+            // START LISTENERS ONCE (To fix "Pending" issue)
+            startWithdrawHistoryListener();
+            startPromoHistoryListener();
+            
+            get(ref(database, 'claim_settings/common')).then(s => {
+                if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
+            });
         }
-    });
 
-    // START LISTENERS ONCE (To fix "Pending" issue)
-    startWithdrawHistoryListener();
-    startPromoHistoryListener();
-
-    get(ref(database, 'claim_settings/common')).then(s => {
-        if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
-    });
-}
-
-// Fixed Withdrawal History Listener
-function startWithdrawHistoryListener() {
-    const historyRef = ref(database, `${userPath}/withdrawals`);
-    onValue(historyRef, (snap) => {
-        window.allWithdrawalData = snap.val(); // Cache data
-        renderWithdrawalHistory(); // Re-render when admin changes data
-    });
-}
-
-function renderWithdrawalHistory() {
-    const container = document.getElementById('withdrawHistory');
-    const data = window.allWithdrawalData;
-    if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
-    
-    let html = "";
-    let found = false;
-    Object.keys(data).reverse().forEach(key => {
-        const item = data[key];
-        if(item.method === window.currentMethod) {
-            found = true;
-            const statusClass = `status-${item.status.toLowerCase()}`;
-            html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins</span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
+        // Fixed Withdrawal History Listener
+        function startWithdrawHistoryListener() {
+            const historyRef = ref(database, `${userPath}/withdrawals`);
+            onValue(historyRef, (snap) => {
+                window.allWithdrawalData = snap.val(); // Cache data
+                renderWithdrawalHistory(); // Re-render when admin changes data
+            });
         }
-    });
-    container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
-}
 
-function startPromoHistoryListener() {
-    onValue(ref(database, `${userPath}/promotions`), (snap) => {
-        const container = document.getElementById('promoHistory');
-        const data = snap.val();
-        if(!data) return;
-        let html = "";
-        Object.keys(data).reverse().forEach(key => {
-            const item = data[key];
-            const statusClass = `status-${item.status.toLowerCase()}`;
-            html += `<div class="history-item"><div class="h-top"><span>${item.platform || 'Request'}</span><span class="h-status ${statusClass}">${item.status}</span></div></div>`;
-        });
-        container.innerHTML = html;
-    });
-}
+        function renderWithdrawalHistory() {
+            const container = document.getElementById('withdrawHistory');
+            const data = window.allWithdrawalData;
 
-// Gift Logic
-window.redeemGift = async () => {
-    const code = document.getElementById('giftCode').value.toUpperCase();
-    if(!code) return alert("Enter code");
+            if(!data) {
+                container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`;
+                return;
+            }
 
-    const claimCheck = await get(ref(database, `${userPath}/claimed_codes/${code}`));
-    if(claimCheck.exists()) return alert("You have already redeemed this code!");
+            let html = "";
+            let found = false;
+            
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                if(item.method === window.currentMethod) {
+                    found = true;
+                    const statusClass = `status-${item.status.toLowerCase()}`;
+                    html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins</span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
+                }
+            });
 
-    const adminSnap = await get(ref(database, 'claim_settings/common'));
-    const adminData = adminSnap.val();
-    
-    if(adminData && adminData.code === code) {
-        const reward = adminData.coins;
-        const up = {};
-        up[`${userPath}/claimed_codes/${code}`] = true;
-        up[`${userPath}/coins`] = window.coins + reward;
-        await update(ref(database), up);
-        alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
-        closeGiftModal();
-    } else alert("Invalid Gift Code!");
-};
+            container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
+        }
 
-// Ads Logic
-window.watchAd = () => {
-    if(window.adsWatched >= 10) return;
-    show_10361814().then(() => {
-        window.adsWatched++;
-        update(dbRef, { adsWatched: window.adsWatched });
-    });
-};
+        function startPromoHistoryListener() {
+            onValue(ref(database, `${userPath}/promotions`), (snap) => {
+                const container = document.getElementById('promoHistory');
+                const data = snap.val();
+                if(!data) return;
+                let html = "";
+                Object.keys(data).reverse().forEach(key => {
+                    const item = data[key];
+                    const statusClass = `status-${item.status.toLowerCase()}`;
+                    html += `<div class="history-item"><div class="h-top"><span>${item.platform || 'Request'}</span><span class="h-status ${statusClass}">${item.status}</span></div></div>`;
+                });
+                container.innerHTML = html;
+            });
+        }
 
-window.handleWithdrawal = () => {
-    const a = Number(document.getElementById('withdrawAmount').value);
-    const d = document.getElementById('withdrawAddress').value;
-    if(a < 10000 || a > window.coins) return alert("Invalid Amount");
-    
-    if(window.withdrawAdsCounter < 10) {
-        if(confirm(`Progress: ${window.withdrawAdsCounter}/10 Watch Ads to withdraw.`)) {
+        // Gift Logic
+        window.redeemGift = async () => {
+            const code = document.getElementById('giftCode').value.toUpperCase();
+            if(!code) return alert("Enter code");
+
+            const claimCheck = await get(ref(database, `${userPath}/claimed_codes/${code}`));
+            if(claimCheck.exists()) return alert("You have already redeemed this code!");
+
+            const adminSnap = await get(ref(database, 'claim_settings/common'));
+            const adminData = adminSnap.val();
+
+            if(adminData && adminData.code === code) {
+                const reward = adminData.coins;
+                const up = {};
+                up[`${userPath}/claimed_codes/${code}`] = true;
+                up[`${userPath}/coins`] = window.coins + reward;
+                await update(ref(database), up);
+                alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
+                closeGiftModal();
+            } else alert("Invalid Gift Code!");
+        };
+
+        // Ads Logic
+        window.watchAd = () => {
+            if(window.adsWatched >= 10) return;
             show_10361814().then(() => {
-                window.withdrawAdsCounter++;
-                if(window.withdrawAdsCounter === 10) alert("Ads complete! Click withdraw again.");
+                window.adsWatched++;
+                update(dbRef, { adsWatched: window.adsWatched });
+            });
+        };
+
+        // --- FIXED WITHDRAWAL LOGIC ---
+        window.handleWithdrawal = () => {
+            const a = Number(document.getElementById('withdrawAmount').value);
+            const d = document.getElementById('withdrawAddress').value;
+
+            if(a < 10000 || a > window.coins) return alert("Invalid Amount");
+
+            if(window.withdrawAdsCounter < 10) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/10 Watch Ads to withdraw.`)) {
+                    show_10361814().then(() => {
+                        window.withdrawAdsCounter++;
+                        if(window.withdrawAdsCounter === 10) alert("Ads complete! Click withdraw again.");
+                    });
+                }
+                return;
+            }
+
+            // Create Data Object - Added UserID so Admin knows who it is
+            const rData = { 
+                amount: a, 
+                address: d, 
+                method: window.currentMethod, 
+                status: 'Pending', 
+                timestamp: Date.now(),
+                userId: TELEGRAM_USER_ID 
+            };
+            
+            // Generate ONE key
+            const newRef = push(ref(database, 'withdrawals'));
+            const key = newRef.key;
+
+            // Multi-path update using same key
+            const updates = {};
+            updates['withdrawals/' + key] = rData; // Global List
+            updates[`${userPath}/withdrawals/${key}`] = rData; // User List
+            updates[`${userPath}/coins`] = window.coins - a; // Deduct Coins
+
+            update(ref(database), updates);
+
+            window.withdrawAdsCounter = 0;
+            alert("Withdrawal Requested!");
+        };
+
+        window.setMethod = (m, b) => {
+            window.currentMethod = m;
+            document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            document.getElementById('withdrawAddress').placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'Email' : 'Address');
+            document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
+            renderWithdrawalHistory(); // Trigger UI re-render on tab switch
+        };
+
+        // Mining Loops
+        function checkMiningStatus() {
+            const now = Date.now();
+            if (window.miningEndTime > now) {
+                window.isMiningActive = true;
+                updateMiningUI(true);
+                startLiveCounter();
+            } else {
+                if (window.isMiningActive) finalizeMiningSession();
+                else updateMiningUI(false);
+            }
+        }
+
+        function finalizeMiningSession() {
+            window.isMiningActive = false;
+            update(dbRef, { coins: window.coins + 1000, miningStartTime: 0, miningEndTime: 0, adsWatched: 0 });
+        }
+
+        function updateMiningUI(isActive) {
+            document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
+            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < 10;
+            document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/10`;
+            updateCoinDisplays(window.coins);
+        }
+
+        function startLiveCounter() {
+            setInterval(() => {
+                const now = Date.now();
+                if (now < window.miningEndTime) {
+                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 1000));
+                    const rem = Math.round((window.miningEndTime - now)/1000);
+                    document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
+                }
+            }, 1000);
+        }
+
+        function updateCoinDisplays(v) {
+            const f = Math.floor(v).toLocaleString();
+            document.getElementById('totalCoins').innerText = f;
+            document.getElementById('walletCoins').innerText = f;
+            document.getElementById('coinInsideCircle').innerText = f;
+            document.getElementById('walletValue').innerText = (v/1000).toFixed(2);
+        }
+
+        window.showSection = (id, btn) => {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if(id === 'watch') loadAdTasks();
+        };
+
+        function loadAdTasks() {
+            onValue(ref(database, 'ad_tasks'), (snap) => {
+                const tasks = snap.val();
+                const container = document.getElementById('adTasksContainer');
+                container.innerHTML = "";
+                if(!tasks) return;
+                
+                Object.keys(tasks).forEach(id => {
+                    const t = tasks[id];
+                    get(ref(database, `${userPath}/ad_stats/${id}`)).then(uSnap => {
+                        const count = uSnap.val() || 0;
+                        const card = document.createElement('div');
+                        card.className = "ad-task-card";
+                        card.style.background = t.bgColor || "#111";
+                        card.innerHTML = `<img src="${t.image}" class="ad-task-img"><div class="ad-task-info"><h3>Ads & Earn (+${t.reward})</h3><p>Limit: ${count}/${t.limit}</p></div><button class="watch-task-btn" onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count})">Watch</button>`;
+                        container.appendChild(card);
+                    });
+                });
             });
         }
-        return;
-    }
 
-    const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now() };
-    push(ref(database, 'withdrawals'), rData); // Global copy for Admin
-    push(ref(database, `${userPath}/withdrawals`), rData); // User copy
-    update(dbRef, { coins: window.coins - a });
-    window.withdrawAdsCounter = 0;
-    alert("Withdrawal Requested!");
-};
-
-window.setMethod = (m, b) => {
-    window.currentMethod = m;
-    document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    document.getElementById('withdrawAddress').placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'Email' : 'Address');
-    document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
-    renderWithdrawalHistory(); // Trigger UI re-render on tab switch
-};
-
-// Mining Loops
-function checkMiningStatus() {
-    const now = Date.now();
-    if (window.miningEndTime > now) {
-        window.isMiningActive = true;
-        updateMiningUI(true);
-        startLiveCounter();
-    } else {
-        if (window.isMiningActive) finalizeMiningSession();
-        else updateMiningUI(false);
-    }
-}
-function finalizeMiningSession() {
-    window.isMiningActive = false;
-    update(dbRef, { coins: window.coins + 1000, miningStartTime: 0, miningEndTime: 0, adsWatched: 0 });
-}
-function updateMiningUI(isActive) {
-    document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
-    document.getElementById('mineBtn').disabled = isActive || window.adsWatched < 10;
-    document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/10`;
-    updateCoinDisplays(window.coins);
-}
-function startLiveCounter() {
-    setInterval(() => {
-        const now = Date.now();
-        if (now < window.miningEndTime) {
-            updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 1000));
-            const rem = Math.round((window.miningEndTime - now)/1000);
-            document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
-        }
-    }, 1000);
-}
-function updateCoinDisplays(v) {
-    const f = Math.floor(v).toLocaleString();
-    document.getElementById('totalCoins').innerText = f;
-    document.getElementById('walletCoins').innerText = f;
-    document.getElementById('coinInsideCircle').innerText = f;
-    document.getElementById('walletValue').innerText = (v/1000).toFixed(2);
-}
-
-window.showSection = (id, btn) => {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if(id === 'watch') loadAdTasks();
-};
-
-function loadAdTasks() {
-    onValue(ref(database, 'ad_tasks'), (snap) => {
-        const tasks = snap.val();
-        const container = document.getElementById('adTasksContainer');
-        container.innerHTML = "";
-        if(!tasks) return;
-        Object.keys(tasks).forEach(id => {
-            const t = tasks[id];
-            get(ref(database, `${userPath}/ad_stats/${id}`)).then(uSnap => {
-                const count = uSnap.val() || 0;
-                const card = document.createElement('div');
-                card.className = "ad-task-card"; card.style.background = t.bgColor || "#111";
-                card.innerHTML = `<img src="${t.image}" class="ad-task-img"><div class="ad-task-info"><h3>Ads & Earn (+${t.reward})</h3><p>Limit: ${count}/${t.limit}</p></div><button class="watch-task-btn" onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count})">Watch</button>`;
-                container.appendChild(card);
+        window.runTaskAd = (id, reward, limit, count) => {
+            if(count >= limit) return alert("Limit Reached!");
+            show_10361814().then(() => {
+                const up = {};
+                up[`${userPath}/coins`] = window.coins + reward;
+                up[`${userPath}/ad_stats/${id}`] = count + 1;
+                update(ref(database), up);
+                alert("Earned " + reward + " Coins!");
             });
-        });
-    });
-}
+        };
 
-window.runTaskAd = (id, reward, limit, count) => {
-    if(count >= limit) return alert("Limit Reached!");
-    show_10361814().then(() => {
-        const up = {}; up[`${userPath}/coins`] = window.coins + reward; up[`${userPath}/ad_stats/${id}`] = count + 1;
-        update(ref(database), up); alert("Earned " + reward + " Coins!");
-    });
-};
+        window.startDailyMining = () => {
+            const now = Date.now();
+            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000 });
+        };
 
-window.startDailyMining = () => {
-    const now = Date.now();
-    update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000 });
-};
-window.submitPromotion = () => {
-    const l = document.getElementById('promoLink').value;
-    const d = { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() };
-    push(ref(database, `${userPath}/promotions`), d);
-    alert("Submitted!");
-};
-window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
-window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
-window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
-window.showProfile = () => alert("ID: " + TELEGRAM_USER_ID);
-window.showMsg = () => alert("Keep Mining!");
+        window.submitPromotion = () => {
+            const l = document.getElementById('promoLink').value;
+            const d = { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() };
+            push(ref(database, `${userPath}/promotions`), d);
+            alert("Submitted!");
+        };
 
-loadUserData();
-</script>
+        window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
+        window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
+        
+        window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
+
+        window.showProfile = () => alert("ID: " + TELEGRAM_USER_ID);
+        window.showMsg = () => alert("Keep Mining!");
+
+        loadUserData();
+    </script>
 </body>
 </html>
