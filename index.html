@@ -156,9 +156,12 @@
                 <p style="color:#aaa; font-size:12px;">Make a video & get up to 300,000 Coins!</p>
             </div>
             
-            <!-- NEW PROMOTION INSTRUCTION MESSAGE -->
-            <div style="background: rgba(255, 215, 0, 0.1); border: 1px dashed #ffd700; padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 11px; color: #ffd700; text-align: center; line-height: 1.5;">
-                ⚠️ <b>Important:</b> Create a professional video about our app and upload it. You <b>must include our app link</b> in the description or bio of your post to receive the reward.
+            <!-- Updated English Instruction Box -->
+            <div style="background: rgba(50, 205, 50, 0.1); border: 1px dashed #32cd32; padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 11px; color: #90ee90; text-align: center; line-height: 1.6;">
+                📢 <b>How to Earn?</b><br>
+                Create a professional video about our app and upload it to social media. 
+                <br><span style="color:#ffd700;">⚠️ It is compulsory to include our app link in the description or bio.</span>
+                <br>Submit your video link below; rewards will be issued after a manual review!
             </div>
 
             <div class="promo-card">
@@ -359,19 +362,47 @@
         }
 
         function startPromoHistoryListener() {
-            onValue(ref(database, `${userPath}/promotions`), (snap) => {
-                const container = document.getElementById('promoHistory');
-                const data = snap.val();
-                if(!data) return;
-                let html = "";
-                Object.keys(data).reverse().forEach(key => {
-                    const item = data[key];
-                    const statusClass = `status-${item.status.toLowerCase()}`;
-                    html += `<div class="history-item"><div class="h-top"><span>${item.platform || 'Request'}</span><span class="h-status ${statusClass}">${item.status}</span></div></div>`;
-                });
-                container.innerHTML = html;
-            });
+    onValue(ref(database, `${userPath}/promotions`), (snap) => {
+        const container = document.getElementById('promoHistory');
+        const data = snap.val();
+        if(!data) {
+            container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`;
+            return;
         }
+        
+        let html = "";
+        Object.keys(data).reverse().forEach(key => {
+            const item = data[key];
+            const statusClass = `status-${item.status.toLowerCase()}`;
+            
+            html += `
+                <div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};">
+                    <div class="h-top">
+                        <span>${item.platform || 'Promotion Task'}</span>
+                        <span class="h-status ${statusClass}">${item.status}</span>
+                    </div>
+                    
+                    <!-- Reward Amount (Visible on Success) -->
+                    ${item.status === 'Success' && item.amount ? 
+                        `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}
+                    
+                    <!-- Admin Message -->
+                    ${item.adminMsg ? 
+                        `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+                            💬 <b>Admin Note:</b> ${item.adminMsg}
+                        </div>` : ''}
+                </div>`;
+
+            // Congratulations Popup Logic
+            if(item.status === 'Success' && !item.notified) {
+                alert(`🎉 Congratulations!\n\nYour promotion video has been approved.\nReward: ${item.amount.toLocaleString()} Coins have been added to your balance.`);
+                // Update database to prevent repeated alerts
+                update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
+            }
+        });
+        container.innerHTML = html;
+    });
+}
 
         window.redeemGift = async () => {
             const code = document.getElementById('giftCode').value.toUpperCase();
