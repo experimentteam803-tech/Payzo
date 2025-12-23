@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinMine - Professional Mining Hub</title>
+    <!-- AdsGram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Monetag SDK (Only for Watch Page tasks if needed) -->
+    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -102,7 +106,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
 </head>
 <body>
 
@@ -282,12 +285,29 @@
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
 
+        // 1. AdsGram Initialization
+        const AdController = window.Adsgram.init({ blockId: "19761" });
+
+        // 2. Admin Panel control variables
+        window.miningAdsReq = 10;   // Defaults
+        window.withdrawAdsReq = 10;
+
+        // Fetch Admin Settings from Firebase
+        onValue(ref(database, 'admin_settings'), (snap) => {
+            const settings = snap.val();
+            if (settings) {
+                window.miningAdsReq = settings.mining_req || 10;
+                window.withdrawAdsReq = settings.withdraw_req || 10;
+                document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+            }
+        });
+        
         window.coins = 0;
         window.adsWatched = 0;
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
-        window.allWithdrawalData = null; // Caching logic to avoid pending issue
+        window.allWithdrawalData = null;
 
         // Load Data
         function loadUserData() {
@@ -304,37 +324,25 @@
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
             });
-            
-            // START LISTENERS ONCE (To fix "Pending" issue)
             startWithdrawHistoryListener();
             startPromoHistoryListener();
-            
             get(ref(database, 'claim_settings/common')).then(s => {
                 if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
             });
         }
 
-        // Fixed Withdrawal History Listener
         function startWithdrawHistoryListener() {
-            const historyRef = ref(database, `${userPath}/withdrawals`);
-            onValue(historyRef, (snap) => {
-                window.allWithdrawalData = snap.val(); // Cache data
-                renderWithdrawalHistory(); // Re-render when admin changes data
+            onValue(ref(database, `${userPath}/withdrawals`), (snap) => {
+                window.allWithdrawalData = snap.val();
+                renderWithdrawalHistory();
             });
         }
 
         function renderWithdrawalHistory() {
             const container = document.getElementById('withdrawHistory');
             const data = window.allWithdrawalData;
-
-            if(!data) {
-                container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`;
-                return;
-            }
-
-            let html = "";
-            let found = false;
-            
+            if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
+            let html = ""; let found = false;
             Object.keys(data).reverse().forEach(key => {
                 const item = data[key];
                 if(item.method === window.currentMethod) {
@@ -343,7 +351,6 @@
                     html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins</span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
                 }
             });
-
             container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
         }
 
@@ -362,17 +369,13 @@
             });
         }
 
-        // Gift Logic
         window.redeemGift = async () => {
             const code = document.getElementById('giftCode').value.toUpperCase();
             if(!code) return alert("Enter code");
-
             const claimCheck = await get(ref(database, `${userPath}/claimed_codes/${code}`));
-            if(claimCheck.exists()) return alert("You have already redeemed this code!");
-
+            if(claimCheck.exists()) return alert("Already redeemed!");
             const adminSnap = await get(ref(database, 'claim_settings/common'));
             const adminData = adminSnap.val();
-
             if(adminData && adminData.code === code) {
                 const reward = adminData.coins;
                 const up = {};
@@ -381,57 +384,47 @@
                 await update(ref(database), up);
                 alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
                 closeGiftModal();
-            } else alert("Invalid Gift Code!");
+            } else alert("Invalid Code!");
         };
 
-        // Ads Logic
+        // --- ADS LOGIC (AdsGram for Mining) ---
         window.watchAd = () => {
-            if(window.adsWatched >= 10) return;
-            show_10361814().then(() => {
-                window.adsWatched++;
-                update(dbRef, { adsWatched: window.adsWatched });
-            });
+            const req = window.miningAdsReq || 10;
+            if(window.adsWatched >= req) return alert("All ads watched!");
+            AdController.show().then((result) => {
+                if (result.done) {
+                    window.adsWatched++;
+                    update(dbRef, { adsWatched: window.adsWatched });
+                }
+            }).catch(() => alert("Ad not ready."));
         };
 
-        // --- FIXED WITHDRAWAL LOGIC ---
+        // --- ADS LOGIC (AdsGram for Withdrawal) ---
         window.handleWithdrawal = () => {
             const a = Number(document.getElementById('withdrawAmount').value);
             const d = document.getElementById('withdrawAddress').value;
-
             if(a < 10000 || a > window.coins) return alert("Invalid Amount");
 
-            if(window.withdrawAdsCounter < 10) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/10 Watch Ads to withdraw.`)) {
-                    show_10361814().then(() => {
-                        window.withdrawAdsCounter++;
-                        if(window.withdrawAdsCounter === 10) alert("Ads complete! Click withdraw again.");
+            const req = window.withdrawAdsReq || 10;
+            if(window.withdrawAdsCounter < req) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${req}. Watch Ads to withdraw.`)) {
+                    AdController.show().then((result) => {
+                        if (result.done) {
+                            window.withdrawAdsCounter++;
+                            if(window.withdrawAdsCounter >= req) alert("Ads complete! Click withdraw again.");
+                        }
                     });
                 }
                 return;
             }
 
-            // Create Data Object - Added UserID so Admin knows who it is
-            const rData = { 
-                amount: a, 
-                address: d, 
-                method: window.currentMethod, 
-                status: 'Pending', 
-                timestamp: Date.now(),
-                userId: TELEGRAM_USER_ID 
-            };
-            
-            // Generate ONE key
-            const newRef = push(ref(database, 'withdrawals'));
-            const key = newRef.key;
-
-            // Multi-path update using same key
+            const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
+            const key = push(ref(database, 'withdrawals')).key;
             const updates = {};
-            updates['withdrawals/' + key] = rData; // Global List
-            updates[`${userPath}/withdrawals/${key}`] = rData; // User List
-            updates[`${userPath}/coins`] = window.coins - a; // Deduct Coins
-
+            updates['withdrawals/' + key] = rData;
+            updates[`${userPath}/withdrawals/${key}`] = rData;
+            updates[`${userPath}/coins`] = window.coins - a;
             update(ref(database), updates);
-
             window.withdrawAdsCounter = 0;
             alert("Withdrawal Requested!");
         };
@@ -442,10 +435,9 @@
             b.classList.add('active');
             document.getElementById('withdrawAddress').placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'Email' : 'Address');
             document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
-            renderWithdrawalHistory(); // Trigger UI re-render on tab switch
+            renderWithdrawalHistory();
         };
 
-        // Mining Loops
         function checkMiningStatus() {
             const now = Date.now();
             if (window.miningEndTime > now) {
@@ -464,9 +456,10 @@
         }
 
         function updateMiningUI(isActive) {
+            const req = window.miningAdsReq || 10;
             document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
-            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < 10;
-            document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/10`;
+            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < req;
+            document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/${req}`;
             updateCoinDisplays(window.coins);
         }
 
@@ -497,13 +490,13 @@
             if(id === 'watch') loadAdTasks();
         };
 
+        // --- WATCH PAGE TASKS (Admin Switch) ---
         function loadAdTasks() {
             onValue(ref(database, 'ad_tasks'), (snap) => {
                 const tasks = snap.val();
                 const container = document.getElementById('adTasksContainer');
                 container.innerHTML = "";
                 if(!tasks) return;
-                
                 Object.keys(tasks).forEach(id => {
                     const t = tasks[id];
                     get(ref(database, `${userPath}/ad_stats/${id}`)).then(uSnap => {
@@ -511,22 +504,30 @@
                         const card = document.createElement('div');
                         card.className = "ad-task-card";
                         card.style.background = t.bgColor || "#111";
-                        card.innerHTML = `<img src="${t.image}" class="ad-task-img"><div class="ad-task-info"><h3>Ads & Earn (+${t.reward})</h3><p>Limit: ${count}/${t.limit}</p></div><button class="watch-task-btn" onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count})">Watch</button>`;
+                        // adType can be 'adsgram' or 'monetag'
+                        card.innerHTML = `<img src="${t.image}" class="ad-task-img"><div class="ad-task-info"><h3>Ads & Earn (+${t.reward})</h3><p>Limit: ${count}/${t.limit}</p></div><button class="watch-task-btn" onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}')">Watch</button>`;
                         container.appendChild(card);
                     });
                 });
             });
         }
 
-        window.runTaskAd = (id, reward, limit, count) => {
+        window.runTaskAd = (id, reward, limit, count, adType) => {
             if(count >= limit) return alert("Limit Reached!");
-            show_10361814().then(() => {
+            const claim = () => {
                 const up = {};
                 up[`${userPath}/coins`] = window.coins + reward;
                 up[`${userPath}/ad_stats/${id}`] = count + 1;
                 update(ref(database), up);
                 alert("Earned " + reward + " Coins!");
-            });
+            };
+
+            if(adType === 'monetag') {
+                if(typeof show_10361814 === 'function') { show_10361814().then(claim); }
+                else alert("Monetag error");
+            } else {
+                AdController.show().then((result) => { if(result.done) claim(); });
+            }
         };
 
         window.startDailyMining = () => {
@@ -536,18 +537,13 @@
 
         window.submitPromotion = () => {
             const l = document.getElementById('promoLink').value;
-            const d = { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() };
-            push(ref(database, `${userPath}/promotions`), d);
+            push(ref(database, `${userPath}/promotions`), { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() });
             alert("Submitted!");
         };
 
         window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
         window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
-        
         window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
-
-        window.showProfile = () => alert("ID: " + TELEGRAM_USER_ID);
-        window.showMsg = () => alert("Keep Mining!");
 
         loadUserData();
     </script>
