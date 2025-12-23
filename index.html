@@ -46,7 +46,7 @@
         .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
         @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
 
-        /* --- NEW WATCH PAGE CSS --- */
+        /* --- WATCH PAGE CSS --- */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
             margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
@@ -285,20 +285,20 @@
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
 
-        // 1. AdsGram Initialization
+        // --- NEW ADSGRAM CONTROLLER ---
         const AdController = window.Adsgram.init({ blockId: "19761" });
 
-        // 2. Admin Panel control variables
-        window.miningAdsReq = 10;   // Defaults
+        // --- ADMIN SYNC ---
+        window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
 
-        // Fetch Admin Settings from Firebase
         onValue(ref(database, 'admin_settings'), (snap) => {
-            const settings = snap.val();
-            if (settings) {
-                window.miningAdsReq = settings.mining_req || 10;
-                window.withdrawAdsReq = settings.withdraw_req || 10;
-                document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+            const s = snap.val();
+            if (s) {
+                window.miningAdsReq = s.mining_req || 10;
+                window.withdrawAdsReq = s.withdraw_req || 10;
+                const statusEl = document.getElementById('adStatus');
+                if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
             }
         });
         
@@ -309,7 +309,6 @@
         window.currentMethod = "upi";
         window.allWithdrawalData = null;
 
-        // Load Data
         function loadUserData() {
             onValue(dbRef, (snap) => {
                 const data = snap.val();
@@ -387,10 +386,9 @@
             } else alert("Invalid Code!");
         };
 
-        // --- ADS LOGIC (AdsGram for Mining) ---
+        // --- UPDATED WATCH AD (ADSGRAM) ---
         window.watchAd = () => {
-            const req = window.miningAdsReq || 10;
-            if(window.adsWatched >= req) return alert("All ads watched!");
+            if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
             AdController.show().then((result) => {
                 if (result.done) {
                     window.adsWatched++;
@@ -399,19 +397,18 @@
             }).catch(() => alert("Ad not ready."));
         };
 
-        // --- ADS LOGIC (AdsGram for Withdrawal) ---
+        // --- UPDATED WITHDRAWAL (ADSGRAM) ---
         window.handleWithdrawal = () => {
             const a = Number(document.getElementById('withdrawAmount').value);
             const d = document.getElementById('withdrawAddress').value;
             if(a < 10000 || a > window.coins) return alert("Invalid Amount");
 
-            const req = window.withdrawAdsReq || 10;
-            if(window.withdrawAdsCounter < req) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${req}. Watch Ads to withdraw.`)) {
+            if(window.withdrawAdsCounter < window.withdrawAdsReq) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
                     AdController.show().then((result) => {
                         if (result.done) {
                             window.withdrawAdsCounter++;
-                            if(window.withdrawAdsCounter >= req) alert("Ads complete! Click withdraw again.");
+                            if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
                         }
                     });
                 }
@@ -456,10 +453,9 @@
         }
 
         function updateMiningUI(isActive) {
-            const req = window.miningAdsReq || 10;
             document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
-            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < req;
-            document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/${req}`;
+            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
+            document.getElementById('adStatus').innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
             updateCoinDisplays(window.coins);
         }
 
@@ -490,93 +486,101 @@
             if(id === 'watch') loadAdTasks();
         };
 
-        // --- WATCH PAGE TASKS (Admin Switch) ---
-        // --- YAHAN SE REPLACE KAREIN (Line 494 to 531) ---
+        // --- UPDATED DYNAMIC WATCH PAGE ---
+        function loadAdTasks() {
+            onValue(ref(database, 'ad_tasks'), (snap) => {
+                const tasks = snap.val();
+                const container = document.getElementById('adTasksContainer');
+                container.innerHTML = "";
+                if(!tasks) return;
+                
+                Object.keys(tasks).forEach(id => {
+                    const t = tasks[id];
+                    get(ref(database, `${userPath}/ad_stats/${id}`)).then(uSnap => {
+                        const userData = uSnap.val() || { count: 0, lastDone: 0 };
+                        const count = userData.count || 0;
+                        const lastDone = userData.lastDone || 0;
+                        
+                        // Cooldown Check
+                        const now = Date.now();
+                        const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
+                        const isCooldown = now < (lastDone + refreshMs);
+                        
+                        const card = document.createElement('div');
+                        card.className = "ad-task-card";
+                        
+                        // Apply Admin Style
+                        card.style.background = t.bgColor || "#161616";
+                        card.style.border = `1px solid ${t.bgColor}55`;
+                        card.style.boxShadow = `0 10px 20px ${t.bgColor}22`;
+                        
+                        let timeRemaining = "";
+                        if(isCooldown) {
+                            const diff = (lastDone + refreshMs) - now;
+                            const hours = Math.floor(diff / (1000 * 60 * 60));
+                            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            timeRemaining = `Next in: ${hours}h ${mins}m`;
+                        }
 
-function loadAdTasks() {
-    onValue(ref(database, 'ad_tasks'), (snap) => {
-        const tasks = snap.val();
-        const container = document.getElementById('adTasksContainer');
-        container.innerHTML = "";
-        if(!tasks) return;
-        
-        Object.keys(tasks).forEach(id => {
-            const t = tasks[id];
-            // User ki progress aur cooldown data fetch karein
-            get(ref(database, `${userPath}/ad_stats/${id}`)).then(uSnap => {
-                const userData = uSnap.val() || { count: 0, lastDone: 0 };
-                const count = userData.count || 0;
-                const lastDone = userData.lastDone || 0;
-                
-                // Cooldown Check (Refresh Time logic)
-                const now = Date.now();
-                const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
-                const isCooldown = now < (lastDone + refreshMs);
-                
-                const card = document.createElement('div');
-                card.className = "ad-task-card";
-                
-                // Admin Panel se aayi hui Styling (Color & Shadow)
-                card.style.background = t.bgColor || "#161616";
-                card.style.border = `1px solid ${t.bgColor}55`;
-                card.style.boxShadow = `0 10px 20px ${t.bgColor}22`;
-                
-                // Timer calculation
-                let timeRemaining = "";
-                if(isCooldown) {
-                    const diff = (lastDone + refreshMs) - now;
-                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    timeRemaining = `Next in: ${hours}h ${mins}m`;
-                }
-
-                card.innerHTML = `
-                    <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968260.png'">
-                    <div class="ad-task-info">
-                        <h3 style="color:#fff; font-size:14px;">${t.title || 'Watch & Earn'}</h3>
-                        <p style="color:rgba(255,255,255,0.8); font-size:12px;">Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
-                        <p style="font-size:10px; opacity:0.6;">${isCooldown ? '<span style="color:#ff4d4d;">'+timeRemaining+'</span>' : 'Limit: '+count+'/'+t.limit}</p>
-                    </div>
-                    <button class="watch-task-btn" 
-                        ${isCooldown ? 'disabled style="background:#333; color:#888;"' : 'style="background:#fff; color:#000;"'}
-                        onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}')">
-                        ${isCooldown ? 'Locked' : 'Watch'}
-                    </button>`;
-                container.appendChild(card);
+                        card.innerHTML = `
+                            <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968260.png'">
+                            <div class="ad-task-info">
+                                <h3 style="color:#fff; font-size:14px;">${t.title || 'Watch & Earn'}</h3>
+                                <p style="color:rgba(255,255,255,0.8); font-size:12px;">Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
+                                <p style="font-size:10px; opacity:0.6;">${isCooldown ? '<span style="color:#ff4d4d;">'+timeRemaining+'</span>' : 'Limit: '+count+'/'+t.limit}</p>
+                            </div>
+                            <button class="watch-task-btn" 
+                                ${isCooldown ? 'disabled style="background:#333; color:#888;"' : 'style="background:#fff; color:#000;"'}
+                                onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}')">
+                                ${isCooldown ? 'Locked' : 'Watch'}
+                            </button>`;
+                        container.appendChild(card);
+                    });
+                });
             });
-        });
-    });
-}
-
-window.runTaskAd = (id, reward, limit, count, adType, adId) => {
-    if(count >= limit) return alert("Limit Reached!");
-    
-    const claim = () => {
-        const newCount = count + 1;
-        const updates = {};
-        updates[`${userPath}/coins`] = window.coins + reward;
-        
-        // Agar limit poori ho gayi, toh cooldown start karein
-        if(newCount >= limit) {
-            updates[`${userPath}/ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-            alert(`🎉 Task Completed! Refresh in cooldown.`);
-        } else {
-            updates[`${userPath}/ad_stats/${id}/count`] = newCount;
-            alert(`🎉 Earned +${reward} Coins!`);
         }
-        update(ref(database), updates);
-    };
 
-    if(adType === 'monetag') {
-        if(typeof show_10361814 === 'function') { show_10361814().then(claim); }
-    } else {
-        // AdsGram dynamic Block ID (Jo aap Admin Panel se daalenge)
-        const TaskAd = window.Adsgram.init({ blockId: adId || "19761" });
-        TaskAd.show().then((res) => { if(res.done) claim(); });
-    }
-};
+        window.runTaskAd = (id, reward, limit, count, adType, adId) => {
+            if(count >= limit) return alert("Limit Reached!");
+            const claim = () => {
+                const newCount = count + 1;
+                const updates = {};
+                updates[`${userPath}/coins`] = window.coins + reward;
+                
+                if(newCount >= limit) {
+                    updates[`${userPath}/ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                    alert(`🎉 Task Completed! Refresh in cooldown.`);
+                } else {
+                    updates[`${userPath}/ad_stats/${id}/count`] = newCount;
+                    alert(`🎉 Earned +${reward} Coins!`);
+                }
+                update(ref(database), updates);
+            };
 
-// --- YAHAN TAK REPLACE KAREIN ---
+            if(adType === 'monetag') {
+                if(typeof show_10361814 === 'function') { show_10361814().then(claim); }
+            } else {
+                const TaskAd = window.Adsgram.init({ blockId: adId || "19761" });
+                TaskAd.show().then((res) => { if(res.done) claim(); });
+            }
+        };
+
+        window.startDailyMining = () => {
+            const now = Date.now();
+            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000 });
+        };
+
+        window.submitPromotion = () => {
+            const l = document.getElementById('promoLink').value;
+            push(ref(database, `${userPath}/promotions`), { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() });
+            alert("Submitted!");
+        };
+
+        window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
+        window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
+        window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
+
+        loadUserData();
     </script>
 </body>
 </html>
