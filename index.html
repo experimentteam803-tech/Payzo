@@ -436,53 +436,67 @@
 
         // --- UPDATED WITHDRAWAL (ADSGRAM) ---
         window.handleWithdrawal = () => {
-    const a = Number(document.getElementById('withdrawAmount').value);
-    const d = document.getElementById('withdrawAddress').value;
-    
-    // --- Naya Minimum Limit Logic ---
-    let minLimit = 10000; // UPI ke liye Default
-    if (window.currentMethod === 'paypal') minLimit = 100000; 
-    if (window.currentMethod === 'crypto') minLimit = 100000;
+        const a = Number(document.getElementById('withdrawAmount').value);
+        const d = document.getElementById('withdrawAddress').value;
+        
+        // Step 1: Minimum Limit Decide karein
+        let minLimit = 10000; // Default UPI
+        if (window.currentMethod === 'paypal') minLimit = 50000;
+        else if (window.currentMethod === 'crypto') minLimit = 100000;
 
-    if (a < minLimit) {
-        return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
-    }
-    if (a > window.coins) return alert("Insufficient Balance!");
-    if (!d) return alert("Please enter payment address/ID");
-
-    // Ads logic
-    if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-        if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
-            AdController.show().then((result) => {
-                if (result.done) {
-                    window.withdrawAdsCounter++;
-                    if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
-                }
-            });
+        // Step 2: Amount check karein
+        if (a < minLimit) {
+            alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
+            return;
         }
-        return;
-    }
+        if (a > window.coins) {
+            alert("Insufficient Balance!");
+            return;
+        }
+        if (!d) {
+            alert("Please enter payment address/ID");
+            return;
+        }
 
-    const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
-    const key = push(ref(database, 'withdrawals')).key;
-    const updates = {};
-    updates['withdrawals/' + key] = rData;
-    updates[`${userPath}/withdrawals/${key}`] = rData;
-    updates[`${userPath}/coins`] = window.coins - a;
-    update(ref(database), updates);
-    window.withdrawAdsCounter = 0;
-    alert("Withdrawal Requested!");
-};
+        // Ads logic
+        if(window.withdrawAdsCounter < window.withdrawAdsReq) {
+            if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
+                AdController.show().then((result) => {
+                    if (result.done) {
+                        window.withdrawAdsCounter++;
+                        if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
+                    }
+                });
+            }
+            return;
+        }
 
-        window.setMethod = (m, b) => {
-            window.currentMethod = m;
-            document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
-            document.getElementById('withdrawAddress').placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'Email' : 'Address');
-            document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
-            renderWithdrawalHistory();
-        };
+        const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
+        const key = push(ref(database, 'withdrawals')).key;
+        const updates = {};
+        updates['withdrawals/' + key] = rData;
+        updates[`${userPath}/withdrawals/${key}`] = rData;
+        updates[`${userPath}/coins`] = window.coins - a;
+        update(ref(database), updates);
+        window.withdrawAdsCounter = 0;
+        alert("Withdrawal Requested!");
+    };
 
+    window.setMethod = (m, b) => {
+        window.currentMethod = m;
+        document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        
+        // UI Update: Placeholder badalna
+        const addrInput = document.getElementById('withdrawAddress');
+        const amtInput = document.getElementById('withdrawAmount');
+        
+        addrInput.placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'PayPal Email' : 'USDT Address');
+        amtInput.placeholder = m === 'upi' ? 'Min 10,000' : (m === 'paypal' ? 'Min 50,000' : 'Min 100,000');
+        
+        document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
+        renderWithdrawalHistory();
+    };
         async function checkMiningStatus() {
     const now = Date.now();
     if (window.miningEndTime && window.miningEndTime > 0) {
