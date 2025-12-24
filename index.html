@@ -492,7 +492,7 @@
         const amtInput = document.getElementById('withdrawAmount');
         
         addrInput.placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'PayPal Email' : 'USDT Address');
-        amtInput.placeholder = m === 'upi' ? 'Min 10,000' : (m === 'paypal' ? 'Min 50,000' : 'Min 100,000');
+        amtInput.placeholder = m === 'upi' ? 'Min 10,000' : (m === 'paypal' ? 'Min 100,000' : 'Min 100,000');
         
         document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
         renderWithdrawalHistory();
