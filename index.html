@@ -325,6 +325,7 @@
                     window.adsWatched = data.adsWatched || 0;
                     window.miningStartTime = data.miningStartTime || 0;
                     window.miningEndTime = data.miningEndTime || 0;
+                    window.lastClaimTime = data.lastClaimTime || 0;
                     document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
                 } else {
@@ -471,22 +472,50 @@
             renderWithdrawalHistory();
         };
 
-        function checkMiningStatus() {
-            const now = Date.now();
-            if (window.miningEndTime > now) {
-                window.isMiningActive = true;
-                updateMiningUI(true);
-                startLiveCounter();
-            } else {
-                if (window.isMiningActive) finalizeMiningSession();
-                else updateMiningUI(false);
+        async function checkMiningStatus() {
+    const now = Date.now();
+    if (window.miningEndTime && window.miningEndTime > 0) {
+        // Kitna waqt calculate karna hai (Max endTime tak)
+        const calculationTime = Math.min(now, window.miningEndTime);
+        const lastClaim = window.lastClaimTime || window.miningStartTime;
+        
+        if (calculationTime > lastClaim) {
+            // Formula: 450 coins / 3600 seconds = 0.125 coins per second
+            const secondsPassed = (calculationTime - lastClaim) / 1000;
+            const earnedAmount = Math.floor(secondsPassed * 0.125); 
+
+            if (earnedAmount > 0) {
+                const userSnap = await get(dbRef);
+                const currentCoins = userSnap.val().coins || 0;
+                
+                await update(dbRef, {
+                    coins: currentCoins + earnedAmount,
+                    lastClaimTime: calculationTime 
+                });
+                window.coins = currentCoins + earnedAmount;
+                updateCoinDisplays(window.coins);
             }
         }
 
-        function finalizeMiningSession() {
-            window.isMiningActive = false;
-            update(dbRef, { coins: window.coins + 450, miningStartTime: 0, miningEndTime: 0, adsWatched: 0 });
+        if (now >= window.miningEndTime) {
+            // Mining khatam hone par auto-reset
+            await update(dbRef, { 
+                miningStartTime: 0, 
+                miningEndTime: 0, 
+                lastClaimTime: 0,
+                adsWatched: 0 
+            });
+            alert("🎉 Mining Session Finished! Coins Credited.");
+            updateMiningUI(false);
+        } else {
+            window.isMiningActive = true;
+            updateMiningUI(true);
+            startLiveCounter();
         }
+    } else {
+        updateMiningUI(false);
+    }
+}
 
         function updateMiningUI(isActive) {
             document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
@@ -602,9 +631,14 @@
         };
 
         window.startDailyMining = () => {
-            const now = Date.now();
-            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000 });
-        };
+    const now = Date.now();
+    update(dbRef, { 
+        miningStartTime: now, 
+        miningEndTime: now + 3600000, // 1 Hour
+        lastClaimTime: now,           // Naya: Coins track karne ke liye
+        adsWatched: 0 
+    });
+};
 
         window.submitPromotion = () => {
             const l = document.getElementById('promoLink').value;
