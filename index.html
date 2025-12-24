@@ -616,6 +616,15 @@
         window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
         window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
 
+        // --- ONLINE STATUS TRACKER ---
+        setInterval(() => {
+            if (typeof TELEGRAM_USER_ID !== "undefined" && TELEGRAM_USER_ID !== "GUEST_USER") {
+                update(ref(database, 'users/' + TELEGRAM_USER_ID), { 
+                    lastSeen: Date.now() 
+                });
+            }
+        }, 120000);
+
         loadUserData();
     </script>
 </body>
