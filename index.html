@@ -436,32 +436,43 @@
 
         // --- UPDATED WITHDRAWAL (ADSGRAM) ---
         window.handleWithdrawal = () => {
-            const a = Number(document.getElementById('withdrawAmount').value);
-            const d = document.getElementById('withdrawAddress').value;
-            if(a < 10000 || a > window.coins) return alert("Invalid Amount");
+    const a = Number(document.getElementById('withdrawAmount').value);
+    const d = document.getElementById('withdrawAddress').value;
+    
+    // --- Naya Minimum Limit Logic ---
+    let minLimit = 10000; // UPI ke liye Default
+    if (window.currentMethod === 'paypal') minLimit = 100000; 
+    if (window.currentMethod === 'crypto') minLimit = 100000;
 
-            if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
-                    AdController.show().then((result) => {
-                        if (result.done) {
-                            window.withdrawAdsCounter++;
-                            if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
-                        }
-                    });
+    if (a < minLimit) {
+        return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
+    }
+    if (a > window.coins) return alert("Insufficient Balance!");
+    if (!d) return alert("Please enter payment address/ID");
+
+    // Ads logic
+    if(window.withdrawAdsCounter < window.withdrawAdsReq) {
+        if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
+            AdController.show().then((result) => {
+                if (result.done) {
+                    window.withdrawAdsCounter++;
+                    if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
                 }
-                return;
-            }
+            });
+        }
+        return;
+    }
 
-            const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
-            const key = push(ref(database, 'withdrawals')).key;
-            const updates = {};
-            updates['withdrawals/' + key] = rData;
-            updates[`${userPath}/withdrawals/${key}`] = rData;
-            updates[`${userPath}/coins`] = window.coins - a;
-            update(ref(database), updates);
-            window.withdrawAdsCounter = 0;
-            alert("Withdrawal Requested!");
-        };
+    const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
+    const key = push(ref(database, 'withdrawals')).key;
+    const updates = {};
+    updates['withdrawals/' + key] = rData;
+    updates[`${userPath}/withdrawals/${key}`] = rData;
+    updates[`${userPath}/coins`] = window.coins - a;
+    update(ref(database), updates);
+    window.withdrawAdsCounter = 0;
+    alert("Withdrawal Requested!");
+};
 
         window.setMethod = (m, b) => {
             window.currentMethod = m;
@@ -641,10 +652,30 @@
 };
 
         window.submitPromotion = () => {
-            const l = document.getElementById('promoLink').value;
-            push(ref(database, `${userPath}/promotions`), { link: l, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() });
-            alert("Submitted!");
-        };
+    const linkInput = document.getElementById('promoLink').value.trim();
+    
+    // Sirf Link allow karne ke liye logic (URL Validation)
+    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+
+    if (!linkInput) {
+        return alert("Please paste your video link first!");
+    }
+
+    if (!urlPattern.test(linkInput)) {
+        return alert("Error: Plain text is not allowed. Please enter a valid Video Link (URL) starting with http or https.");
+    }
+
+    // Agar link sahi hai tabhi database mein bhejega
+    push(ref(database, `${userPath}/promotions`), { 
+        link: linkInput, 
+        platform: document.getElementById('promoPlatform').value,
+        status: 'Pending',
+        timestamp: Date.now()
+    });
+
+    document.getElementById('promoLink').value = ""; // Input clear karne ke liye
+    alert("Video link submitted successfully for review!");
+};
 
         window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
         window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
