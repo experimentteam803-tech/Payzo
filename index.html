@@ -485,7 +485,7 @@
 
         function finalizeMiningSession() {
             window.isMiningActive = false;
-            update(dbRef, { coins: window.coins + 1000, miningStartTime: 0, miningEndTime: 0, adsWatched: 0 });
+            update(dbRef, { coins: window.coins + 450, miningStartTime: 0, miningEndTime: 0, adsWatched: 0 });
         }
 
         function updateMiningUI(isActive) {
@@ -499,7 +499,7 @@
             setInterval(() => {
                 const now = Date.now();
                 if (now < window.miningEndTime) {
-                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 1000));
+                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 450));
                     const rem = Math.round((window.miningEndTime - now)/1000);
                     document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
                 }
