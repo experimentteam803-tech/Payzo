@@ -706,6 +706,7 @@
             if(btn.disabled) return; 
 
             const claim = () => {
+                startWatchTaskTimer(btn);
                 const newCount = count + 1;
                 const updates = {};
                 updates[`${userPath}/coins`] = window.coins + reward;
