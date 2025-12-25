@@ -300,22 +300,27 @@
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
 
-        // --- FIXED ADMIN SYNC (100% WORKING) ---
+        // --- FIXED ADMIN SYNC (Mining + Withdrawal Sync) ---
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
             if (s) {
-                // Yeh line check karegi ki data folder ke andar hai ya bahar
-                let req = 10; // Default value
-                
+                // 1. Mining Ads Sync logic
+                let mReq = 10; // Default
                 if (s.miningAds && s.miningAds.required !== undefined) {
-                    req = s.miningAds.required; // Agar folder (miningAds/required) mein hai
+                    mReq = s.miningAds.required;
                 } else if (s.mining_req !== undefined) {
-                    req = s.mining_req; // Agar direct (mining_req) mein hai
+                    mReq = s.mining_req;
                 }
+                window.miningAdsReq = Number(mReq);
 
-                window.miningAdsReq = Number(req);
+                // 2. Withdrawal Ads Sync logic (Yeh naya part hai)
+                let wReq = 10; // Default
+                if (s.withdrawAds && s.withdrawAds.required !== undefined) {
+                    wReq = s.withdrawAds.required;
+                }
+                window.withdrawAdsReq = Number(wReq);
                 
-                // Screen par turant update karne ke liye
+                // UI Update (Screen par 0/5 ya 0/10 dikhane ke liye)
                 const statusEl = document.getElementById('adStatus');
                 if(statusEl) {
                     statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.miningAdsReq}`;
