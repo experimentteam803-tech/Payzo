@@ -300,33 +300,23 @@
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
 
-        // --- FIXED ADMIN SYNC (Mining + Withdrawal Sync) ---
+        // --- FINAL ADMIN SYNC (Mining & Withdrawal) ---
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
             if (s) {
-                // 1. Mining Ads Sync logic
-                let mReq = 10; // Default
-                if (s.miningAds && s.miningAds.required !== undefined) {
-                    mReq = s.miningAds.required;
-                } else if (s.mining_req !== undefined) {
-                    mReq = s.mining_req;
-                }
-                window.miningAdsReq = Number(mReq);
+                // 1. Mining Ads Sync (Admin Panel ke 'mining_req' se match kiya)
+                window.miningAdsReq = Number(s.mining_req || 10);
 
-                // 2. Withdrawal Ads Sync logic (Yeh naya part hai)
-                let wReq = 10; // Default
-                if (s.withdrawAds && s.withdrawAds.required !== undefined) {
-                    wReq = s.withdrawAds.required;
-                }
-                window.withdrawAdsReq = Number(wReq);
+                // 2. Withdrawal Ads Sync (Admin Panel ke 'withdraw_req' se match kiya)
+                window.withdrawAdsReq = Number(s.withdraw_req || 10);
                 
-                // UI Update (Screen par 0/5 ya 0/10 dikhane ke liye)
+                // Screen par mining ads ka count update karein
                 const statusEl = document.getElementById('adStatus');
                 if(statusEl) {
                     statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.miningAdsReq}`;
                 }
                 
-                // Mining button ko refresh karein
+                // Mining button refresh
                 if(typeof updateMiningUI === 'function') {
                     updateMiningUI(window.isMiningActive);
                 }
