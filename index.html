@@ -238,7 +238,6 @@
         <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-link"></i></button>
     </nav>
 
-    <!-- GIFT MODAL -->
     <div id="giftModal" class="modal-overlay">
         <div class="modal-content" style="text-align:center;">
             <h3 style="color:#ffd700; margin-bottom:15px;">🎁 Redeem Gift</h3>
@@ -249,7 +248,7 @@
         </div>
     </div>
 
-    <!-- NEW POPUP SYSTEM MODAL -->
+    <!-- POPUP SYSTEM MODAL -->
     <div id="globalPopup" class="modal-overlay">
         <div class="modal-content" style="text-align:center; border: 1px solid #ffd700;">
             <h3 id="popupTitle" style="color:#ffd700; margin-bottom:15px; font-family:'Orbitron';"></h3>
@@ -320,7 +319,7 @@
                 }
             });
 
-            // --- POPUP LISTENER ---
+            // POPUP LISTENER
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -339,7 +338,6 @@
 
         window.closeGlobalPopup = () => {
             document.getElementById('globalPopup').style.display = 'none';
-            // Delete popup from DB so it doesn't show again
             remove(ref(database, userPath + '/popup'));
         };
 
@@ -570,7 +568,6 @@
                         const now = Date.now();
                         const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
                         const isCooldown = now < (lastDone + refreshMs);
-                        
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
 
@@ -620,9 +617,24 @@
             else if(adType === 'adexium') {
                 if(typeof AdexiumWidget !== 'undefined') {
                     try {
-                        const adexiumWidget = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
-                        adexiumWidget.autoMode();
-                        setTimeout(claim, 7000); 
+                        // --- FIXED ADEXIUM MANUAL REQUEST ---
+                        const adexium = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
+                        
+                        // Request the ad
+                        adexium.requestAd('interstitial');
+                        
+                        // When ad is received, display it and reward
+                        adexium.on('adReceived', (ad) => {
+                            adexium.displayAd(ad);
+                            // Reward after a short delay to ensure display
+                            setTimeout(claim, 3000);
+                        });
+
+                        // If no ad found
+                        adexium.on('noAdFound', () => {
+                            alert("No Adexium ads available right now.");
+                        });
+
                     } catch(e) { alert("Adexium error."); }
                 } else { alert("Adexium SDK not loaded."); }
             }
