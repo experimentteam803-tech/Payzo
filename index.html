@@ -300,21 +300,31 @@
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
 
-        // --- ADMIN SYNC FIX (Line 303 - 311) ---
+        // --- FIXED ADMIN SYNC (100% WORKING) ---
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
-            if (s && s.miningAds) {
-                // Admin Panel ke path (miningAds/required) ke sath match kiya
-                window.miningAdsReq = s.miningAds.required || 5; 
+            if (s) {
+                // Yeh line check karegi ki data folder ke andar hai ya bahar
+                let req = 10; // Default value
                 
-                // Screen par count update karein (e.g. 0/5)
-                const statusEl = document.getElementById('adStatus');
-                if(statusEl) {
-                    statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+                if (s.miningAds && s.miningAds.required !== undefined) {
+                    req = s.miningAds.required; // Agar folder (miningAds/required) mein hai
+                } else if (s.mining_req !== undefined) {
+                    req = s.mining_req; // Agar direct (mining_req) mein hai
                 }
 
-                // Agar ads poore ho gaye hain to mining button check karein
-                updateMiningUI(window.isMiningActive);
+                window.miningAdsReq = Number(req);
+                
+                // Screen par turant update karne ke liye
+                const statusEl = document.getElementById('adStatus');
+                if(statusEl) {
+                    statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.miningAdsReq}`;
+                }
+                
+                // Mining button ko refresh karein
+                if(typeof updateMiningUI === 'function') {
+                    updateMiningUI(window.isMiningActive);
+                }
             }
         });
         
