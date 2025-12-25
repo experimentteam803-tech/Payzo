@@ -135,7 +135,7 @@
             </div>
 
             <div style="text-align:center; margin-bottom:20px;">
-                <button class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
+                <button id="adWatchBtn" class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
                 <p id="adStatus" style="font-size:12px; color:#aaa; margin-top:5px;">Ads Required to Mine: 0/10</p>
             </div>
 
@@ -300,13 +300,21 @@
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
 
+        // --- ADMIN SYNC FIX (Line 303 - 311) ---
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
-            if (s) {
-                window.miningAdsReq = s.mining_req || 10;
-                window.withdrawAdsReq = s.withdraw_req || 10;
+            if (s && s.miningAds) {
+                // Admin Panel ke path (miningAds/required) ke sath match kiya
+                window.miningAdsReq = s.miningAds.required || 5; 
+                
+                // Screen par count update karein (e.g. 0/5)
                 const statusEl = document.getElementById('adStatus');
-                if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+                if(statusEl) {
+                    statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+                }
+
+                // Agar ads poore ho gaye hain to mining button check karein
+                updateMiningUI(window.isMiningActive);
             }
         });
         
@@ -423,16 +431,73 @@
             } else alert("Invalid Code!");
         };
 
-        // --- UPDATED WATCH AD (ADSGRAM) ---
+        // --- ADSGRAM + MONETAG FALLBACK + 10s TIMER ---
         window.watchAd = () => {
+            const btn = document.getElementById('adWatchBtn');
             if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
+            if(btn.disabled) return; // Timer chal raha ho to click na ho
+
+            // 1. Adsgram Try Karein
             AdController.show().then((result) => {
                 if (result.done) {
-                    window.adsWatched++;
-                    update(dbRef, { adsWatched: window.adsWatched });
+                    handleAdSuccess(); 
                 }
-            }).catch(() => alert("Ad not ready."));
+            }).catch((err) => {
+                // 2. Agar Adsgram fail ho, to Monetag chalayein automatically
+                console.log("Adsgram failed, switching to Monetag...");
+                if(typeof show_10361814 === 'function') {
+                    show_10361814().then(() => {
+                        handleAdSuccess(); 
+                    }).catch(() => {
+                        alert("Ads not available. Please try later.");
+                    });
+                } else {
+                    alert("Ad provider loading...");
+                }
+            });
         };
+
+        // Ad dekhne ke baad Progress aur Timer logic
+        function handleAdSuccess() {
+            window.adsWatched++;
+            update(dbRef, { adsWatched: window.adsWatched });
+            
+            // Screen par text update karne ke liye (Ye line zaroori hai)
+            const statusEl = document.getElementById('adStatus');
+            if(statusEl) {
+                statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+            }
+
+            if(window.adsWatched < window.miningAdsReq) {
+                startAdTimer();
+            } else {
+                alert("🎉 All ads completed! Start mining now.");
+                updateMiningUI(false); 
+            }
+        }
+
+        // 10 Second Timer Function
+        function startAdTimer() {
+            const btn = document.getElementById('adWatchBtn');
+            let timeLeft = 10;
+            
+            btn.disabled = true; // Button lock
+            btn.style.opacity = "0.6";
+            btn.style.filter = "grayscale(1)"; 
+
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                btn.innerText = `⏳ Wait ${timeLeft}s for next Ad...`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    btn.disabled = false; // Button unlock
+                    btn.style.opacity = "1";
+                    btn.style.filter = "none";
+                    btn.innerText = "🎬 Watch Ad (+Progress)";
+                }
+            }, 1000);
+        }
 
         // --- UPDATED WITHDRAWAL (ADSGRAM) ---
         window.handleWithdrawal = () => {
