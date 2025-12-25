@@ -733,26 +733,37 @@
             }
         };
 
-        // --- WATCH PAGE TASK TIMER (Line 734) ---
         function startWatchTaskTimer(btn) {
+            if(!btn || btn.disabled) return;
+            
             let timeLeft = 10;
-            btn.disabled = true; // Button lock
-            btn.style.background = "#444"; // Color change (Dark)
+            btn.disabled = true;
+            btn.style.pointerEvents = "none"; // Timer ke beech click block
+            btn.style.background = "#333";
             btn.style.color = "#888";
-            const originalText = "Watch";
+            btn.style.opacity = "0.7";
+            btn.innerText = "10s"; // Turant 10s dikhayein
 
-            const watchTimer = setInterval(() => {
+            // Purane kisi bhi interval ko clear karne ke liye safety
+            if(btn.timerInterval) clearInterval(btn.timerInterval);
+
+            btn.timerInterval = setInterval(() => {
                 timeLeft--;
-                btn.innerText = `${timeLeft}s`; // Countdown dikhayega
-
-                if (timeLeft <= 0) {
-                    clearInterval(watchTimer);
-                    btn.disabled = false; // Button unlock
-                    btn.style.background = "#fff"; // Original color
+                
+                if (timeLeft > 0) {
+                    btn.innerText = timeLeft + "s";
+                } else {
+                    // Timer khatam hone par cleanup
+                    clearInterval(btn.timerInterval);
+                    btn.disabled = false;
+                    btn.style.pointerEvents = "auto";
+                    btn.style.background = "#fff";
                     btn.style.color = "#000";
-                    btn.innerText = originalText;
+                    btn.style.opacity = "1";
+                    btn.innerText = "Watch";
+                    btn.timerInterval = null;
                 }
-            }, 1000);
+            }, 1000); // Perfect 1 second speed
         }
         
         window.startDailyMining = () => {
