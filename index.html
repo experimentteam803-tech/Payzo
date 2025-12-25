@@ -238,6 +238,7 @@
         <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-link"></i></button>
     </nav>
 
+    <!-- GIFT MODAL -->
     <div id="giftModal" class="modal-overlay">
         <div class="modal-content" style="text-align:center;">
             <h3 style="color:#ffd700; margin-bottom:15px;">🎁 Redeem Gift</h3>
@@ -248,9 +249,18 @@
         </div>
     </div>
 
+    <!-- NEW POPUP SYSTEM MODAL -->
+    <div id="globalPopup" class="modal-overlay">
+        <div class="modal-content" style="text-align:center; border: 1px solid #ffd700;">
+            <h3 id="popupTitle" style="color:#ffd700; margin-bottom:15px; font-family:'Orbitron';"></h3>
+            <p id="popupMessage" style="font-size:13px; color:#ccc; line-height:1.6; margin-bottom:20px;"></p>
+            <button class="action-btn mine-btn" onclick="closeGlobalPopup()">Understood</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, update, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, update, push, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
         const tg = window.Telegram.WebApp;
         const TELEGRAM_USER_ID = tg.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
@@ -309,12 +319,29 @@
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
             });
+
+            // --- POPUP LISTENER ---
+            onValue(ref(database, userPath + '/popup'), (snap) => {
+                const data = snap.val();
+                if (data) {
+                    document.getElementById('popupTitle').innerText = data.title;
+                    document.getElementById('popupMessage').innerText = data.message;
+                    document.getElementById('globalPopup').style.display = 'flex';
+                }
+            });
+
             startWithdrawHistoryListener();
             startPromoHistoryListener();
             get(ref(database, 'claim_settings/common')).then(s => {
                 if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
             });
         }
+
+        window.closeGlobalPopup = () => {
+            document.getElementById('globalPopup').style.display = 'none';
+            // Delete popup from DB so it doesn't show again
+            remove(ref(database, userPath + '/popup'));
+        };
 
         function startWithdrawHistoryListener() {
             onValue(ref(database, `${userPath}/withdrawals`), (snap) => {
@@ -567,7 +594,6 @@
         }
 
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
-            // --- SERVER-SIDE COOLDOWN CHECK ---
             const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
             const userData = uSnap.val() || { count: 0, lastDone: 0 };
             const now = Date.now();
@@ -583,13 +609,8 @@
                 const updates = {};
                 updates[`coins`] = window.coins + reward;
                 updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                
-                if(newCount >= limit) {
-                    updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                } else {
-                    updates[`ad_stats/${id}/count`] = newCount;
-                }
-                
+                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                else updates[`ad_stats/${id}/count`] = newCount;
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
