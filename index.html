@@ -651,7 +651,7 @@
             if(id === 'watch') loadAdTasks();
         };
 
-        // --- UPDATED DYNAMIC WATCH PAGE ---
+        // --- UPDATED WATCH PAGE WITH TIMER & FALLBACK 
         function loadAdTasks() {
             onValue(ref(database, 'ad_tasks'), (snap) => {
                 const tasks = snap.val();
@@ -666,18 +666,14 @@
                         const count = userData.count || 0;
                         const lastDone = userData.lastDone || 0;
                         
-                        // Cooldown Check
                         const now = Date.now();
                         const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
                         const isCooldown = now < (lastDone + refreshMs);
                         
                         const card = document.createElement('div');
                         card.className = "ad-task-card";
-                        
-                        // Apply Admin Style
                         card.style.background = t.bgColor || "#161616";
                         card.style.border = `1px solid ${t.bgColor}55`;
-                        card.style.boxShadow = `0 10px 20px ${t.bgColor}22`;
                         
                         let timeRemaining = "";
                         if(isCooldown) {
@@ -688,7 +684,7 @@
                         }
 
                         card.innerHTML = `
-                            <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968260.png'">
+                            <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img">
                             <div class="ad-task-info">
                                 <h3 style="color:#fff; font-size:14px;">${t.title || 'Watch & Earn'}</h3>
                                 <p style="color:rgba(255,255,255,0.8); font-size:12px;">Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
@@ -696,7 +692,7 @@
                             </div>
                             <button class="watch-task-btn" 
                                 ${isCooldown ? 'disabled style="background:#333; color:#888;"' : 'style="background:#fff; color:#000;"'}
-                                onclick="runTaskAd('${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}')">
+                                onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}')">
                                 ${isCooldown ? 'Locked' : 'Watch'}
                             </button>`;
                         container.appendChild(card);
@@ -705,8 +701,10 @@
             });
         }
 
-        window.runTaskAd = (id, reward, limit, count, adType, adId) => {
+        window.runTaskAd = (btn, id, reward, limit, count, adType, adId) => {
             if(count >= limit) return alert("Limit Reached!");
+            if(btn.disabled) return; 
+
             const claim = () => {
                 const newCount = count + 1;
                 const updates = {};
@@ -718,18 +716,44 @@
                 } else {
                     updates[`${userPath}/ad_stats/${id}/count`] = newCount;
                     alert(`🎉 Earned +${reward} Coins!`);
+                    startWatchTaskTimer(btn); // 10s Timer shuru
                 }
                 update(ref(database), updates);
             };
 
             if(adType === 'monetag') {
-                if(typeof show_10361814 === 'function') { show_10361814().then(claim); }
+                if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("Ad error")); }
             } else {
                 const TaskAd = window.Adsgram.init({ blockId: adId || "19761" });
-                TaskAd.show().then((res) => { if(res.done) claim(); });
+                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => {
+                    console.log("Adsgram fail, trying Monetag...");
+                    if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("No Ads available")); }
+                });
             }
         };
 
+        // --- WATCH PAGE TASK TIMER (Line 734) ---
+        function startWatchTaskTimer(btn) {
+            let timeLeft = 10;
+            btn.disabled = true; // Button lock
+            btn.style.background = "#444"; // Color change (Dark)
+            btn.style.color = "#888";
+            const originalText = "Watch";
+
+            const watchTimer = setInterval(() => {
+                timeLeft--;
+                btn.innerText = `${timeLeft}s`; // Countdown dikhayega
+
+                if (timeLeft <= 0) {
+                    clearInterval(watchTimer);
+                    btn.disabled = false; // Button unlock
+                    btn.style.background = "#fff"; // Original color
+                    btn.style.color = "#000";
+                    btn.innerText = originalText;
+                }
+            }, 1000);
+        }
+        
         window.startDailyMining = () => {
     const now = Date.now();
     update(dbRef, { 
