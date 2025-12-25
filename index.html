@@ -6,12 +6,11 @@
     <title>CoinMine - Professional Mining Hub</title>
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <!-- Adexium SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
     <!-- Monetag SDK -->
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -275,7 +274,7 @@
         const AdController = window.Adsgram.init({ blockId: "19761" });
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
-        window.activeTimers = {}; // Global Timer Tracker
+        window.activeTimers = {}; 
 
         // Admin Sync
         onValue(ref(database, 'admin_settings'), (snap) => {
@@ -524,7 +523,6 @@
             if(id === 'watch') loadAdTasks();
         };
 
-        // --- WATCH PAGE WITH PERSISTENT TIMER ---
         function loadAdTasks() {
             onValue(ref(database, 'ad_tasks'), (snap) => {
                 const tasks = snap.val();
@@ -545,8 +543,6 @@
                         const now = Date.now();
                         const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
                         const isCooldown = now < (lastDone + refreshMs);
-                        
-                        // Check if this specific task is currently in a 10s timer
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
 
@@ -571,60 +567,40 @@
 
         window.runTaskAd = (btn, id, reward, limit, count, adType, adId, title) => {
             if(count >= limit) return alert("Limit Reached!");
-            if(btn.disabled || btn.innerText.includes('s')) return; 
+            if(btn.disabled) return; 
 
             const claim = () => {
-                startWatchTaskTimer(id); // Start persistent timer
+                startWatchTaskTimer(id);
                 const newCount = count + 1;
                 const historyRef = push(ref(database, userPath + '/coin_history'));
                 const updates = {};
                 updates[`coins`] = window.coins + reward;
-                updates[`coin_history/${historyRef.key}`] = { 
-                    reason: `Watch Ad: ${title} 📺`, 
-                    amount: reward, 
-                    timestamp: Date.now() 
-                };
-                
+                updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
                 if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
                 else updates[`ad_stats/${id}/count`] = newCount;
-
-                update(dbRef, updates).then(() => { 
-                    setTimeout(() => alert(`🎉 Success! +${reward} Coins added.`), 200); 
-                });
+                update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
-            // --- AD NETWORKS LOGIC ---
             if(adType === 'monetag') {
-                if(typeof show_10361814 === 'function') { 
-                    show_10361814().then(claim).catch(() => alert("Ad error")); 
-                }
+                if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("Ad error")); }
             } 
             else if(adType === 'adexium') {
-                // --- ADEXIUM INTEGRATION ---
                 if(typeof AdexiumWidget !== 'undefined') {
                     try {
+                        // Adexium logic fix: Force trigger
                         const adexiumWidget = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
                         adexiumWidget.autoMode();
-                        // Adexium interstitial ke liye 7 second baad reward trigger hoga
+                        // Interstitial ads don't have a 'done' callback, so we use a safe timer
                         setTimeout(claim, 7000); 
                     } catch(e) { alert("Adexium error."); }
-                } else {
-                    alert("Adexium SDK not loaded.");
-                }
+                } else { alert("Adexium SDK not loaded."); }
             }
             else {
-                // Adsgram Logic with Smart Fix
                 let finalAdId = String(adId).trim();
-                if (!finalAdId.startsWith("task-") && !finalAdId.startsWith("int-")) {
-                    finalAdId = "task-" + finalAdId;
-                }
+                if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
                 const TaskAd = window.Adsgram.init({ blockId: finalAdId });
-                TaskAd.show().then((res) => { 
-                    if(res.done) claim(); 
-                }).catch(() => {
-                    if(typeof show_10361814 === 'function') { 
-                        show_10361814().then(claim).catch(() => alert("No Ads available")); 
-                    }
+                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => {
+                    if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("No Ads")); }
                 });
             }
         };
@@ -635,16 +611,10 @@
                 window.activeTimers[taskId]--;
                 const btn = document.getElementById(`btn-${taskId}`);
                 if(btn) btn.innerText = window.activeTimers[taskId] + "s";
-
                 if (window.activeTimers[taskId] <= 0) {
                     clearInterval(timerInterval);
                     delete window.activeTimers[taskId];
-                    if(btn) {
-                        btn.disabled = false;
-                        btn.innerText = "Watch";
-                        btn.style.background = "#fff";
-                        btn.style.color = "#000";
-                    }
+                    if(btn) { btn.disabled = false; btn.innerText = "Watch"; btn.style.background = "#fff"; btn.style.color = "#000"; }
                 }
             }, 1000);
         }
