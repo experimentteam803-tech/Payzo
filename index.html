@@ -543,6 +543,7 @@
                         const now = Date.now();
                         const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
                         const isCooldown = now < (lastDone + refreshMs);
+                        
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
 
@@ -556,7 +557,7 @@
                                 </div>
                                 <button class="watch-task-btn" id="btn-${id}"
                                     ${(isCooldown || isTimerRunning) ? 'disabled style="background:#333; color:#888;"' : ''}
-                                    onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}')">
+                                    onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">
                                     ${isTimerRunning ? activeTimer + 's' : (isCooldown ? 'Locked' : 'Watch')}
                                 </button>
                             </div>`;
@@ -565,19 +566,30 @@
             });
         }
 
-        window.runTaskAd = (btn, id, reward, limit, count, adType, adId, title) => {
-            if(count >= limit) return alert("Limit Reached!");
-            if(btn.disabled) return; 
+        window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
+            // --- SERVER-SIDE COOLDOWN CHECK ---
+            const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
+            const userData = uSnap.val() || { count: 0, lastDone: 0 };
+            const now = Date.now();
+            const refreshMs = (refreshTime || 24) * 60 * 60 * 1000;
+            if (now < (userData.lastDone + refreshMs)) return alert("Task is in cooldown!");
+            if (userData.count >= limit) return alert("Limit Reached!");
+            if (btn.disabled) return; 
 
             const claim = () => {
                 startWatchTaskTimer(id);
-                const newCount = count + 1;
+                const newCount = userData.count + 1;
                 const historyRef = push(ref(database, userPath + '/coin_history'));
                 const updates = {};
                 updates[`coins`] = window.coins + reward;
                 updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                else updates[`ad_stats/${id}/count`] = newCount;
+                
+                if(newCount >= limit) {
+                    updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                } else {
+                    updates[`ad_stats/${id}/count`] = newCount;
+                }
+                
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
@@ -587,10 +599,8 @@
             else if(adType === 'adexium') {
                 if(typeof AdexiumWidget !== 'undefined') {
                     try {
-                        // Adexium logic fix: Force trigger
                         const adexiumWidget = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
                         adexiumWidget.autoMode();
-                        // Interstitial ads don't have a 'done' callback, so we use a safe timer
                         setTimeout(claim, 7000); 
                     } catch(e) { alert("Adexium error."); }
                 } else { alert("Adexium SDK not loaded."); }
