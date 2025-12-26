@@ -58,7 +58,7 @@
         .ad-task-info { flex: 1; }
         .ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
         .ad-task-info p { font-size: 11px; opacity: 0.7; }
-        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 80px; }
+        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 100px; font-size: 12px; }
 
         /* History Section */
         .history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
@@ -248,7 +248,6 @@
         </div>
     </div>
 
-    <!-- POPUP SYSTEM MODAL -->
     <div id="globalPopup" class="modal-overlay">
         <div class="modal-content" style="text-align:center; border: 1px solid #ffd700;">
             <h3 id="popupTitle" style="color:#ffd700; margin-bottom:15px; font-family:'Orbitron';"></h3>
@@ -285,7 +284,6 @@
         window.withdrawAdsReq = 10;
         window.activeTimers = {}; 
 
-        // Admin Sync
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
             if (s) {
@@ -319,7 +317,6 @@
                 }
             });
 
-            // POPUP LISTENER
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -408,7 +405,7 @@
             if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
             if(btn.disabled) return;
             AdController.show().then((result) => { if (result.done) handleAdSuccess(); }).catch(() => {
-                if(typeof show_10361814 === 'function') { show_10361814().then(() => handleAdSuccess()).catch(() => alert("Ads not available.")); }
+                runDynamicMonetag("10361814", handleAdSuccess);
             });
         };
 
@@ -548,6 +545,15 @@
             if(id === 'watch') loadAdTasks();
         };
 
+        // --- HELPER: FORMAT COOLDOWN TIME ---
+        function formatCooldown(ms) {
+            const totalSecs = Math.floor(ms / 1000);
+            const h = Math.floor(totalSecs / 3600);
+            const m = Math.floor((totalSecs % 3600) / 60);
+            const s = totalSecs % 60;
+            return `${h}h ${m}m ${s}s`;
+        }
+
         function loadAdTasks() {
             onValue(ref(database, 'ad_tasks'), (snap) => {
                 const tasks = snap.val();
@@ -565,11 +571,28 @@
                         const userData = uSnap.val() || { count: 0, lastDone: 0 };
                         const count = userData.count || 0;
                         const lastDone = userData.lastDone || 0;
+                        
                         const now = Date.now();
-                        const refreshMs = (t.refreshTime || 24) * 60 * 60 * 1000; 
-                        const isCooldown = now < (lastDone + refreshMs);
+                        const refreshMs = (Number(t.refreshTime) || 24) * 60 * 60 * 1000; 
+                        const cooldownEndTime = lastDone + refreshMs;
+                        const isCooldown = now < cooldownEndTime && count === 0 && lastDone > 0;
+                        
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
+
+                        let btnText = "Watch";
+                        let btnDisabled = false;
+
+                        if (isTimerRunning) {
+                            btnText = activeTimer + "s";
+                            btnDisabled = true;
+                        } else if (isCooldown) {
+                            btnText = "Next in " + formatCooldown(cooldownEndTime - now);
+                            btnDisabled = true;
+                        } else if (count >= t.limit) {
+                            // This state should trigger the cooldown reset in runTaskAd
+                            btnText = "Watch"; 
+                        }
 
                         cardWrapper.innerHTML = `
                             <div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;">
@@ -577,12 +600,12 @@
                                 <div class="ad-task-info">
                                     <h3>${t.title || 'Watch & Earn'}</h3>
                                     <p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
-                                    <p style="font-size:10px; opacity:0.6;">${isCooldown ? 'Cooldown' : 'Limit: '+count+'/'+t.limit}</p>
+                                    <p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p>
                                 </div>
                                 <button class="watch-task-btn" id="btn-${id}"
-                                    ${(isCooldown || isTimerRunning) ? 'disabled style="background:#333; color:#888;"' : ''}
+                                    ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''}
                                     onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">
-                                    ${isTimerRunning ? activeTimer + 's' : (isCooldown ? 'Locked' : 'Watch')}
+                                    ${btnText}
                                 </button>
                             </div>`;
                     });
@@ -590,13 +613,27 @@
             });
         }
 
+        function runDynamicMonetag(zoneId, callback) {
+            const functionName = "show_" + zoneId;
+            if (typeof window[functionName] === 'function') {
+                window[functionName]().then(callback).catch(() => alert("Ad error"));
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://whephiwums.com/vignette.min.js';
+                script.dataset.zone = zoneId;
+                script.dataset.sdk = functionName;
+                script.onload = () => { if (typeof window[functionName] === 'function') window[functionName]().then(callback); };
+                document.head.appendChild(script);
+            }
+        }
+
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
             const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
             const userData = uSnap.val() || { count: 0, lastDone: 0 };
             const now = Date.now();
-            const refreshMs = (refreshTime || 24) * 60 * 60 * 1000;
-            if (now < (userData.lastDone + refreshMs)) return alert("Task is in cooldown!");
-            if (userData.count >= limit) return alert("Limit Reached!");
+            const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
+            
+            if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
             if (btn.disabled) return; 
 
             const claim = () => {
@@ -606,35 +643,26 @@
                 const updates = {};
                 updates[`coins`] = window.coins + reward;
                 updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                else updates[`ad_stats/${id}/count`] = newCount;
+                
+                if(newCount >= limit) {
+                    updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                } else {
+                    updates[`ad_stats/${id}/count`] = newCount;
+                }
+                
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
             if(adType === 'monetag') {
-                if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("Ad error")); }
+                runDynamicMonetag(adId, claim);
             } 
             else if(adType === 'adexium') {
                 if(typeof AdexiumWidget !== 'undefined') {
                     try {
-                        // --- FIXED ADEXIUM MANUAL REQUEST ---
                         const adexium = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
-                        
-                        // Request the ad
                         adexium.requestAd('interstitial');
-                        
-                        // When ad is received, display it and reward
-                        adexium.on('adReceived', (ad) => {
-                            adexium.displayAd(ad);
-                            // Reward after a short delay to ensure display
-                            setTimeout(claim, 3000);
-                        });
-
-                        // If no ad found
-                        adexium.on('noAdFound', () => {
-                            alert("No Adexium ads available right now.");
-                        });
-
+                        adexium.on('adReceived', (ad) => { adexium.displayAd(ad); setTimeout(claim, 7000); });
+                        adexium.on('noAdFound', () => alert("No Adexium ads available."));
                     } catch(e) { alert("Adexium error."); }
                 } else { alert("Adexium SDK not loaded."); }
             }
@@ -643,7 +671,7 @@
                 if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
                 const TaskAd = window.Adsgram.init({ blockId: finalAdId });
                 TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => {
-                    if(typeof show_10361814 === 'function') { show_10361814().then(claim).catch(() => alert("No Ads")); }
+                    runDynamicMonetag("10361814", claim);
                 });
             }
         };
@@ -657,7 +685,7 @@
                 if (window.activeTimers[taskId] <= 0) {
                     clearInterval(timerInterval);
                     delete window.activeTimers[taskId];
-                    if(btn) { btn.disabled = false; btn.innerText = "Watch"; btn.style.background = "#fff"; btn.style.color = "#000"; }
+                    // UI will auto-refresh via onValue listener
                 }
             }, 1000);
         }
@@ -685,6 +713,13 @@
                 update(ref(database, 'users/' + TELEGRAM_USER_ID), { lastSeen: Date.now() });
             }
         }, 120000);
+
+        // --- GLOBAL UI REFRESHER FOR COOLDOWNS ---
+        setInterval(() => {
+            if (document.getElementById('watch').style.display === 'block') {
+                loadAdTasks(); // Refresh UI every minute to update cooldown clocks
+            }
+        }, 60000);
 
         loadUserData();
     </script>
