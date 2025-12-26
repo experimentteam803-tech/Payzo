@@ -695,14 +695,31 @@
         };
 
         function startWatchTaskTimer(taskId) {
-            window.activeTimers[taskId] = 10;
-            const timerInterval = setInterval(() => {
-                window.activeTimers[taskId]--;
-                const btn = document.getElementById(`btn-${taskId}`);
-                if(btn) btn.innerText = window.activeTimers[taskId] + "s";
-                if (window.activeTimers[taskId] <= 0) { clearInterval(timerInterval); delete window.activeTimers[taskId]; }
-            }, 1000);
+    window.activeTimers[taskId] = 10; // 10 second ka timer
+    const timerInterval = setInterval(() => {
+        window.activeTimers[taskId]--;
+        const btn = document.getElementById(`btn-${taskId}`);
+
+        if (window.activeTimers[taskId] <= 0) {
+            // Timer khatam hone par ye chalega
+            clearInterval(timerInterval);
+            delete window.activeTimers[taskId];
+            
+            if (btn) {
+                btn.innerText = "Watch"; // Wapas "Watch" likho
+                btn.disabled = false;    // Button ko chalu karo
+                btn.style.background = "#fff"; // Original color (white)
+                btn.style.color = "#000";      // Original text color (black)
+            }
+        } else {
+            // Jab tak timer chal raha hai
+            if (btn) {
+                btn.innerText = window.activeTimers[taskId] + "s";
+                btn.disabled = true; // Timer ke waqt button band rakho
+            }
         }
+    }, 1000);
+}
         
         window.startDailyMining = () => {
             const now = Date.now();
