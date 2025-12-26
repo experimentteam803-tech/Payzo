@@ -463,11 +463,11 @@
                 // Naya RichAds SDK use kar rahe hain
                 if(window.TelegramAdsController) {
                     window.TelegramAdsController.show().then(() => {
-                        // 15 second ka timer progress count karne ke liye
+                        // 10 second ka timer progress count karne ke liye
                         setTimeout(() => {
                             window.withdrawAdsCounter++;
                             alert(`Ad Watched! Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}`);
-                        }, 15000); 
+                        }, 10000); 
                     }).catch(() => {
                         // Fallback: Agar RichAds fail ho toh Adsgram ya Monetag chale
                         AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
