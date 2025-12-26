@@ -10,6 +10,8 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <!-- RichAds SDK -->
+    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/richads-widget.min.js"></script>
     
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
@@ -58,7 +60,7 @@
         .ad-task-info { flex: 1; }
         .ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
         .ad-task-info p { font-size: 11px; opacity: 0.7; }
-        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 100px; font-size: 12px; }
+        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 100px; }
 
         /* History Section */
         .history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
@@ -284,6 +286,7 @@
         window.withdrawAdsReq = 10;
         window.activeTimers = {}; 
 
+        // Admin Sync
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
             if (s) {
@@ -372,7 +375,7 @@
                     const statusClass = `status-${item.status.toLowerCase()}`;
                     html += `<div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}${item.adminMsg ? `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">💬 <b>Admin Note:</b> ${item.adminMsg}</div>` : ''}</div>`;
                     if(item.status === 'Success' && !item.notified) {
-                        alert(`🎉 Congratulations!\n\nYour promotion video has been approved.\nReward: ${item.amount.toLocaleString()} Coins added.`);
+                        alert(`🎉 Congratulations!\n\nYour promotion video has been approved.`);
                         update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
                     }
                 });
@@ -450,9 +453,14 @@
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
                 if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
                     AdController.show().then((result) => {
-                        if (result.done) {
-                            window.withdrawAdsCounter++;
-                            if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete! Click withdraw again.");
+                        if (result.done) { window.withdrawAdsCounter++; if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete!"); }
+                    }).catch(() => {
+                        if(typeof AdexiumWidget !== 'undefined') {
+                            const rich = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
+                            rich.requestAd('interstitial');
+                            rich.on('adReceived', (ad) => { rich.displayAd(ad); window.withdrawAdsCounter++; });
+                        } else {
+                            runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; });
                         }
                     });
                 }
@@ -488,11 +496,18 @@
                 const lastClaim = window.lastClaimTime || window.miningStartTime;
                 if (calculationTime > lastClaim) {
                     const secondsPassed = (calculationTime - lastClaim) / 1000;
-                    const earnedAmount = Math.floor(secondsPassed * 0.125); 
+                    let earnedAmount = Math.floor(secondsPassed * 0.125); 
+
+                    // --- ANTI-GLITCH SHIELD ---
+                    if (earnedAmount > 450) earnedAmount = 450; 
+
                     if (earnedAmount > 0) {
                         const userSnap = await get(dbRef);
                         const currentCoins = userSnap.val().coins || 0;
                         const historyRef = push(ref(database, userPath + '/coin_history'));
+                        
+                        if(earnedAmount > 500) return; // Security block
+
                         await update(dbRef, {
                             coins: currentCoins + earnedAmount,
                             lastClaimTime: calculationTime,
@@ -545,7 +560,6 @@
             if(id === 'watch') loadAdTasks();
         };
 
-        // --- HELPER: FORMAT COOLDOWN TIME ---
         function formatCooldown(ms) {
             const totalSecs = Math.floor(ms / 1000);
             const h = Math.floor(totalSecs / 3600);
@@ -560,54 +574,26 @@
                 const container = document.getElementById('adTasksContainer');
                 container.innerHTML = "";
                 if(!tasks) return;
-                
                 Object.keys(tasks).forEach(id => {
                     const t = tasks[id];
                     const cardWrapper = document.createElement('div');
                     cardWrapper.id = `task-card-${id}`;
                     container.appendChild(cardWrapper);
-
                     onValue(ref(database, `${userPath}/ad_stats/${id}`), (uSnap) => {
                         const userData = uSnap.val() || { count: 0, lastDone: 0 };
                         const count = userData.count || 0;
                         const lastDone = userData.lastDone || 0;
-                        
                         const now = Date.now();
                         const refreshMs = (Number(t.refreshTime) || 24) * 60 * 60 * 1000; 
                         const cooldownEndTime = lastDone + refreshMs;
                         const isCooldown = now < cooldownEndTime && count === 0 && lastDone > 0;
-                        
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
-
                         let btnText = "Watch";
                         let btnDisabled = false;
-
-                        if (isTimerRunning) {
-                            btnText = activeTimer + "s";
-                            btnDisabled = true;
-                        } else if (isCooldown) {
-                            btnText = "Next in " + formatCooldown(cooldownEndTime - now);
-                            btnDisabled = true;
-                        } else if (count >= t.limit) {
-                            // This state should trigger the cooldown reset in runTaskAd
-                            btnText = "Watch"; 
-                        }
-
-                        cardWrapper.innerHTML = `
-                            <div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;">
-                                <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img">
-                                <div class="ad-task-info">
-                                    <h3>${t.title || 'Watch & Earn'}</h3>
-                                    <p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
-                                    <p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p>
-                                </div>
-                                <button class="watch-task-btn" id="btn-${id}"
-                                    ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''}
-                                    onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">
-                                    ${btnText}
-                                </button>
-                            </div>`;
+                        if (isTimerRunning) { btnText = activeTimer + "s"; btnDisabled = true; }
+                        else if (isCooldown) { btnText = "Next in " + formatCooldown(cooldownEndTime - now); btnDisabled = true; }
+                        cardWrapper.innerHTML = `<div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;"><img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img"><div class="ad-task-info"><h3>${t.title || 'Watch & Earn'}</h3><p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p><p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p></div><button class="watch-task-btn" id="btn-${id}" ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''} onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">${btnText}</button></div>`;
                     });
                 });
             });
@@ -632,7 +618,6 @@
             const userData = uSnap.val() || { count: 0, lastDone: 0 };
             const now = Date.now();
             const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
-            
             if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
             if (btn.disabled) return; 
 
@@ -643,36 +628,27 @@
                 const updates = {};
                 updates[`coins`] = window.coins + reward;
                 updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                
-                if(newCount >= limit) {
-                    updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                } else {
-                    updates[`ad_stats/${id}/count`] = newCount;
-                }
-                
+                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                else updates[`ad_stats/${id}/count`] = newCount;
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
-            if(adType === 'monetag') {
-                runDynamicMonetag(adId, claim);
-            } 
-            else if(adType === 'adexium') {
+            if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
+            else if(adType === 'adexium' || adType === 'richads') {
                 if(typeof AdexiumWidget !== 'undefined') {
                     try {
-                        const adexium = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
-                        adexium.requestAd('interstitial');
-                        adexium.on('adReceived', (ad) => { adexium.displayAd(ad); setTimeout(claim, 7000); });
-                        adexium.on('noAdFound', () => alert("No Adexium ads available."));
-                    } catch(e) { alert("Adexium error."); }
-                } else { alert("Adexium SDK not loaded."); }
+                        const adex = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
+                        adex.requestAd('interstitial');
+                        adex.on('adReceived', (ad) => { adex.displayAd(ad); setTimeout(claim, 7000); });
+                        adex.on('noAdFound', () => alert("No ads available."));
+                    } catch(e) { alert("Ad error."); }
+                } else { alert("SDK not loaded."); }
             }
             else {
                 let finalAdId = String(adId).trim();
                 if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
                 const TaskAd = window.Adsgram.init({ blockId: finalAdId });
-                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => {
-                    runDynamicMonetag("10361814", claim);
-                });
+                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
             }
         };
 
@@ -682,11 +658,7 @@
                 window.activeTimers[taskId]--;
                 const btn = document.getElementById(`btn-${taskId}`);
                 if(btn) btn.innerText = window.activeTimers[taskId] + "s";
-                if (window.activeTimers[taskId] <= 0) {
-                    clearInterval(timerInterval);
-                    delete window.activeTimers[taskId];
-                    // UI will auto-refresh via onValue listener
-                }
+                if (window.activeTimers[taskId] <= 0) { clearInterval(timerInterval); delete window.activeTimers[taskId]; }
             }, 1000);
         }
         
@@ -714,11 +686,8 @@
             }
         }, 120000);
 
-        // --- GLOBAL UI REFRESHER FOR COOLDOWNS ---
         setInterval(() => {
-            if (document.getElementById('watch').style.display === 'block') {
-                loadAdTasks(); // Refresh UI every minute to update cooldown clocks
-            }
+            if (document.getElementById('watch').style.display === 'block') { loadAdTasks(); }
         }, 60000);
 
         loadUserData();
