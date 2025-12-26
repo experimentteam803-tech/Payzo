@@ -11,8 +11,15 @@
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
     <!-- RichAds SDK -->
-    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/richads-widget.min.js"></script>
-    
+    <!-- RichAds New SDK -->
+<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+<script>
+  window.TelegramAdsController = new TelegramAdsController();
+  window.TelegramAdsController.initialize({
+    pubId: "null", 
+    appId: "5142",
+  });
+</script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -451,21 +458,30 @@
             if (!d) return alert("Please enter payment address/ID");
 
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
-                    AdController.show().then((result) => {
-                        if (result.done) { window.withdrawAdsCounter++; if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete!"); }
+            if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
+                
+                // Naya RichAds SDK use kar rahe hain
+                if(window.TelegramAdsController) {
+                    window.TelegramAdsController.show().then(() => {
+                        // 15 second ka timer progress count karne ke liye
+                        setTimeout(() => {
+                            window.withdrawAdsCounter++;
+                            alert(`Ad Watched! Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}`);
+                        }, 15000); 
                     }).catch(() => {
-                        if(typeof AdexiumWidget !== 'undefined') {
-                            const rich = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
-                            rich.requestAd('interstitial');
-                            rich.on('adReceived', (ad) => { rich.displayAd(ad); window.withdrawAdsCounter++; });
-                        } else {
-                            runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; });
-                        }
+                        // Fallback: Agar RichAds fail ho toh Adsgram ya Monetag chale
+                        AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
+                        .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
                     });
+                } else {
+                    // Agar SDK load nahi hui toh direct fallback
+                    AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
+                    .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
                 }
-                return;
             }
+            return;
+        }
+                
             const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
             const key = push(ref(database, 'withdrawals')).key;
             const updates = {};
@@ -634,15 +650,19 @@
             };
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
-            else if(adType === 'adexium' || adType === 'richads') {
-                if(typeof AdexiumWidget !== 'undefined') {
-                    try {
-                        const adex = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
-                        adex.requestAd('interstitial');
-                        adex.on('adReceived', (ad) => { adex.displayAd(ad); setTimeout(claim, 7000); });
-                        adex.on('noAdFound', () => alert("No ads available."));
-                    } catch(e) { alert("Ad error."); }
-                } else { alert("SDK not loaded."); }
+            else if(adType === 'richads') {
+                if(window.TelegramAdsController) {
+                    window.TelegramAdsController.show().then(() => {
+                        // User ko ad dikhne ke 15 second baad reward milega
+                        setTimeout(() => {
+                            claim();
+                        }, 8000); 
+                    }).catch((e) => {
+                        alert("RichAds Error or No Ads available");
+                    });
+                } else {
+                    alert("RichAds SDK not loaded properly");
+                }
             }
             else {
                 let finalAdId = String(adId).trim();
