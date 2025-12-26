@@ -662,29 +662,28 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
             else if(adType === 'richads') {
-                alert("RichAds Button Clicked!"); // Debug 1
-
-                if (!window.richAd) {
-                    alert("SDK not ready, trying to re-init...");
-                    setupRichAds();
-                }
+                if (!window.richAd) setupRichAds();
 
                 if (window.richAd) {
-                    alert("SDK is Ready. Calling Show..."); // Debug 2
-                    
+                    // Timeout setup: Agar 5 sec tak ad nahi aaya toh fallback
+                    let adTimeout = setTimeout(() => {
+                        alert("RichAds: No ads available in your region right now. Please try again later.");
+                    }, 5000);
+
                     window.richAd.show()
                         .then(() => {
-                            alert("Ad Opened Successfully! Wait 15s.");
+                            clearTimeout(adTimeout); // Ad aa gaya toh timeout hata do
+                            alert("Ad Loaded! Reward in 15s.");
                             setTimeout(() => {
                                 claim();
                             }, 15000);
                         })
                         .catch((err) => {
-                            alert("RichAds Error: " + JSON.stringify(err));
-                            console.log(err);
+                            clearTimeout(adTimeout);
+                            alert("RichAds: No Fill / No Ads Available.");
                         });
                 } else {
-                    alert("Fatal: RichAds SDK failed to load. Check Internet or appId.");
+                    alert("RichAds SDK Loading... Click again.");
                 }
             }
             else {
