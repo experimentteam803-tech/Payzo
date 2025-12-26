@@ -10,15 +10,23 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-    <!-- RichAds SDK -->
-    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-          <script>
-            window.TelegramAdsController = new TelegramAdsController();
-            window.TelegramAdsController.initialize({
-              pubId: "null",
-              appId: "5142",
+    <!-- RichAds New SDK -->
+<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+<script>
+    // Isse global window par check karne ke liye asaan banate hain
+    window.addEventListener('load', function() {
+        if (typeof TelegramAdsController !== 'undefined') {
+            window.tgAds = new TelegramAdsController();
+            window.tgAds.initialize({
+                pubId: null, // Quotes hata diye hain
+                appId: "5142",
             });
-          </script>  
+            console.log("RichAds Initialized");
+        } else {
+            console.error("RichAds SDK Script not found");
+        }
+    });
+</script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -459,21 +467,19 @@
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
             if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
                 
-                // Naya RichAds SDK use kar rahe hain
-                if(window.TelegramAdsController) {
-                    window.TelegramAdsController.show().then(() => {
-                        // 10 second ka timer progress count karne ke liye
+                if(window.tgAds) {
+                    window.tgAds.show().then(() => {
                         setTimeout(() => {
                             window.withdrawAdsCounter++;
                             alert(`Ad Watched! Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}`);
-                        }, 10000); 
+                        }, 15000);
                     }).catch(() => {
-                        // Fallback: Agar RichAds fail ho toh Adsgram ya Monetag chale
+                        // Agar RichAds fail ho toh backup ads chalayein
                         AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
                         .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
                     });
                 } else {
-                    // Agar SDK load nahi hui toh direct fallback
+                    // RichAds nahi hai toh backup
                     AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
                     .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
                 }
@@ -650,17 +656,18 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
             else if(adType === 'richads') {
-                if(window.TelegramAdsController) {
-                    window.TelegramAdsController.show().then(() => {
-                        // User ko ad dikhne ke 15 second baad reward milega
+                if(window.tgAds) {
+                    window.tgAds.show().then(() => {
+                        // Reward timer
                         setTimeout(() => {
                             claim();
-                        }, 8000); 
-                    }).catch((e) => {
-                        alert("RichAds Error or No Ads available");
+                        }, 15000); 
+                    }).catch((err) => {
+                        console.error("RichAds Show Error:", err);
+                        alert("No Ads Available Right Now (RichAds)");
                     });
                 } else {
-                    alert("RichAds SDK not loaded properly");
+                    alert("RichAds is still loading... Please wait 2 seconds.");
                 }
             }
             else {
