@@ -10,28 +10,28 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-    <!-- RichAds Official Telegram SDK -->
+    <!-- RichAds SDK -->
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <script>
-    // Global variable
-    var richAdsInstance = null;
+    // Global variable initialize
+    window.richAd = null;
 
-    function initRichAds() {
+    function setupRichAds() {
         try {
             if (typeof TelegramAdsController !== 'undefined') {
-                richAdsInstance = new TelegramAdsController();
-                richAdsInstance.initialize({
-                    pubId: "996843", // Agar dashboard pe koi ID hai toh yahan likhein, warna "743777" rehne dein
+                window.richAd = new TelegramAdsController();
+                window.richAd.initialize({
+                    pubId: "null", // Screenshot ke hisaab se
                     appId: "5142",
                 });
-                console.log("RichAds Ready");
+                console.log("RichAds System Loaded");
             }
         } catch (e) {
-            console.error("RichAds Init Failed:", e);
+            console.error("RichAds Setup Error:", e);
         }
     }
-    // Turant init karein
-    initRichAds();
+    // Window load hote hi setup karein
+    window.onload = setupRichAds;
 </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
@@ -662,22 +662,29 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
             else if(adType === 'richads') {
-                // Agar instance nahi hai toh dobara koshish karein
-                if(!richAdsInstance) initRichAds();
+                alert("RichAds Button Clicked!"); // Debug 1
 
-                if(richAdsInstance) {
-                    richAdsInstance.show().then(() => {
-                        // Ad successfully dikh gaya
-                        setTimeout(() => {
-                            claim();
-                        }, 15000); // 15 Second Reward
-                    }).catch((error) => {
-                        // Agar koi ad available nahi hai toh alert aayega
-                        console.error("RichAds Show Error:", error);
-                        alert("RichAds: " + (error.message || "No ads available right now. Try again later."));
-                    });
+                if (!window.richAd) {
+                    alert("SDK not ready, trying to re-init...");
+                    setupRichAds();
+                }
+
+                if (window.richAd) {
+                    alert("SDK is Ready. Calling Show..."); // Debug 2
+                    
+                    window.richAd.show()
+                        .then(() => {
+                            alert("Ad Opened Successfully! Wait 15s.");
+                            setTimeout(() => {
+                                claim();
+                            }, 15000);
+                        })
+                        .catch((err) => {
+                            alert("RichAds Error: " + JSON.stringify(err));
+                            console.log(err);
+                        });
                 } else {
-                    alert("RichAds SDK is loading. Please click again in 2 seconds.");
+                    alert("Fatal: RichAds SDK failed to load. Check Internet or appId.");
                 }
             }
             else {
