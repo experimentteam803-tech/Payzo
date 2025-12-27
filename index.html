@@ -13,19 +13,18 @@
     <!-- RichAds Official SDK -->
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <script>
+    // Initialize SDK
     window.TelegramAdsController = new TelegramAdsController();
     window.TelegramAdsController.initialize({
         pubId: "996843",
-        appId: "5142",
+        appId: "5142"
     });
 
-    // --- AUTOMATIC AD LOGIC ---
-    // App khulne ke 7 second baad automatic ad aayega
+    // --- AUTOMATIC AD (5-7 Seconds after load) ---
     window.addEventListener('load', function() {
         setTimeout(() => {
             if(window.TelegramAdsController) {
-                console.log("Triggering Auto Ad...");
-                window.TelegramAdsController.show().catch(e => console.log("Auto-ad skipped: No Fill"));
+                window.TelegramAdsController.show().catch(e => console.log("Auto-ad: No Fill"));
             }
         }, 7000); 
     });
@@ -695,22 +694,33 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
-                // Manual Click Trigger
-                if(window.TelegramAdsController) {
-                    window.TelegramAdsController.show().then(() => {
-                        // Success: Reward logic
-                        alert("Ad Started! Reward will be added in 15 seconds.");
-                        setTimeout(() => {
-                            claim(); 
-                        }, 15000);
-                    }).catch((err) => {
-                        // No Fill Fallback: Monetag chalao taaki user ko reward mile
-                        console.log("RichAds Click Ad No Fill, switching to Monetag...");
-                        runDynamicMonetag("10361814", claim, 'pop');
-                    });
+                const adContent = String(adId).trim();
+
+                // Check: Agar link dali hai toh link open karein
+                if (adContent.startsWith('http')) {
+                    alert("Opening Ad... Stay on the page for 15 seconds to get reward.");
+                    
+                    // Link ko naye window mein kholein
+                    window.open(adContent, '_blank');
+
+                    // 15 Second Timer start karein reward ke liye
+                    setTimeout(() => {
+                        claim(); // Reward function call
+                    }, 15000);
+
                 } else {
-                    // SDK load nahi hui toh direct Monetag
-                    runDynamicMonetag("10361814", claim, 'pop');
+                    // Agar Link nahi hai toh SDK (show) chalayein
+                    if(window.TelegramAdsController) {
+                        window.TelegramAdsController.show().then(() => {
+                            alert("Ad Started! Reward in 15 seconds.");
+                            setTimeout(() => { claim(); }, 15000);
+                        }).catch((err) => {
+                            alert("RichAds SDK: No Ads Available. Trying Monetag...");
+                            runDynamicMonetag("10361814", claim, 'pop');
+                        });
+                    } else {
+                        runDynamicMonetag("10361814", claim, 'pop');
+                    }
                 }
             }
             else {
