@@ -10,28 +10,15 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-    <!-- RichAds SDK -->
+    <!-- RichAds Official SDK -->
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <script>
-    // Global variable initialize
-    window.richAd = null;
-
-    function setupRichAds() {
-        try {
-            if (typeof TelegramAdsController !== 'undefined') {
-                window.richAd = new TelegramAdsController();
-                window.richAd.initialize({
-                    pubId: "null", // Screenshot ke hisaab se
-                    appId: "5142",
-                });
-                console.log("RichAds System Loaded");
-            }
-        } catch (e) {
-            console.error("RichAds Setup Error:", e);
-        }
-    }
-    // Window load hote hi setup karein
-    window.onload = setupRichAds;
+    // Global Initialize
+    window.TelegramAdsController = new TelegramAdsController();
+    window.TelegramAdsController.initialize({
+        pubId: "996843",
+        appId: "5142",
+    });
 </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
@@ -698,28 +685,21 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
-                if (!window.richAd) setupRichAds();
-
-                if (window.richAd) {
-                    // Timeout setup: Agar 5 sec tak ad nahi aaya toh fallback
-                    let adTimeout = setTimeout(() => {
-                        alert("RichAds: No ads available in your region right now. Please try again later.");
-                    }, 5000);
-
-                    window.richAd.show()
-                        .then(() => {
-                            clearTimeout(adTimeout); // Ad aa gaya toh timeout hata do
-                            alert("Ad Loaded! Reward in 15s.");
-                            setTimeout(() => {
-                                claim();
-                            }, 15000);
-                        })
-                        .catch((err) => {
-                            clearTimeout(adTimeout);
-                            alert("RichAds: No Fill / No Ads Available.");
-                        });
+                if(window.TelegramAdsController) {
+                    // Ad dikhane ki koshish
+                    window.TelegramAdsController.show().then(() => {
+                        // Agar ad successful dikh gaya toh 15s wait karein
+                        alert("Ad Loaded! Reward will be added in 15 seconds.");
+                        setTimeout(() => {
+                            claim(); // Reward function
+                        }, 15000);
+                    }).catch((err) => {
+                        // Agar ad available nahi hai toh alert aayega
+                        console.error("RichAds Error:", err);
+                        alert("RichAds: No ads available right now. Please try other tasks.");
+                    });
                 } else {
-                    alert("RichAds SDK Loading... Click again.");
+                    alert("RichAds SDK is still loading. Please try again in 3 seconds.");
                 }
             }
             else {
