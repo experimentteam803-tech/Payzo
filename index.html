@@ -11,21 +11,15 @@
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
     <!-- RichAds Official Code Start -->
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-<script>
-    // Unka official initialization
-    window.TelegramAdsController = new TelegramAdsController();
-    window.TelegramAdsController.initialize({
-        pubId: "996843", // Aapki PubID
-        appId: "5142",   // Aapki AppID
-    });
 
-    // --- AUTOMATIC AD LOGIC (Optional) ---
-    // Agar aap chahte hain app khulte hi automatic ad aaye, toh ye 3 line rehne dein
-    window.TelegramAdsController.show().catch(function(e) {
-        console.log("Auto-ad skipped or No Fill");
-    });
-</script>
+          <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+          <script>
+            window.TelegramAdsController = new TelegramAdsController();
+            window.TelegramAdsController.initialize({
+              pubId: "996843",
+              appId: "5142",
+            });
+          </script>
 <!-- RichAds Official Code End -->
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
