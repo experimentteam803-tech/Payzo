@@ -626,20 +626,31 @@
             });
         }
 
-        function runDynamicMonetag(zoneId, callback) {
+        function runDynamicMonetag(zoneId, callback, adArg = null) {
             const functionName = "show_" + zoneId;
+            
+            // Ad chalane wala main logic
+            const executeAd = () => {
+                if (typeof window[functionName] === 'function') {
+                    // Rewarded Popup ke liye 'pop' jayega, normal ke liye khali rahega
+                    window[functionName](adArg).then(callback).catch((e) => {
+                        console.error("Monetag Error:", e);
+                        alert("Ad failed to load. Please try again.");
+                    });
+                }
+            };
+
             if (typeof window[functionName] === 'function') {
-                window[functionName]().then(callback).catch(() => alert("Ad error"));
+                executeAd();
             } else {
                 const script = document.createElement('script');
-                script.src = 'https://whephiwums.com/vignette.min.js';
+                script.src = '//whephiwums.com/vignette.min.js';
                 script.dataset.zone = zoneId;
                 script.dataset.sdk = functionName;
-                script.onload = () => { if (typeof window[functionName] === 'function') window[functionName]().then(callback); };
+                script.onload = executeAd;
                 document.head.appendChild(script);
             }
         }
-
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
             const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
             const userData = uSnap.val() || { count: 0, lastDone: 0 };
@@ -660,7 +671,7 @@
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
-            if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
+            if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
                 if (!window.richAd) setupRichAds();
 
