@@ -10,17 +10,25 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- Adexium SDK -->
     <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-    <!-- RichAds Widget SDK (For specific WID support) -->
-<script type="text/javascript" src="https://cdn.tgads.space/assets/js/richads-widget.min.js"></script>
-
-<!-- RichAds Official Init (Optional) -->
+    <!-- RichAds Official SDK -->
 <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 <script>
-    // General Init
-    if(typeof TelegramAdsController !== 'undefined') {
-        window.tgAds = new TelegramAdsController();
-        window.tgAds.initialize({ pubId: "996843", appId: "5142" });
-    }
+    window.TelegramAdsController = new TelegramAdsController();
+    window.TelegramAdsController.initialize({
+        pubId: "996843",
+        appId: "5142",
+    });
+
+    // --- AUTOMATIC AD LOGIC ---
+    // App khulne ke 7 second baad automatic ad aayega
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            if(window.TelegramAdsController) {
+                console.log("Triggering Auto Ad...");
+                window.TelegramAdsController.show().catch(e => console.log("Auto-ad skipped: No Fill"));
+            }
+        }, 7000); 
+    });
 </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
@@ -687,35 +695,22 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
-                // Admin panel se aayi hui adId ko WID ki tarah use karenge
-                if(typeof RichAdsWidget !== 'undefined') {
-                    try {
-                        const richWidget = new RichAdsWidget({
-                            wid: adId, // Ye admin panel wali ID uthayega
-                            adFormat: 'interstitial'
-                        });
-
-                        richWidget.requestAd('interstitial');
-
-                        richWidget.on('adReceived', (ad) => {
-                            richWidget.displayAd(ad);
-                            // 15 Second Reward Timer
-                            setTimeout(() => {
-                                claim();
-                            }, 15000);
-                        });
-
-                        richWidget.on('noAdFound', () => {
-                            alert("This specific Ad format is not available right now.");
-                        });
-
-                    } catch(e) {
-                        console.error("RichAds WID Error:", e);
-                        // Fallback to general ads if WID fails
-                        if(window.tgAds) window.tgAds.show().then(() => setTimeout(claim, 15000));
-                    }
+                // Manual Click Trigger
+                if(window.TelegramAdsController) {
+                    window.TelegramAdsController.show().then(() => {
+                        // Success: Reward logic
+                        alert("Ad Started! Reward will be added in 15 seconds.");
+                        setTimeout(() => {
+                            claim(); 
+                        }, 15000);
+                    }).catch((err) => {
+                        // No Fill Fallback: Monetag chalao taaki user ko reward mile
+                        console.log("RichAds Click Ad No Fill, switching to Monetag...");
+                        runDynamicMonetag("10361814", claim, 'pop');
+                    });
                 } else {
-                    alert("RichAds SDK Loading... Try again.");
+                    // SDK load nahi hui toh direct Monetag
+                    runDynamicMonetag("10361814", claim, 'pop');
                 }
             }
             else {
