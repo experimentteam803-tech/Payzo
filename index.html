@@ -12,38 +12,15 @@
     <!-- Monetag SDK -->
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
     <!-- RichAds Official SDK -->
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-<script>
-    // Global Controller
-    window.TelegramAdsController = new TelegramAdsController();
-    window.TelegramAdsController.initialize({
-        pubId: "996843",
-        appId: "5142",
-    });
 
-    // --- AUTOMATIC AD ENGINE ---
-    function showAutomaticAd() {
-        if (window.TelegramAdsController) {
-            console.log("RichAds: Trying to show automatic ad...");
-            window.TelegramAdsController.show()
-                .then(() => {
-                    console.log("RichAds: Automatic ad displayed successfully.");
-                })
-                .catch((err) => {
-                    console.log("RichAds: Auto-ad failed (No Fill). Retrying in 15s...");
-                    // Agar pehli baar ad nahi mila, toh 15 second baad ek aur koshish
-                    setTimeout(() => {
-                        window.TelegramAdsController.show().catch(e => console.log("Retry failed."));
-                    }, 15000);
-                });
-        }
-    }
-
-    // App khulne ke 6 second baad automatic trigger karein
-    window.addEventListener('load', () => {
-        setTimeout(showAutomaticAd, 6000); 
-    });
-</script>
+          <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+          <script>
+            window.TelegramAdsController = new TelegramAdsController();
+            window.TelegramAdsController.initialize({
+              pubId: "996843",
+              appId: "5142",
+            });
+          </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
