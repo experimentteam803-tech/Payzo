@@ -4,45 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinMine - Professional Mining Hub</title>
-    <!-- telegram SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <head>
+    <!-- 1. Telegram Script (Top Priority) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+        }
+    </script>
+
+    <!-- 2. RichAds SDKs -->
+    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/richads-widget.min.js"></script>
+    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+
+    <script>
+        // Official SDK Init (For Automatic Ads)
+        window.addEventListener('load', function() {
+            if (window.TelegramAdsController) {
+                window.TelegramAdsController = new TelegramAdsController();
+                window.TelegramAdsController.initialize({ pubId: "996843", appId: "5142" });
+                
+                // AUTOMATIC AD (7 seconds after load)
+                setTimeout(() => {
+                    window.TelegramAdsController.show().catch(e => console.log("Auto-ad No Fill"));
+                }, 7000);
+            }
+        });
+    </script>
+    
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
-    <!-- RichAds Official SDK -->
-<script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-<script>
-    // Global Controller
-    window.TelegramAdsController = new TelegramAdsController();
-    window.TelegramAdsController.initialize({
-        pubId: "996843",
-        appId: "5142",
-    });
-
-    // --- AUTOMATIC AD ENGINE ---
-    function showAutomaticAd() {
-        if (window.TelegramAdsController) {
-            console.log("RichAds: Trying to show automatic ad...");
-            window.TelegramAdsController.show()
-                .then(() => {
-                    console.log("RichAds: Automatic ad displayed successfully.");
-                })
-                .catch((err) => {
-                    console.log("RichAds: Auto-ad failed (No Fill). Retrying in 15s...");
-                    // Agar pehli baar ad nahi mila, toh 15 second baad ek aur koshish
-                    setTimeout(() => {
-                        window.TelegramAdsController.show().catch(e => console.log("Retry failed."));
-                    }, 15000);
-                });
-        }
-    }
-
-    // App khulne ke 6 second baad automatic trigger karein
-    window.addEventListener('load', () => {
-        setTimeout(showAutomaticAd, 6000); 
-    });
-</script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -708,35 +702,41 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
-                // Admin panel se aayi hui adId ko WID ki tarah use karenge
-                if(typeof RichAdsWidget !== 'undefined') {
+                const widId = String(adId).trim();
+                
+                // 1. Try Specific WID (Admin Panel se aayi hui ID)
+                if (typeof RichAdsWidget !== 'undefined') {
                     try {
-                        const richWidget = new RichAdsWidget({
-                            wid: adId, // Ye admin panel wali ID uthayega
+                        const rich = new RichAdsWidget({
+                            wid: widId, 
                             adFormat: 'interstitial'
                         });
 
-                        richWidget.requestAd('interstitial');
+                        rich.requestAd('interstitial');
 
-                        richWidget.on('adReceived', (ad) => {
-                            richWidget.displayAd(ad);
-                            // 15 Second Reward Timer
-                            setTimeout(() => {
-                                claim();
-                            }, 15000);
+                        rich.on('adReceived', (ad) => {
+                            rich.displayAd(ad);
+                            setTimeout(() => { claim(); }, 15000); // 15s Reward
                         });
 
-                        richWidget.on('noAdFound', () => {
-                            alert("This specific Ad format is not available right now.");
+                        rich.on('noAdFound', () => {
+                            // WID fail hone par Official SDK (appId) chalayein
+                            if(window.TelegramAdsController) {
+                                window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
+                            } else {
+                                runDynamicMonetag("10361814", claim, 'pop');
+                            }
                         });
-
                     } catch(e) {
-                        console.error("RichAds WID Error:", e);
-                        // Fallback to general ads if WID fails
-                        if(window.tgAds) window.tgAds.show().then(() => setTimeout(claim, 15000));
+                        // Error Fallback
+                        if(window.TelegramAdsController) window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
                     }
-                } else {
-                    alert("RichAds SDK Loading... Try again.");
+                } 
+                // 2. Agar Widget SDK load nahi hui toh direct Official SDK chalayein
+                else if (window.TelegramAdsController) {
+                    window.TelegramAdsController.show().then(() => {
+                        setTimeout(() => { claim(); }, 15000);
+                    }).catch(() => runDynamicMonetag("10361814", claim, 'pop'));
                 }
             }
             else {
