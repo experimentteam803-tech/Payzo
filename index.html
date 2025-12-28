@@ -708,31 +708,35 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
             else if(adType === 'richads') {
-                const adContent = String(adId).trim();
-
-                // Check: Agar aapne Admin Panel mein Link (URL) dali hai
-                if (adContent.startsWith('http')) {
-                    alert("Opening Ad Video... Please wait 15 seconds.");
-                    window.open(adContent, '_blank'); // Link open hogi
-                    
-                    // 15 Second Timer Reward ke liye
-                    setTimeout(() => {
-                        claim(); 
-                    }, 15000);
-
-                } else {
-                    // Agar link nahi hai, toh Official SDK chalao
-                    if(window.TelegramAdsController) {
-                        window.TelegramAdsController.show().then(() => {
-                            alert("Ad Started! You will get reward after 15 seconds.");
-                            setTimeout(() => { claim(); }, 15000);
-                        }).catch((err) => {
-                            // Agar RichAds ke paas ad nahi hai, toh Monetag backup
-                            runDynamicMonetag("10361814", claim, 'pop');
+                // Admin panel se aayi hui adId ko WID ki tarah use karenge
+                if(typeof RichAdsWidget !== 'undefined') {
+                    try {
+                        const richWidget = new RichAdsWidget({
+                            wid: adId, // Ye admin panel wali ID uthayega
+                            adFormat: 'interstitial'
                         });
-                    } else {
-                        runDynamicMonetag("10361814", claim, 'pop');
+
+                        richWidget.requestAd('interstitial');
+
+                        richWidget.on('adReceived', (ad) => {
+                            richWidget.displayAd(ad);
+                            // 15 Second Reward Timer
+                            setTimeout(() => {
+                                claim();
+                            }, 15000);
+                        });
+
+                        richWidget.on('noAdFound', () => {
+                            alert("This specific Ad format is not available right now.");
+                        });
+
+                    } catch(e) {
+                        console.error("RichAds WID Error:", e);
+                        // Fallback to general ads if WID fails
+                        if(window.tgAds) window.tgAds.show().then(() => setTimeout(claim, 15000));
                     }
+                } else {
+                    alert("RichAds SDK Loading... Try again.");
                 }
             }
             else {
