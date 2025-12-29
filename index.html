@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinMine - Professional Mining Hub</title>
-
-    <!-- telegram SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-    <!-- AdsGram SDK -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <!-- Monetag SDK -->
-    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
-    <!-- RichAds Official SDK -->
-
+    <head>
+    <!-- 1. Telegram Script (Top Priority) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- 2. RichAds SDKs -->
+    
           <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
           <script>
             window.TelegramAdsController = new TelegramAdsController();
@@ -21,134 +18,49 @@
               appId: "5142",
             });
           </script>
+    <!-- AdsGram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Monetag SDK -->
+    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-        /* --- LINE 26 SE 45 TAK REPLACE KAREIN --- */
-body { 
-    background: radial-gradient(circle at center, #10141d 0%, #050505 100%); 
-    color: white; 
-    height: 100vh; 
-    width: 100vw; 
-    display: flex; 
-    flex-direction: column; 
-    overflow: hidden; 
-}
+        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
 
-header {
-    display: flex; justify-content: space-between; align-items: center; 
-    width: 100%; padding: 10px 20px;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
-    border-bottom: 1px solid rgba(50, 205, 50, 0.2);
-    z-index: 100; flex-shrink: 0; /* Header fixed height */
-}
+        /* Header */
+        header{
+            display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+            position:fixed; top:0; z-index:100;
+        }
+        .header-right { display: flex; gap: 15px; align-items: center; }
+        .gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-main {
-    flex: 1; width: 100%; max-width: 500px; 
-    margin: 0 auto; display: flex; flex-direction: column; 
-    overflow: hidden; position: relative;
-}
+        header .profile{display:flex;align-items:center;gap:10px}
+        header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
+        header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
-.section {
-    display: none; width: 100%; height: 100%; 
-    padding: 10px 20px; animation: fadeIn 0.4s ease;
-    flex-direction: column; overflow-y: auto; /* Sirf section ke andar scroll hoga */
-}
+        /* Main */
+        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
+        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
+        #home{display:block;}
 
         /* Home Balance */
         .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- LINE 52 SE 63 TAK REPLACE KAREIN --- */
-.mining-visualizer { 
-    position: relative; 
-    width: 65vw; height: 65vw; 
-    max-width: 260px; max-height: 260px;
-    margin: 5px auto; 
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 1; /* Space kam hone par chota ho jaye */
-    contain: layout style;
-    transform: translateZ(0);
-}
+        .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
+        .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
+        .inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
+        .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
 
-/* Side Glows - Isolated from Layout */
-.side-glow {
-    position: absolute;
-    width: 200px;
-    height: 400px;
-    background: radial-gradient(ellipse at center, rgba(50, 205, 50, 0.15) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-    filter: blur(40px);
-}
-.glow-left { left: -120px; }
-.glow-right { right: -120px; }
+        #miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
+        .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
+        @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
 
-/* Orbit Paths (Lines) */
-.orbit-path {
-    position: absolute;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    pointer-events: none;
-}
-
-/* Orbits with Planets */
-.orbit {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    pointer-events: none;
-    display: none; /* Default off */
-}
-
-.mining-active-glow .orbit { display: block; }
-
-.orbit-1 { width: 100%; height: 100%; animation: rotateRing 15s linear infinite; }
-.orbit-2 { width: 75%; height: 75%; animation: rotateRing 10s linear reverse infinite; }
-.orbit-3 { width: 52%; height: 52%; animation: rotateRing 6s linear infinite; }
-
-.planet {
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 50%;
-}
-
-.p1 { width: 16px; height: 16px; background: radial-gradient(circle at 30% 30%, #a2ffaf, #32cd32); box-shadow: 0 0 15px #32cd32; }
-.p2 { width: 10px; height: 10px; background: radial-gradient(circle at 30% 30%, #fff, #00f2ff); box-shadow: 0 0 12px #00f2ff; }
-.p3 { width: 7px; height: 7px; background: #ffd700; box-shadow: 0 0 10px #ffd700; }
-
-.inner-core { 
-    position: absolute;
-    width: 120px; 
-    height: 120px; 
-    background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
-    border-radius: 50%; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    border: 2px solid rgba(255, 255, 255, 0.1); 
-    z-index: 10;
-}
-
-.mining-active-glow .inner-core { 
-    border-color: #32cd32; 
-    animation: pulseCore 2s infinite alternate; 
-}
-
-/* --- NO-JITTER ANIMATIONS --- */
-@keyframes rotateRing { 
-    from { transform: rotate(0deg); } 
-    to { transform: rotate(360deg); } 
-}
-
-@keyframes pulseCore { 
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(50, 205, 50, 0.2); } 
-    100% { transform: scale(1.05); box-shadow: 0 0 50px rgba(50, 205, 50, 0.4); } 
-}
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
@@ -196,26 +108,13 @@ main {
         .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
         .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
 
-        /* --- LINE 199 KO ISSE REPLACE KAREIN --- */
-.navbar {
-    display: flex; 
-    justify-content: space-around; 
-    background: rgba(0,0,0,0.95); 
-    padding: 10px 0; 
-    border-top: 1px solid #32cd32; 
-    width: 100%; 
-    z-index: 100; 
-    flex-shrink: 0; /* Yeh line zaroori hai */
-}
+        .navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
         .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
         .nav-btn.active{opacity: 1; color: #32cd32;}
 
-        /* --- LINE 113 AUR 114 REPLACE KAREIN --- */
         @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseCore { 
-    0% { transform: scale(1); box-shadow: 0 0 40px rgba(50, 205, 50, 0.2); } 
-    100% { transform: scale(1.06); box-shadow: 0 0 80px rgba(50, 205, 50, 0.5); } 
-}
+        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -241,25 +140,12 @@ main {
             </div>
 
             <div class="mining-visualizer" id="mineCircle">
-    <!-- Static Glows -->
-    <div class="side-glow glow-left"></div>
-    <div class="side-glow glow-right"></div>
-
-    <!-- Static Path Lines (Taaki orbits dikhein) -->
-    <div class="orbit-path" style="width:100%; height:100%;"></div>
-    <div class="orbit-path" style="width:75%; height:75%;"></div>
-    <div class="orbit-path" style="width:52%; height:52%;"></div>
-
-    <!-- Moving Orbits & Planets -->
-    <div class="orbit orbit-1"><div class="planet p1"></div></div>
-    <div class="orbit orbit-2"><div class="planet p2"></div></div>
-    <div class="orbit orbit-3"><div class="planet p3"></div></div>
-    
-    <div class="inner-core">
-        <div id="miningEmoji">⛏️</div>
-        <div style="font-family:'Orbitron'; font-size:22px; color:#fff;" id="coinInsideCircle">0</div>
-    </div>
-</div>
+                <div class="outer-ring"></div>
+                <div class="inner-core">
+                    <div id="miningEmoji">⛏️</div>
+                    <div style="font-family:'Orbitron'; font-size:24px; color:#fff;" id="coinInsideCircle">0</div>
+                </div>
+            </div>
 
             <div style="text-align:center; margin-bottom:20px;">
                 <button id="adWatchBtn" class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
@@ -801,7 +687,44 @@ main {
             };
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
-            
+            else if(adType === 'richads') {
+                const widId = String(adId).trim();
+                
+                // 1. Try Specific WID (Admin Panel se aayi hui ID)
+                if (typeof RichAdsWidget !== 'undefined') {
+                    try {
+                        const rich = new RichAdsWidget({
+                            wid: widId, 
+                            adFormat: 'interstitial'
+                        });
+
+                        rich.requestAd('interstitial');
+
+                        rich.on('adReceived', (ad) => {
+                            rich.displayAd(ad);
+                            setTimeout(() => { claim(); }, 15000); // 15s Reward
+                        });
+
+                        rich.on('noAdFound', () => {
+                            // WID fail hone par Official SDK (appId) chalayein
+                            if(window.TelegramAdsController) {
+                                window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
+                            } else {
+                                runDynamicMonetag("10361814", claim, 'pop');
+                            }
+                        });
+                    } catch(e) {
+                        // Error Fallback
+                        if(window.TelegramAdsController) window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
+                    }
+                } 
+                // 2. Agar Widget SDK load nahi hui toh direct Official SDK chalayein
+                else if (window.TelegramAdsController) {
+                    window.TelegramAdsController.show().then(() => {
+                        setTimeout(() => { claim(); }, 15000);
+                    }).catch(() => runDynamicMonetag("10361814", claim, 'pop'));
+                }
+            }
             else {
                 let finalAdId = String(adId).trim();
                 if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
