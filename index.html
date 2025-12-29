@@ -23,43 +23,52 @@
           </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
+        /* --- LINE 26 SE 45 TAK REPLACE KAREIN --- */
+body { 
+    background: radial-gradient(circle at center, #10141d 0%, #050505 100%); 
+    color: white; 
+    height: 100vh; 
+    width: 100vw; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+}
 
-        /* Header */
-        header{
-            display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
-            position:fixed; top:0; z-index:100;
-        }
-        .header-right { display: flex; gap: 15px; align-items: center; }
-        .gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+header {
+    display: flex; justify-content: space-between; align-items: center; 
+    width: 100%; padding: 10px 20px;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
+    border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+    z-index: 100; flex-shrink: 0; /* Header fixed height */
+}
 
-        header .profile{display:flex;align-items:center;gap:10px}
-        header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
-        header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
+main {
+    flex: 1; width: 100%; max-width: 500px; 
+    margin: 0 auto; display: flex; flex-direction: column; 
+    overflow: hidden; position: relative;
+}
 
-        /* Main */
-        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
-        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-        #home{display:block;}
+.section {
+    display: none; width: 100%; height: 100%; 
+    padding: 10px 20px; animation: fadeIn 0.4s ease;
+    flex-direction: column; overflow-y: auto; /* Sirf section ke andar scroll hoga */
+}
 
         /* Home Balance */
         .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- STABLE COSMIC VISUALIZER --- */
+        /* --- LINE 52 SE 63 TAK REPLACE KAREIN --- */
 .mining-visualizer { 
     position: relative; 
-    width: 320px; 
-    height: 320px; 
-    margin: 20px auto; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    overflow: visible;
-    contain: layout style; /* Ye page ko hilne se rokta hai */
+    width: 65vw; height: 65vw; 
+    max-width: 260px; max-height: 260px;
+    margin: 5px auto; 
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 1; /* Space kam hone par chota ho jaye */
+    contain: layout style;
+    transform: translateZ(0);
 }
 
 /* Side Glows - Isolated from Layout */
@@ -187,7 +196,17 @@
         .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
         .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
 
-        .navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
+        /* --- LINE 199 KO ISSE REPLACE KAREIN --- */
+.navbar {
+    display: flex; 
+    justify-content: space-around; 
+    background: rgba(0,0,0,0.95); 
+    padding: 10px 0; 
+    border-top: 1px solid #32cd32; 
+    width: 100%; 
+    z-index: 100; 
+    flex-shrink: 0; /* Yeh line zaroori hai */
+}
         .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
         .nav-btn.active{opacity: 1; color: #32cd32;}
 
