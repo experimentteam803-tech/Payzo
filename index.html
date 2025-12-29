@@ -49,7 +49,7 @@
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- LINE 52 SE 60 TAK REPLACE KAREIN --- */
+        /* --- STABILITY FIX FOR MINING VISUALIZER --- */
 .mining-visualizer { 
     position: relative; 
     width: 300px; 
@@ -58,9 +58,17 @@
     display: flex; 
     align-items: center; 
     justify-content: center;
-    /* Universal Side Glow Highlights */
-    background: radial-gradient(circle at -15% 50%, rgba(50, 205, 50, 0.12) 0%, transparent 45%),
-                radial-gradient(circle at 115% 50%, rgba(50, 205, 50, 0.12) 0%, transparent 45%);
+    /* Hardware acceleration lock */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Side Highlights ko body par move karna behtar hai, par yahan hum 'fixed size' use karenge */
+body {
+    background: radial-gradient(circle at -10% 50%, rgba(50, 205, 50, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 110% 50%, rgba(50, 205, 50, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at center, #10141d 0%, #050505 100%) !important;
 }
 
 .orbit {
@@ -68,33 +76,48 @@
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.04);
     display: none;
+    pointer-events: none; /* Mouse/Touch interference rokne ke liye */
+    will-change: transform; /* Browser ko pehle hi batana ki ye move hoga */
 }
 
 .mining-active-glow .orbit { display: block; }
 
-/* 3 Alag-alag Orbits & Planets */
-.orbit-1 { width: 100%; height: 100%; animation: rotateRing 12s linear infinite; border-color: rgba(50, 205, 50, 0.1); }
-.orbit-2 { width: 82%; height: 82%; animation: rotateRing 7s linear reverse infinite; border-color: rgba(0, 242, 255, 0.08); }
-.orbit-3 { width: 64%; height: 64%; animation: rotateRing 4s linear infinite; border-color: rgba(255, 215, 0, 0.08); }
+.orbit-1 { width: 100%; height: 100%; animation: rotateRing 12s linear infinite; }
+.orbit-2 { width: 82%; height: 82%; animation: rotateRing 7s linear reverse infinite; }
+.orbit-3 { width: 64%; height: 64%; animation: rotateRing 4s linear infinite; }
 
 .planet {
     position: absolute;
     border-radius: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(0); /* Lock position */
 }
-
-.orbit-1 .planet { top: -9px; width: 18px; height: 18px; background: radial-gradient(circle at 30% 30%, #a2ffaf, #32cd32); box-shadow: 0 0 20px #32cd32; }
-.orbit-2 .planet { top: -6px; width: 12px; height: 12px; background: radial-gradient(circle at 30% 30%, #fff, #00f2ff); box-shadow: 0 0 15px #00f2ff; }
-.orbit-3 .planet { top: -4px; width: 9px; height: 9px; background: #ffd700; box-shadow: 0 0 10px #ffd700; }
 
 .inner-core { 
-    width: 140px; height: 140px; 
+    width: 140px; 
+    height: 140px; 
     background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
-    border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    border: 2px solid rgba(255, 255, 255, 0.05); z-index: 10;
+    border-radius: 50%; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    border: 2px solid rgba(255, 255, 255, 0.05); 
+    z-index: 10;
+    will-change: transform, box-shadow;
+    transform: translateZ(0); /* Performance boost */
 }
-.mining-active-glow .inner-core { border-color: #32cd32; animation: pulseCore 2s infinite alternate; }
+
+/* --- KEYFRAMES STABILITY FIX --- */
+@keyframes rotateRing { 
+    from { transform: rotate(0deg) translateZ(0); } 
+    to { transform: rotate(360deg) translateZ(0); } 
+}
+
+@keyframes pulseCore { 
+    0% { transform: scale(1) translateZ(0); box-shadow: 0 0 30px rgba(50, 205, 50, 0.2); } 
+    100% { transform: scale(1.03) translateZ(0); box-shadow: 0 0 60px rgba(50, 205, 50, 0.4); } 
+}
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
