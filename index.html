@@ -25,8 +25,16 @@
     
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
-
+        body { 
+    background: radial-gradient(circle at center, #10141d 0%, #050505 100%); 
+    color: white; 
+    height: 100vh; /* Full screen height */
+    width: 100vw;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    overflow: hidden; /* Scroll band karne ke liye */
+}
         /* Header */
         header{
             display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
@@ -42,10 +50,16 @@
         header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
         /* Main */
-        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
+        main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-        #home{display:block;}
-
+        #home { 
+    display: flex !important; 
+    flex-direction: column; 
+    justify-content: space-around; 
+    align-items: center; 
+    height: 100%; 
+    padding: 10px 0; 
+}
         /* Home Balance */
         .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
