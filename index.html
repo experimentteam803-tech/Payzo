@@ -50,77 +50,41 @@
         header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
         /* Main */
-        /* Main Container - Header se jagah banane ke liye */
-        main { 
-            flex: 1; 
-            width: 100%; 
-            max-width: 500px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            padding-top: 100px; /* Isse content Header se niche aayega */
-            padding-bottom: 10px; 
-        }
+        main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
+        main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; padding-top: 80px; padding-bottom: 90px; }
+        /* Home Balance */
+        .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
+        .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
+        #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        #home { 
-            display: flex !important; 
-            flex-direction: column; 
-            justify-content: space-between; /* Items ko upar se niche tak failayega */
-            align-items: center; 
-            height: 100%; 
-            padding: 0 10px; 
-            overflow: hidden;
-        }
-
-        /* Balance Card - Bilkul Center mein */
-        .balance-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            border-radius: 15px; 
-            padding: 10px; 
-            text-align: center; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            width: 85%; 
-            margin: 0 auto; 
-        }
-
-        #totalCoins { 
-            font-family: 'Orbitron', sans-serif; 
-            font-size: 26px !important; 
-            color: #ffd700; 
-            font-weight: 700; 
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); 
-        }
-
-        /* Mining Galaxy - Middle mein */
+        /* --- Naya Realistic Universal Look --- */
         .mining-visualizer { 
             position: relative; 
-            width: 230px; 
-            height: 230px; 
-            margin: 0 auto; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            width: 260px; height: 260px; 
+            margin: 20px auto; 
+            display: flex; align-items: center; justify-content: center;
         }
-
         .orbit {
             position: absolute; border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%; transition: 0.5s;
         }
-        .orbit-1 { width: 130px; height: 130px; }
-        .orbit-2 { width: 180px; height: 180px; }
-        .orbit-3 { width: 230px; height: 230px; }
+        .orbit-1 { width: 150px; height: 150px; }
+        .orbit-2 { width: 200px; height: 200px; }
+        .orbit-3 { width: 250px; height: 250px; }
 
         .planet {
-            position: absolute; border-radius: 50%; top: 50%; left: -6px; transform: translateY(-50%);
+            position: absolute; border-radius: 50%; top: 50%; left: -8px; transform: translateY(-50%);
         }
+        .p1 { width: 14px; height: 14px; background: radial-gradient(circle, #4db8ff, #004d99); box-shadow: 0 0 10px #4db8ff; }
+        .p2 { width: 18px; height: 18px; background: radial-gradient(circle, #ff4d4d, #800000); box-shadow: 0 0 12px #ff4d4d; top: 0; left: 50%; }
+        .p3 { width: 12px; height: 12px; background: radial-gradient(circle, #32cd32, #006400); box-shadow: 0 0 10px #32cd32; bottom: 0; left: 50%; }
 
         .inner-core { 
-            width: 85px; 
-            height: 85px; 
-            z-index: 10;
+            width: 100px; height: 100px; z-index: 10;
             background: radial-gradient(circle, #ffd700 0%, #ff8c00 70%, #ff4500 100%); 
             border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            box-shadow: 0 0 25px rgba(255, 140, 0, 0.4); transition: 0.5s;
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.5); transition: 0.5s;
         }
 
         /* Mining Chalu hone par animation */
@@ -396,7 +360,6 @@
                     window.lastClaimTime = data.lastClaimTime || 0;
                     document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
-                    showSection('home', document.querySelector('.nav-btn'));
                 } else {
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
@@ -579,69 +542,52 @@
         };
 
         async function checkMiningStatus() {
-    const now = Date.now();
-    if (window.miningEndTime && window.miningEndTime > 0) {
-        const calculationTime = Math.min(now, window.miningEndTime);
-        const lastClaim = window.lastClaimTime || window.miningStartTime;
-        
-        if (calculationTime > lastClaim) {
-            const secondsPassed = (calculationTime - lastClaim) / 1000;
-            let earnedAmount = Math.floor(secondsPassed * 0.125);
+            const now = Date.now();
+            if (window.miningEndTime && window.miningEndTime > 0) {
+                const calculationTime = Math.min(now, window.miningEndTime);
+                const lastClaim = window.lastClaimTime || window.miningStartTime;
+                if (calculationTime > lastClaim) {
+                    const secondsPassed = (calculationTime - lastClaim) / 1000;
+                    let earnedAmount = Math.floor(secondsPassed * 0.125); 
 
-            // --- ANTI-GLITCH SHIELD (Preserved) ---
-            if (earnedAmount > 450) earnedAmount = 450;
+                    // --- ANTI-GLITCH SHIELD ---
+                    if (earnedAmount > 450) earnedAmount = 450; 
 
-            if (earnedAmount > 0) {
-                const userSnap = await get(dbRef);
-                const currentCoins = userSnap.val().coins || 0;
-                
-                if(earnedAmount > 500) return; // Security block (Preserved)
-                
-                const historyRef = push(ref(database, userPath + '/coin_history'));
-                await update(dbRef, {
-                    coins: currentCoins + earnedAmount,
-                    lastClaimTime: calculationTime,
-                    [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
-                });
-                window.coins = currentCoins + earnedAmount;
-                updateCoinDisplays(window.coins);
-            }
+                    if (earnedAmount > 0) {
+                        const userSnap = await get(dbRef);
+                        const currentCoins = userSnap.val().coins || 0;
+                        const historyRef = push(ref(database, userPath + '/coin_history'));
+                        
+                        if(earnedAmount > 500) return; // Security block
+
+                        await update(dbRef, {
+                            coins: currentCoins + earnedAmount,
+                            lastClaimTime: calculationTime,
+                            [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
+                        });
+                        window.coins = currentCoins + earnedAmount;
+                        updateCoinDisplays(window.coins);
+                    }
+                }
+                if (now >= window.miningEndTime) {
+                    await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
+                    alert("🎉 Mining Session Finished!");
+                    updateMiningUI(false);
+                } else { window.isMiningActive = true; updateMiningUI(true); startLiveCounter(); }
+            } else updateMiningUI(false);
         }
 
-        if (now >= window.miningEndTime) {
-            // Mining khatam hone par reset
-            await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
-            window.miningEndTime = 0; // State clear karein
-            alert("🎉 Mining Session Finished!");
-            updateMiningUI(false);
-        } else {
-            window.isMiningActive = true;
-            updateMiningUI(true);
-            startLiveCounter();
+        function updateMiningUI(isActive) {
+            const circle = document.getElementById('mineCircle');
+            // isActive hone par planets apne aap ghumne lagenge CSS ki wajah se
+            circle.classList.toggle('mining-active-glow', isActive);
+            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
+            
+            const emoji = document.getElementById('miningEmoji');
+            emoji.innerText = isActive ? "⛏️" : "🚀";
+            
+            updateCoinDisplays(window.coins);
         }
-    } else {
-        updateMiningUI(false);
-    }
-}
-
-function updateMiningUI(isActive) {
-    const circle = document.getElementById('mineCircle');
-    const homeSec = document.getElementById('home');
-    
-    // Black screen fix: Ensure Home is visible
-    if(homeSec.style.display === 'none' || homeSec.style.display === '') {
-        homeSec.style.display = 'flex';
-    }
-
-    // Animation toggle
-    circle.classList.toggle('mining-active-glow', isActive);
-    document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
-
-    const emoji = document.getElementById('miningEmoji');
-    emoji.innerText = isActive ? "⛏️" : "🚀";
-
-    updateCoinDisplays(window.coins);
-}
 
         function startLiveCounter() {
             setInterval(() => {
