@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CoinMine - Professional Mining Hub</title>
-    <head>
     <!-- 1. Telegram Script (Top Priority) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- 2. RichAds SDKs -->
-    
-          <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
           <script>
             window.TelegramAdsController = new TelegramAdsController();
             window.TelegramAdsController.initialize({
@@ -22,19 +20,11 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
-    
+   
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-        body { 
-    background: radial-gradient(circle at center, #10141d 0%, #050505 100%); 
-    color: white; 
-    height: 100vh; /* Full screen height */
-    width: 100vw;
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    overflow: hidden; /* Scroll band karne ke liye */
-}
+        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
+
         /* Header */
         header{
             display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
@@ -50,60 +40,25 @@
         header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
         /* Main */
-        main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
         .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-        #home { 
-            display: none; /* JS ise flex mein badal dega */
-            flex-direction: column; 
-            justify-content: space-around; 
-            align-items: center; 
-            height: 100%; 
-            padding: 10px 0; 
-            overflow: hidden;
-        }
+        #home{display:block;}
+
+        /* Home Balance */
         .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- Naya Realistic Universal Look --- */
-        .mining-visualizer { 
-            position: relative; 
-            width: 260px; height: 260px; 
-            margin: 20px auto; 
-            display: flex; align-items: center; justify-content: center;
-        }
-        .orbit {
-            position: absolute; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50%; transition: 0.5s;
-        }
-        .orbit-1 { width: 150px; height: 150px; }
-        .orbit-2 { width: 200px; height: 200px; }
-        .orbit-3 { width: 250px; height: 250px; }
+        .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
+        .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
+        .inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
+        .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
 
-        .planet {
-            position: absolute; border-radius: 50%; top: 50%; left: -8px; transform: translateY(-50%);
-        }
-        .p1 { width: 14px; height: 14px; background: radial-gradient(circle, #4db8ff, #004d99); box-shadow: 0 0 10px #4db8ff; }
-        .p2 { width: 18px; height: 18px; background: radial-gradient(circle, #ff4d4d, #800000); box-shadow: 0 0 12px #ff4d4d; top: 0; left: 50%; }
-        .p3 { width: 12px; height: 12px; background: radial-gradient(circle, #32cd32, #006400); box-shadow: 0 0 10px #32cd32; bottom: 0; left: 50%; }
+        #miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
+        .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
+        @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
 
-        .inner-core { 
-            width: 100px; height: 100px; z-index: 10;
-            background: radial-gradient(circle, #ffd700 0%, #ff8c00 70%, #ff4500 100%); 
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            box-shadow: 0 0 30px rgba(255, 140, 0, 0.5); transition: 0.5s;
-        }
-
-        /* Mining Chalu hone par animation */
-        .mining-active-glow .inner-core { 
-            background: radial-gradient(circle, #fff 0%, #32cd32 60%, #006400 100%);
-            box-shadow: 0 0 50px rgba(50, 205, 50, 0.6); 
-        }
-        .mining-active-glow .orbit-1 { animation: rotateUniv 8s linear infinite; border-color: rgba(50,205,50,0.3); }
-        .mining-active-glow .orbit-2 { animation: rotateUniv 12s linear infinite reverse; border-color: rgba(50,205,50,0.3); }
-        .mining-active-glow .orbit-3 { animation: rotateUniv 18s linear infinite; border-color: rgba(50,205,50,0.3); }
-
-        @keyframes rotateUniv { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
@@ -155,6 +110,9 @@
         .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
         .nav-btn.active{opacity: 1; color: #32cd32;}
 
+        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -180,12 +138,10 @@
             </div>
 
             <div class="mining-visualizer" id="mineCircle">
-                <div class="orbit orbit-1"><div class="planet p1"></div></div>
-                <div class="orbit orbit-2"><div class="planet p2"></div></div>
-                <div class="orbit orbit-3"><div class="planet p3"></div></div>
+                <div class="outer-ring"></div>
                 <div class="inner-core">
-                    <div id="miningEmoji" style="font-size:30px;">🚀</div>
-                    <div style="font-family:'Orbitron'; font-size:18px; color:#fff;" id="coinInsideCircle">0</div>
+                    <div id="miningEmoji">⛏️</div>
+                    <div style="font-family:'Orbitron'; font-size:24px; color:#fff;" id="coinInsideCircle">0</div>
                 </div>
             </div>
 
@@ -367,7 +323,6 @@
                     window.lastClaimTime = data.lastClaimTime || 0;
                     document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
-                    showSection('home', document.querySelector('.nav-btn'));
                 } else {
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
@@ -504,28 +459,21 @@
             if (!d) return alert("Please enter payment address/ID");
 
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-            if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
-                
-                if(window.tgAds) {
-                    window.tgAds.show().then(() => {
-                        setTimeout(() => {
-                            window.withdrawAdsCounter++;
-                            alert(`Ad Watched! Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}`);
-                        }, 15000);
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
+                    AdController.show().then((result) => {
+                        if (result.done) { window.withdrawAdsCounter++; if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete!"); }
                     }).catch(() => {
-                        // Agar RichAds fail ho toh backup ads chalayein
-                        AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
-                        .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
+                        if(typeof AdexiumWidget !== 'undefined') {
+                            const rich = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
+                            rich.requestAd('interstitial');
+                            rich.on('adReceived', (ad) => { rich.displayAd(ad); window.withdrawAdsCounter++; });
+                        } else {
+                            runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; });
+                        }
                     });
-                } else {
-                    // RichAds nahi hai toh backup
-                    AdController.show().then(res => { if(res.done) window.withdrawAdsCounter++; })
-                    .catch(() => runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; }));
                 }
+                return;
             }
-            return;
-        }
-                
             const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
             const key = push(ref(database, 'withdrawals')).key;
             const updates = {};
@@ -550,69 +498,48 @@
         };
 
         async function checkMiningStatus() {
-    const now = Date.now();
-    if (window.miningEndTime && window.miningEndTime > 0) {
-        const calculationTime = Math.min(now, window.miningEndTime);
-        const lastClaim = window.lastClaimTime || window.miningStartTime;
-        
-        if (calculationTime > lastClaim) {
-            const secondsPassed = (calculationTime - lastClaim) / 1000;
-            let earnedAmount = Math.floor(secondsPassed * 0.125);
+            const now = Date.now();
+            if (window.miningEndTime && window.miningEndTime > 0) {
+                const calculationTime = Math.min(now, window.miningEndTime);
+                const lastClaim = window.lastClaimTime || window.miningStartTime;
+                if (calculationTime > lastClaim) {
+                    const secondsPassed = (calculationTime - lastClaim) / 1000;
+                    let earnedAmount = Math.floor(secondsPassed * 0.125); 
 
-            // --- ANTI-GLITCH SHIELD (Preserved) ---
-            if (earnedAmount > 450) earnedAmount = 450;
+                    // --- ANTI-GLITCH SHIELD ---
+                    if (earnedAmount > 450) earnedAmount = 450; 
 
-            if (earnedAmount > 0) {
-                const userSnap = await get(dbRef);
-                const currentCoins = userSnap.val().coins || 0;
-                
-                if(earnedAmount > 500) return; // Security block (Preserved)
-                
-                const historyRef = push(ref(database, userPath + '/coin_history'));
-                await update(dbRef, {
-                    coins: currentCoins + earnedAmount,
-                    lastClaimTime: calculationTime,
-                    [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
-                });
-                window.coins = currentCoins + earnedAmount;
-                updateCoinDisplays(window.coins);
-            }
+                    if (earnedAmount > 0) {
+                        const userSnap = await get(dbRef);
+                        const currentCoins = userSnap.val().coins || 0;
+                        const historyRef = push(ref(database, userPath + '/coin_history'));
+                        
+                        if(earnedAmount > 500) return; // Security block
+
+                        await update(dbRef, {
+                            coins: currentCoins + earnedAmount,
+                            lastClaimTime: calculationTime,
+                            [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
+                        });
+                        window.coins = currentCoins + earnedAmount;
+                        updateCoinDisplays(window.coins);
+                    }
+                }
+                if (now >= window.miningEndTime) {
+                    await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
+                    alert("🎉 Mining Session Finished!");
+                    updateMiningUI(false);
+                } else { window.isMiningActive = true; updateMiningUI(true); startLiveCounter(); }
+            } else updateMiningUI(false);
         }
 
-        if (now >= window.miningEndTime) {
-            // Mining khatam hone par reset
-            await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
-            window.miningEndTime = 0; // State clear karein
-            alert("🎉 Mining Session Finished!");
-            updateMiningUI(false);
-        } else {
-            window.isMiningActive = true;
-            updateMiningUI(true);
-            startLiveCounter();
+        function updateMiningUI(isActive) {
+            document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
+            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
+            const statusEl = document.getElementById('adStatus');
+            if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+            updateCoinDisplays(window.coins);
         }
-    } else {
-        updateMiningUI(false);
-    }
-}
-
-function updateMiningUI(isActive) {
-    const circle = document.getElementById('mineCircle');
-    const homeSec = document.getElementById('home');
-    
-    // Black screen fix: Ensure Home is visible
-    if(homeSec.style.display === 'none' || homeSec.style.display === '') {
-        homeSec.style.display = 'flex';
-    }
-
-    // Animation toggle
-    circle.classList.toggle('mining-active-glow', isActive);
-    document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
-
-    const emoji = document.getElementById('miningEmoji');
-    emoji.innerText = isActive ? "⛏️" : "🚀";
-
-    updateCoinDisplays(window.coins);
-}
 
         function startLiveCounter() {
             setInterval(() => {
@@ -670,66 +597,30 @@ function updateMiningUI(isActive) {
                         const isCooldown = now < cooldownEndTime && count === 0 && lastDone > 0;
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
-                        
                         let btnText = "Watch";
                         let btnDisabled = false;
-                        let extraClass = "";
-                        let dataAttr = "";
-
-                        if (isTimerRunning) { 
-                            btnText = activeTimer + "s"; 
-                            btnDisabled = true; 
-                        } else if (isCooldown) { 
-                            // Yahan live update ke liye attributes jode gaye hain
-                            btnText = "Next in " + formatCooldown(cooldownEndTime - now); 
-                            btnDisabled = true; 
-                            extraClass = "cooldown-timer";
-                            dataAttr = `data-expire="${cooldownEndTime}"`;
-                        }
-
-                        cardWrapper.innerHTML = `
-                            <div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;">
-                                <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img">
-                                <div class="ad-task-info">
-                                    <h3>${t.title || 'Watch & Earn'}</h3>
-                                    <p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
-                                    <p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p>
-                                </div>
-                                <button class="watch-task-btn ${extraClass}" id="btn-${id}" ${dataAttr} ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''} 
-                                    onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">
-                                    ${btnText}
-                                </button>
-                            </div>`;
+                        if (isTimerRunning) { btnText = activeTimer + "s"; btnDisabled = true; }
+                        else if (isCooldown) { btnText = "Next in " + formatCooldown(cooldownEndTime - now); btnDisabled = true; }
+                        cardWrapper.innerHTML = `<div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;"><img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img"><div class="ad-task-info"><h3>${t.title || 'Watch & Earn'}</h3><p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p><p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p></div><button class="watch-task-btn" id="btn-${id}" ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''} onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">${btnText}</button></div>`;
                     });
                 });
             });
         }
 
-        function runDynamicMonetag(zoneId, callback, adArg = null) {
+        function runDynamicMonetag(zoneId, callback) {
             const functionName = "show_" + zoneId;
-            
-            // Ad chalane wala main logic
-            const executeAd = () => {
-                if (typeof window[functionName] === 'function') {
-                    // Rewarded Popup ke liye 'pop' jayega, normal ke liye khali rahega
-                    window[functionName](adArg).then(callback).catch((e) => {
-                        console.error("Monetag Error:", e);
-                        alert("Ad failed to load. Please try again.");
-                    });
-                }
-            };
-
             if (typeof window[functionName] === 'function') {
-                executeAd();
+                window[functionName]().then(callback).catch(() => alert("Ad error"));
             } else {
                 const script = document.createElement('script');
-                script.src = '//whephiwums.com/vignette.min.js';
+                script.src = 'https://whephiwums.com/vignette.min.js';
                 script.dataset.zone = zoneId;
                 script.dataset.sdk = functionName;
-                script.onload = executeAd;
+                script.onload = () => { if (typeof window[functionName] === 'function') window[functionName]().then(callback); };
                 document.head.appendChild(script);
             }
         }
+
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
             const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
             const userData = uSnap.val() || { count: 0, lastDone: 0 };
@@ -750,44 +641,16 @@ function updateMiningUI(isActive) {
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
             };
 
-            if(adType === 'monetag') { runDynamicMonetag(adId, claim,'pop'); } 
-            else if(adType === 'richads') {
-                const widId = String(adId).trim();
-                
-                // 1. Try Specific WID (Admin Panel se aayi hui ID)
-                if (typeof RichAdsWidget !== 'undefined') {
+            if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
+            else if(adType === 'adexium' || adType === 'richads') {
+                if(typeof AdexiumWidget !== 'undefined') {
                     try {
-                        const rich = new RichAdsWidget({
-                            wid: widId, 
-                            adFormat: 'interstitial'
-                        });
-
-                        rich.requestAd('interstitial');
-
-                        rich.on('adReceived', (ad) => {
-                            rich.displayAd(ad);
-                            setTimeout(() => { claim(); }, 15000); // 15s Reward
-                        });
-
-                        rich.on('noAdFound', () => {
-                            // WID fail hone par Official SDK (appId) chalayein
-                            if(window.TelegramAdsController) {
-                                window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
-                            } else {
-                                runDynamicMonetag("10361814", claim, 'pop');
-                            }
-                        });
-                    } catch(e) {
-                        // Error Fallback
-                        if(window.TelegramAdsController) window.TelegramAdsController.show().then(() => setTimeout(claim, 15000));
-                    }
-                } 
-                // 2. Agar Widget SDK load nahi hui toh direct Official SDK chalayein
-                else if (window.TelegramAdsController) {
-                    window.TelegramAdsController.show().then(() => {
-                        setTimeout(() => { claim(); }, 15000);
-                    }).catch(() => runDynamicMonetag("10361814", claim, 'pop'));
-                }
+                        const adex = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
+                        adex.requestAd('interstitial');
+                        adex.on('adReceived', (ad) => { adex.displayAd(ad); setTimeout(claim, 7000); });
+                        adex.on('noAdFound', () => alert("No ads available."));
+                    } catch(e) { alert("Ad error."); }
+                } else { alert("SDK not loaded."); }
             }
             else {
                 let finalAdId = String(adId).trim();
@@ -798,31 +661,14 @@ function updateMiningUI(isActive) {
         };
 
         function startWatchTaskTimer(taskId) {
-    window.activeTimers[taskId] = 10; // 10 second ka timer
-    const timerInterval = setInterval(() => {
-        window.activeTimers[taskId]--;
-        const btn = document.getElementById(`btn-${taskId}`);
-
-        if (window.activeTimers[taskId] <= 0) {
-            // Timer khatam hone par ye chalega
-            clearInterval(timerInterval);
-            delete window.activeTimers[taskId];
-            
-            if (btn) {
-                btn.innerText = "Watch"; // Wapas "Watch" likho
-                btn.disabled = false;    // Button ko chalu karo
-                btn.style.background = "#fff"; // Original color (white)
-                btn.style.color = "#000";      // Original text color (black)
-            }
-        } else {
-            // Jab tak timer chal raha hai
-            if (btn) {
-                btn.innerText = window.activeTimers[taskId] + "s";
-                btn.disabled = true; // Timer ke waqt button band rakho
-            }
+            window.activeTimers[taskId] = 10;
+            const timerInterval = setInterval(() => {
+                window.activeTimers[taskId]--;
+                const btn = document.getElementById(`btn-${taskId}`);
+                if(btn) btn.innerText = window.activeTimers[taskId] + "s";
+                if (window.activeTimers[taskId] <= 0) { clearInterval(timerInterval); delete window.activeTimers[taskId]; }
+            }, 1000);
         }
-    }, 1000);
-}
         
         window.startDailyMining = () => {
             const now = Date.now();
@@ -848,38 +694,9 @@ function updateMiningUI(isActive) {
             }
         }, 120000);
 
-        // Live Cooldown Ticker (Har 1 second mein update hoga)
         setInterval(() => {
-            const now = Date.now();
-            
-            // Sirf un buttons ko update karega jo cooldown mein hain
-            const cooldownButtons = document.querySelectorAll('.cooldown-timer');
-            cooldownButtons.forEach(btn => {
-                const expireTime = parseInt(btn.getAttribute('data-expire'));
-                const timeLeft = expireTime - now;
-
-                if (timeLeft <= 0) {
-                    // Time khatam: Button ko wapas normal karo
-                    btn.classList.remove('cooldown-timer');
-                    btn.innerText = "Watch";
-                    btn.disabled = false;
-                    btn.style.background = "#fff";
-                    btn.style.color = "#000";
-                    // Data refresh karne ke liye ek baar call karein
-                    if(typeof loadAdTasks === 'function') loadAdTasks();
-                } else {
-                    // Live countdown text update
-                    btn.innerText = "Next in " + formatCooldown(timeLeft);
-                }
-            });
-
-            // Har 60 second mein background refresh (Original logic)
-            if (Math.floor(now / 1000) % 60 === 0) {
-                if (document.getElementById('watch').style.display === 'block') { 
-                    loadAdTasks(); 
-                }
-            }
-        }, 1000);
+            if (document.getElementById('watch').style.display === 'block') { loadAdTasks(); }
+        }, 60000);
 
         loadUserData();
     </script>
