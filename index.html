@@ -51,16 +51,45 @@
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-        .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
-        .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
-        .inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
-        .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
+        /* --- Naya Realistic Universal Look --- */
+        .mining-visualizer { 
+            position: relative; 
+            width: 260px; height: 260px; 
+            margin: 20px auto; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .orbit {
+            position: absolute; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%; transition: 0.5s;
+        }
+        .orbit-1 { width: 150px; height: 150px; }
+        .orbit-2 { width: 200px; height: 200px; }
+        .orbit-3 { width: 250px; height: 250px; }
 
-        #miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
-        .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
-        @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
+        .planet {
+            position: absolute; border-radius: 50%; top: 50%; left: -8px; transform: translateY(-50%);
+        }
+        .p1 { width: 14px; height: 14px; background: radial-gradient(circle, #4db8ff, #004d99); box-shadow: 0 0 10px #4db8ff; }
+        .p2 { width: 18px; height: 18px; background: radial-gradient(circle, #ff4d4d, #800000); box-shadow: 0 0 12px #ff4d4d; top: 0; left: 50%; }
+        .p3 { width: 12px; height: 12px; background: radial-gradient(circle, #32cd32, #006400); box-shadow: 0 0 10px #32cd32; bottom: 0; left: 50%; }
 
+        .inner-core { 
+            width: 100px; height: 100px; z-index: 10;
+            background: radial-gradient(circle, #ffd700 0%, #ff8c00 70%, #ff4500 100%); 
+            border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.5); transition: 0.5s;
+        }
+
+        /* Mining Chalu hone par animation */
+        .mining-active-glow .inner-core { 
+            background: radial-gradient(circle, #fff 0%, #32cd32 60%, #006400 100%);
+            box-shadow: 0 0 50px rgba(50, 205, 50, 0.6); 
+        }
+        .mining-active-glow .orbit-1 { animation: rotateUniv 8s linear infinite; border-color: rgba(50,205,50,0.3); }
+        .mining-active-glow .orbit-2 { animation: rotateUniv 12s linear infinite reverse; border-color: rgba(50,205,50,0.3); }
+        .mining-active-glow .orbit-3 { animation: rotateUniv 18s linear infinite; border-color: rgba(50,205,50,0.3); }
+
+        @keyframes rotateUniv { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
@@ -112,9 +141,6 @@
         .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
         .nav-btn.active{opacity: 1; color: #32cd32;}
 
-        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -140,10 +166,12 @@
             </div>
 
             <div class="mining-visualizer" id="mineCircle">
-                <div class="outer-ring"></div>
+                <div class="orbit orbit-1"><div class="planet p1"></div></div>
+                <div class="orbit orbit-2"><div class="planet p2"></div></div>
+                <div class="orbit orbit-3"><div class="planet p3"></div></div>
                 <div class="inner-core">
-                    <div id="miningEmoji">⛏️</div>
-                    <div style="font-family:'Orbitron'; font-size:24px; color:#fff;" id="coinInsideCircle">0</div>
+                    <div id="miningEmoji" style="font-size:30px;">🚀</div>
+                    <div style="font-family:'Orbitron'; font-size:18px; color:#fff;" id="coinInsideCircle">0</div>
                 </div>
             </div>
 
@@ -543,10 +571,14 @@
         }
 
         function updateMiningUI(isActive) {
-            document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
+            const circle = document.getElementById('mineCircle');
+            // isActive hone par planets apne aap ghumne lagenge CSS ki wajah se
+            circle.classList.toggle('mining-active-glow', isActive);
             document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
-            const statusEl = document.getElementById('adStatus');
-            if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
+            
+            const emoji = document.getElementById('miningEmoji');
+            emoji.innerText = isActive ? "⛏️" : "🚀";
+            
             updateCoinDisplays(window.coins);
         }
 
