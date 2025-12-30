@@ -52,8 +52,15 @@
         /* Main */
         main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-        main { flex: 1; width: 100%; max-width: 500px; display: flex; flex-direction: column; overflow: hidden; padding-top: 80px; padding-bottom: 90px; }
-        /* Home Balance */
+        #home { 
+            display: none; /* JS ise flex mein badal dega */
+            flex-direction: column; 
+            justify-content: space-around; 
+            align-items: center; 
+            height: 100%; 
+            padding: 10px 0; 
+            overflow: hidden;
+        }
         .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
@@ -360,6 +367,7 @@
                     window.lastClaimTime = data.lastClaimTime || 0;
                     document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
+                    showSection('home', document.querySelector('.nav-btn'));
                 } else {
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
@@ -542,52 +550,69 @@
         };
 
         async function checkMiningStatus() {
-            const now = Date.now();
-            if (window.miningEndTime && window.miningEndTime > 0) {
-                const calculationTime = Math.min(now, window.miningEndTime);
-                const lastClaim = window.lastClaimTime || window.miningStartTime;
-                if (calculationTime > lastClaim) {
-                    const secondsPassed = (calculationTime - lastClaim) / 1000;
-                    let earnedAmount = Math.floor(secondsPassed * 0.125); 
+    const now = Date.now();
+    if (window.miningEndTime && window.miningEndTime > 0) {
+        const calculationTime = Math.min(now, window.miningEndTime);
+        const lastClaim = window.lastClaimTime || window.miningStartTime;
+        
+        if (calculationTime > lastClaim) {
+            const secondsPassed = (calculationTime - lastClaim) / 1000;
+            let earnedAmount = Math.floor(secondsPassed * 0.125);
 
-                    // --- ANTI-GLITCH SHIELD ---
-                    if (earnedAmount > 450) earnedAmount = 450; 
+            // --- ANTI-GLITCH SHIELD (Preserved) ---
+            if (earnedAmount > 450) earnedAmount = 450;
 
-                    if (earnedAmount > 0) {
-                        const userSnap = await get(dbRef);
-                        const currentCoins = userSnap.val().coins || 0;
-                        const historyRef = push(ref(database, userPath + '/coin_history'));
-                        
-                        if(earnedAmount > 500) return; // Security block
-
-                        await update(dbRef, {
-                            coins: currentCoins + earnedAmount,
-                            lastClaimTime: calculationTime,
-                            [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
-                        });
-                        window.coins = currentCoins + earnedAmount;
-                        updateCoinDisplays(window.coins);
-                    }
-                }
-                if (now >= window.miningEndTime) {
-                    await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
-                    alert("🎉 Mining Session Finished!");
-                    updateMiningUI(false);
-                } else { window.isMiningActive = true; updateMiningUI(true); startLiveCounter(); }
-            } else updateMiningUI(false);
+            if (earnedAmount > 0) {
+                const userSnap = await get(dbRef);
+                const currentCoins = userSnap.val().coins || 0;
+                
+                if(earnedAmount > 500) return; // Security block (Preserved)
+                
+                const historyRef = push(ref(database, userPath + '/coin_history'));
+                await update(dbRef, {
+                    coins: currentCoins + earnedAmount,
+                    lastClaimTime: calculationTime,
+                    [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
+                });
+                window.coins = currentCoins + earnedAmount;
+                updateCoinDisplays(window.coins);
+            }
         }
 
-        function updateMiningUI(isActive) {
-            const circle = document.getElementById('mineCircle');
-            // isActive hone par planets apne aap ghumne lagenge CSS ki wajah se
-            circle.classList.toggle('mining-active-glow', isActive);
-            document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
-            
-            const emoji = document.getElementById('miningEmoji');
-            emoji.innerText = isActive ? "⛏️" : "🚀";
-            
-            updateCoinDisplays(window.coins);
+        if (now >= window.miningEndTime) {
+            // Mining khatam hone par reset
+            await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
+            window.miningEndTime = 0; // State clear karein
+            alert("🎉 Mining Session Finished!");
+            updateMiningUI(false);
+        } else {
+            window.isMiningActive = true;
+            updateMiningUI(true);
+            startLiveCounter();
         }
+    } else {
+        updateMiningUI(false);
+    }
+}
+
+function updateMiningUI(isActive) {
+    const circle = document.getElementById('mineCircle');
+    const homeSec = document.getElementById('home');
+    
+    // Black screen fix: Ensure Home is visible
+    if(homeSec.style.display === 'none' || homeSec.style.display === '') {
+        homeSec.style.display = 'flex';
+    }
+
+    // Animation toggle
+    circle.classList.toggle('mining-active-glow', isActive);
+    document.getElementById('mineBtn').disabled = isActive || window.adsWatched < window.miningAdsReq;
+
+    const emoji = document.getElementById('miningEmoji');
+    emoji.innerText = isActive ? "⛏️" : "🚀";
+
+    updateCoinDisplays(window.coins);
+}
 
         function startLiveCounter() {
             setInterval(() => {
