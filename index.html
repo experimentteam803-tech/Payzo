@@ -597,11 +597,36 @@
                         const isCooldown = now < cooldownEndTime && count === 0 && lastDone > 0;
                         const activeTimer = window.activeTimers[id];
                         const isTimerRunning = activeTimer && activeTimer > 0;
+                        
                         let btnText = "Watch";
                         let btnDisabled = false;
-                        if (isTimerRunning) { btnText = activeTimer + "s"; btnDisabled = true; }
-                        else if (isCooldown) { btnText = "Next in " + formatCooldown(cooldownEndTime - now); btnDisabled = true; }
-                        cardWrapper.innerHTML = `<div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;"><img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img"><div class="ad-task-info"><h3>${t.title || 'Watch & Earn'}</h3><p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p><p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p></div><button class="watch-task-btn" id="btn-${id}" ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''} onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">${btnText}</button></div>`;
+                        let extraClass = "";
+                        let dataAttr = "";
+
+                        if (isTimerRunning) { 
+                            btnText = activeTimer + "s"; 
+                            btnDisabled = true; 
+                        } else if (isCooldown) { 
+                            // Yahan live update ke liye attributes jode gaye hain
+                            btnText = "Next in " + formatCooldown(cooldownEndTime - now); 
+                            btnDisabled = true; 
+                            extraClass = "cooldown-timer";
+                            dataAttr = `data-expire="${cooldownEndTime}"`;
+                        }
+
+                        cardWrapper.innerHTML = `
+                            <div class="ad-task-card" style="background: ${t.bgColor || "#161616"}; border: 1px solid ${t.bgColor}55;">
+                                <img src="${t.image || 'https://cdn-icons-png.flaticon.com/512/5968/5968260.png'}" class="ad-task-img">
+                                <div class="ad-task-info">
+                                    <h3>${t.title || 'Watch & Earn'}</h3>
+                                    <p>Reward: <b style="color:#ffd700;">+${t.reward}</b></p>
+                                    <p style="font-size:10px; opacity:0.6;">${isCooldown ? 'In Cooldown' : 'Limit: '+count+'/'+t.limit}</p>
+                                </div>
+                                <button class="watch-task-btn ${extraClass}" id="btn-${id}" ${dataAttr} ${btnDisabled ? 'disabled style="background:#333; color:#888;"' : ''} 
+                                    onclick="runTaskAd(this, '${id}', ${t.reward}, ${t.limit}, ${count}, '${t.adType}', '${t.adId}', '${t.title}', ${t.refreshTime})">
+                                    ${btnText}
+                                </button>
+                            </div>`;
                     });
                 });
             });
@@ -694,10 +719,38 @@
             }
         }, 120000);
 
+        // Live Cooldown Ticker (Har 1 second mein update hoga)
         setInterval(() => {
-            if (document.getElementById('watch').style.display === 'block') { loadAdTasks(); }
-        }, 60000);
+            const now = Date.now();
+            
+            // Sirf un buttons ko update karega jo cooldown mein hain
+            const cooldownButtons = document.querySelectorAll('.cooldown-timer');
+            cooldownButtons.forEach(btn => {
+                const expireTime = parseInt(btn.getAttribute('data-expire'));
+                const timeLeft = expireTime - now;
 
+                if (timeLeft <= 0) {
+                    // Time khatam: Button ko wapas normal karo
+                    btn.classList.remove('cooldown-timer');
+                    btn.innerText = "Watch";
+                    btn.disabled = false;
+                    btn.style.background = "#fff";
+                    btn.style.color = "#000";
+                    // Data refresh karne ke liye ek baar call karein
+                    if(typeof loadAdTasks === 'function') loadAdTasks();
+                } else {
+                    // Live countdown text update
+                    btn.innerText = "Next in " + formatCooldown(timeLeft);
+                }
+            });
+
+            // Har 60 second mein background refresh (Original logic)
+            if (Math.floor(now / 1000) % 60 === 0) {
+                if (document.getElementById('watch').style.display === 'block') { 
+                    loadAdTasks(); 
+                }
+            }
+        }, 1000);
         loadUserData();
     </script>
 </body>
