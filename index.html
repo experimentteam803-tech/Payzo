@@ -115,6 +115,26 @@
 
         @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- Professional History Look (Line 117 ke baad dalein) --- */
+.history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.history-item { 
+    background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 16px; 
+    border: 1px solid rgba(255, 255, 255, 0.06); transition: 0.3s;
+}
+.h-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.h-status { 
+    font-size: 10px; font-weight: 800; text-transform: uppercase; 
+    padding: 4px 12px; border-radius: 20px; letter-spacing: 1px;
+}
+/* Status Glow Effects */
+.status-success { background: rgba(50, 205, 50, 0.15); color: #32cd32; box-shadow: 0 0 10px rgba(50, 205, 50, 0.1); }
+.status-pending { background: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+.status-rejected { background: rgba(255, 77, 77, 0.15); color: #ff4d4d; }
+.status-refunded { background: rgba(0, 242, 255, 0.15); color: #00f2ff; }
+.admin-note {
+    margin-top: 10px; padding: 10px; background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px; border-left: 3px solid #ffd700; font-size: 11px; color: #efefef;
+}
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -362,39 +382,61 @@
         }
 
         function renderWithdrawalHistory() {
-            const container = document.getElementById('withdrawHistory');
-            const data = window.allWithdrawalData;
-            if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
-            let html = ""; let found = false;
-            Object.keys(data).reverse().forEach(key => {
-                const item = data[key];
-                if(item.method === window.currentMethod) {
-                    found = true;
-                    const statusClass = `status-${item.status.toLowerCase()}`;
-                    html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins</span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
-                }
-            });
-            container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
+    const container = document.getElementById('withdrawHistory');
+    const data = window.allWithdrawalData;
+    if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
+    let html = ""; let found = false;
+    Object.keys(data).reverse().forEach(key => {
+        const item = data[key];
+        if(item.method === window.currentMethod) {
+            found = true;
+            const statusClass = `status-${item.status.toLowerCase()}`;
+            html += `
+            <div class="history-item">
+                <div class="h-top">
+                    <span style="font-family:'Orbitron'; font-size:16px; color:#ffd700; font-weight:bold;">💰 ${item.amount.toLocaleString()}</span>
+                    <span class="h-status ${statusClass}">${item.status}</span>
+                </div>
+                <div style="font-size:11px; color:#aaa;">
+                    <p>📍 ${item.address}</p>
+                    <p style="opacity:0.5; margin-top:4px;">📅 ${new Date(item.timestamp).toLocaleDateString()}</p>
+                </div>
+                ${item.adminMsg ? `<div class="admin-note"><b>Admin:</b> ${item.adminMsg}</div>` : ''}
+            </div>`;
         }
+    });
+    container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
+}
 
-        function startPromoHistoryListener() {
-            onValue(ref(database, `${userPath}/promotions`), (snap) => {
-                const container = document.getElementById('promoHistory');
-                const data = snap.val();
-                if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
-                let html = "";
-                Object.keys(data).reverse().forEach(key => {
-                    const item = data[key];
-                    const statusClass = `status-${item.status.toLowerCase()}`;
-                    html += `<div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}${item.adminMsg ? `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">💬 <b>Admin Note:</b> ${item.adminMsg}</div>` : ''}</div>`;
-                    if(item.status === 'Success' && !item.notified) {
-                        alert(`🎉 Congratulations!\n\nYour promotion video has been approved.`);
-                        update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
-                    }
-                });
-                container.innerHTML = html;
-            });
-        }
+function startPromoHistoryListener() {
+    onValue(ref(database, `${userPath}/promotions`), (snap) => {
+        const container = document.getElementById('promoHistory');
+        const data = snap.val();
+        if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
+        let html = "";
+        Object.keys(data).reverse().forEach(key => {
+            const item = data[key];
+            const statusClass = `status-${item.status.toLowerCase()}`;
+            html += `
+            <div class="history-item">
+                <div class="h-top">
+                    <span style="font-weight:bold; color:#32cd32;">🚀 ${item.platform || 'Promotion'}</span>
+                    <span class="h-status ${statusClass}">${item.status}</span>
+                </div>
+                <div style="font-size:11px; color:#aaa;">
+                    <p>🔗 ${item.link.substring(0, 35)}...</p>
+                    ${item.amount ? `<p style="color:#ffd700; font-weight:bold; margin-top:5px;">🎁 Reward: +${item.amount.toLocaleString()} Coins</p>` : ''}
+                </div>
+                ${item.adminMsg ? `<div class="admin-note"><b>Admin Note:</b> ${item.adminMsg}</div>` : ''}
+            </div>`;
+            if(item.status === 'Success' && !item.notified) {
+                alert(`🎉 Congratulations!\n\nYour promotion video has been approved.`);
+                update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
+            }
+        });
+        container.innerHTML = html;
+    });
+}
 
         window.redeemGift = async () => {
             const code = document.getElementById('giftCode').value.toUpperCase();
