@@ -22,110 +22,98 @@
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
    
     <style>
-    /* Global Reset - Keeping your original font */
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-    
-    body{ 
-        background: radial-gradient(circle at center, #141822 0%, #050505 100%); 
-        color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; 
-    }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
+        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
 
-    /* Header: Premium Glassmorphism */
-    header{
-        display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
-        background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); 
-        border-bottom: 1px solid rgba(50, 205, 50, 0.2);
-        position:fixed; top:0; z-index:100;
-    }
-    header .profile img{
-        width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;
-        box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
-    }
-    header .profile span{font-weight:600;color:#90ee90;font-size: 13px; letter-spacing: 0.5px;}
+        /* Header */
+        header{
+            display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+            position:fixed; top:0; z-index:100;
+        }
+        .header-right { display: flex; gap: 15px; align-items: center; }
+        .gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-    /* Main Container Spacing */
-    main{flex:1; width:100%; max-width: 500px; padding-top:85px; padding-bottom: 95px;}
-    .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
+        header .profile{display:flex;align-items:center;gap:10px}
+        header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
+        header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
-    /* Home Balance: Gold Look */
-    .balance-card { 
-        background: rgba(255, 255, 255, 0.03); border-radius: 22px; padding: 30px 20px; text-align: center; 
-        border: 1px solid rgba(255, 255, 255, 0.07); margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-    .balance-card h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 10px; }
-    #totalCoins { 
-        font-family: 'Orbitron', sans-serif; font-size: 44px; color: #ffd700; font-weight: 700; 
-        text-shadow: 0 0 20px rgba(255, 215, 0, 0.4); 
-    }
+        /* Main */
+        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
+        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
+        #home{display:block;}
 
-    /* Mining Circle Animation */
-    .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 25px auto; display: flex; align-items: center; justify-content: center; }
-    .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
-    .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
-    
-    .inner-core { 
-        width: 180px; height: 180px; background: radial-gradient(circle, #1a1e29 0%, #000 100%); 
-        border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        border: 2px solid rgba(255, 255, 255, 0.05); 
-    }
-    .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.25); animation: pulseCore 2s infinite alternate; }
+        /* Home Balance */
+        .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
+        .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
+        #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-    /* Buttons: Modern Gradients */
-    .action-btn { width: 100%; padding:16px; border-radius:14px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; }
-    
-    .mine-btn { 
-        background: linear-gradient(135deg, #32cd32 0%, #28a745 100%); color: #000; 
-        box-shadow: 0 6px 20px rgba(50, 205, 50, 0.2); 
-    }
-    .mine-btn:disabled { background: #222; color: #555; opacity: 0.8; }
-    
-    .ad-btn { 
-        background: linear-gradient(135deg, #ffd700 0%, #ffc107 100%); color: #000; 
-        margin-bottom: 15px; box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2); 
-    }
+        .mining-visualizer { position: relative; width: 260px; height: 260px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+        .outer-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(50, 205, 50, 0.1); }
+        .mining-active-glow .outer-ring { border: 2px dashed #32cd32; animation: rotateRing 12s linear infinite; }
+        .inner-core { width: 180px; height: 180px; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.05); }
+        .mining-active-glow .inner-core { border-color: #32cd32; box-shadow: 0 0 50px rgba(50, 205, 50, 0.3); animation: pulseCore 2s infinite alternate; }
 
-    /* Watch Task Cards: Clean & Modern */
-    .ad-task-card {
-        display: flex; align-items: center; padding: 18px; border-radius: 20px;
-        margin-bottom: 15px; gap: 15px; border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(255,255,255,0.03); backdrop-filter: blur(5px);
-    }
-    .ad-task-img { width: 55px; height: 55px; border-radius: 12px; background: #fff; padding: 8px; object-fit: contain; }
-    .ad-task-info h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .ad-task-info p { font-size: 11px; opacity: 0.6; }
-    .watch-task-btn { background: #fff; color: #000; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; cursor: pointer; min-width: 90px; transition: 0.2s; }
-    .watch-task-btn:active { transform: scale(0.95); }
+        #miningEmoji { font-size: 40px; margin-bottom: 5px; transition: 0.3s; }
+        .mining-active-glow #miningEmoji { animation: pickaxeSwing 1s infinite; }
+        @keyframes pickaxeSwing { 0% { transform: rotate(0deg); } 50% { transform: rotate(-45deg); } 100% { transform: rotate(0deg); } }
 
-    /* Withdrawal Forms & History */
-    .submission-form { background: rgba(255,255,255,0.02); padding: 22px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-    .submission-form input, .submission-form select { 
-        width: 100%; padding: 14px; margin: 10px 0 20px; background: #000; 
-        border: 1px solid #333; color: #fff; border-radius: 12px; font-size: 14px;
-    }
+        /* Watch Page Cards */
+        .ad-task-card {
+            display: flex; align-items: center; padding: 15px; border-radius: 18px;
+            margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .ad-task-img { width: 50px; height: 50px; border-radius: 10px; background: #fff; padding: 5px; object-fit: contain; }
+        .ad-task-info { flex: 1; }
+        .ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
+        .ad-task-info p { font-size: 11px; opacity: 0.7; }
+        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 100px; }
 
-    /* Navbar: Premium Dark Style */
-    .navbar{
-        display:flex; justify-content:space-around; background: rgba(10, 10, 10, 0.9);
-        padding:15px 0; border-top: 1px solid rgba(50, 205, 50, 0.2);
-        position:fixed; bottom:0; width:100%; z-index:100; backdrop-filter: blur(15px);
-    }
-    .nav-btn{background:none; border:none; color:rgba(255,255,255,0.4); font-size:20px; cursor:pointer; transition: 0.3s;}
-    .nav-btn.active{color: #32cd32; transform: translateY(-3px); text-shadow: 0 0 10px rgba(50, 205, 50, 0.5);}
+        /* History Section */
+        .history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        .history-title { font-size: 14px; color: #ffd700; font-family: 'Orbitron'; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .history-list { display: flex; flex-direction: column; gap: 10px; }
+        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+        .h-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .h-status { font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+        .status-pending { background: #555; color: #fff; }
+        .status-success { background: #32cd32; color: #000; }
+        .status-rejected { background: #ff4d4d; color: #fff; }
 
-    /* Modals & Popups */
-    .modal-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
-    .modal-content { background: #11141b; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        /* Promotion */
+        .promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .submission-form { background: #161616; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+        .submission-form input, .submission-form select { width: 100%; padding: 12px; margin: 10px 0 20px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
 
-    /* Success/Reject Colors */
-    .status-success { background: rgba(50, 205, 50, 0.15); color: #32cd32; border: 1px solid #32cd3255; padding: 2px 8px; border-radius: 5px; }
-    .status-pending { background: rgba(255, 255, 255, 0.1); color: #aaa; padding: 2px 8px; border-radius: 5px; }
+        /* Method Tabs */
+        .method-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .method-btn { background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .method-btn.active { background: #32cd32; color: #000; border-color: #32cd32; }
 
-    /* Animations */
-    @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.04); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-</style>
+        /* Referral */
+        .ref-info-card { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .ref-step { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start; }
+        .step-num { background: #ffd700; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 12px; }
+
+        /* Modal Styles */
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; align-items:center; justify-content:center; }
+        .modal-content { background:#161616; padding:25px; border-radius:20px; width:90%; max-width:400px; border: 1px solid #333; }
+
+        /* Buttons & Nav */
+        .action-btn { width: 100%; padding:15px; border-radius:12px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; }
+        .mine-btn { background: #32cd32; color: #000; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
+        .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+        .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
+
+        .navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
+        .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
+        .nav-btn.active{opacity: 1; color: #32cd32;}
+
+        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
