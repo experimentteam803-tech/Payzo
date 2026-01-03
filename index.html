@@ -656,65 +656,88 @@ if (typeof AdexiumWidget !== 'undefined') {
         }
 
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
-            const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
-            const userData = uSnap.val() || { count: 0, lastDone: 0 };
-            const now = Date.now();
-            const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
-            if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
-            if (btn.disabled) return; 
+    const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
+    const userData = uSnap.val() || { count: 0, lastDone: 0 };
+    const now = Date.now();
+    const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
+    if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
+    if (btn.disabled) return; 
 
-            const claim = () => {
-                startWatchTaskTimer(id);
-                const newCount = userData.count + 1;
-                const historyRef = push(ref(database, userPath + '/coin_history'));
-                const updates = {};
-                updates[`coins`] = window.coins + reward;
-                updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                else updates[`ad_stats/${id}/count`] = newCount;
-                update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
+    const claim = () => {
+        startWatchTaskTimer(id);
+        const newCount = userData.count + 1;
+        const historyRef = push(ref(database, userPath + '/coin_history'));
+        const updates = {};
+        updates[`coins`] = window.coins + reward;
+        updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
+        if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+        else updates[`ad_stats/${id}/count`] = newCount;
+        update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
+    };
+
+    if(adType === 'monetag') { 
+        runDynamicMonetag(adId, claim); 
+    } 
+    else if(adType === 'adexium' || adType === 'richads') {
+        if(typeof AdexiumWidget !== 'undefined' && globalAdexium) {
+            
+            let adFinished = false;
+            const originalText = btn.innerText;
+            btn.innerText = "Loading..."; // User ko wait karne ka signal
+            btn.disabled = true;
+
+            // Fallback Timer: 6 second wait karein (Adexium ko load hone ka time dein)
+            let fallbackTimeout = setTimeout(() => {
+                if(!adFinished) {
+                    adFinished = true;
+                    console.log("Adexium timeout, switching to Monetag...");
+                    runDynamicMonetag("10361814", claim);
+                    removeAdListeners();
+                }
+            }, 6000);
+
+            const onAdReceived = (ad) => {
+                if(!adFinished) {
+                    adFinished = true;
+                    clearTimeout(fallbackTimeout);
+                    globalAdexium.displayAd(ad);
+                    setTimeout(claim, 7000); // Reward after viewing
+                    removeAdListeners();
+                }
             };
 
-            if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
-            else if(adType === 'adexium' || adType === 'richads') {
-                if(typeof AdexiumWidget !== 'undefined' && globalAdexium) {
-                    // Pehle se loaded ad dikhane ki koshish karein
-                    globalAdexium.displayAd(); 
-                    
-                    // Nayi ad bhi request kar dein agle baar ke liye
-                    globalAdexium.requestAd('interstitial');
-
-                    globalAdexium.on('adReceived', (ad) => { 
-                        globalAdexium.displayAd(ad); 
-                        setTimeout(claim, 7000); 
-                    });
-
-                    // Agar 3 second tak kuch nahi hota, tabhi Monetag par jayein
-                    let fallbackTimeout = setTimeout(() => {
-                        console.log("Adexium taking too long, switching to Monetag...");
-                        runDynamicMonetag("10361814", claim);
-                    }, 3000);
-
-                    globalAdexium.on('adDisplayed', () => {
-                        clearTimeout(fallbackTimeout); // Agar ad dikh gayi toh fallback cancel
-                    });
-
-                    globalAdexium.on('noAdFound', () => {
-                        // Agar turant mana kar de toh Monetag
-                        clearTimeout(fallbackTimeout);
-                        runDynamicMonetag("10361814", claim); 
-                    });
-                } else { 
-                    runDynamicMonetag("10361814", claim); 
+            const onAdError = () => {
+                if(!adFinished) {
+                    adFinished = true;
+                    clearTimeout(fallbackTimeout);
+                    runDynamicMonetag("10361814", claim);
+                    removeAdListeners();
                 }
-            }
-            else {
-                let finalAdId = String(adId).trim();
-                if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
-                const TaskAd = window.Adsgram.init({ blockId: finalAdId });
-                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
-            }
-        };
+            };
+
+            const removeAdListeners = () => {
+                globalAdexium.off('adReceived', onAdReceived);
+                globalAdexium.off('noAdFound', onAdError);
+                globalAdexium.off('error', onAdError);
+            };
+
+            globalAdexium.on('adReceived', onAdReceived);
+            globalAdexium.on('noAdFound', onAdError);
+            globalAdexium.on('error', onAdError);
+
+            globalAdexium.requestAd('interstitial');
+
+        } else { 
+            runDynamicMonetag("10361814", claim); 
+        }
+    }
+    else {
+        let finalAdId = String(adId).trim();
+        if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
+        const TaskAd = window.Adsgram.init({ blockId: finalAdId });
+        TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
+    }
+};
 
         function startWatchTaskTimer(taskId) {
     window.activeTimers[taskId] = 10; // 10 second ka timer
