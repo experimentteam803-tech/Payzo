@@ -694,14 +694,7 @@ if (typeof AdexiumWidget !== 'undefined') {
         // Default fallback to Monetag for any other type (like old adexium tasks)
         runDynamicMonetag("10361814", claim);
     }
-};
-    else {
-        let finalAdId = String(adId).trim();
-        if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
-        const TaskAd = window.Adsgram.init({ blockId: finalAdId });
-        TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
-    }
-};
+};    
     
 
         function startWatchTaskTimer(taskId) {
