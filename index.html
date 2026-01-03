@@ -681,53 +681,61 @@ if (typeof AdexiumWidget !== 'undefined') {
         runDynamicMonetag(adId, claim); 
     } 
     else if(adType === 'adexium' || adType === 'richads') {
-        if(typeof AdexiumWidget !== 'undefined' && globalAdexium) {
-            
+        if(typeof AdexiumWidget !== 'undefined') {
+            if(!globalAdexium) {
+                globalAdexium = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
+            }
+
             let adFinished = false;
+            let retryCount = 0;
+            const maxRetries = 3; // 3 baar koshish karega
             const originalText = btn.innerText;
-            btn.innerText = "Loading..."; // User ko wait karne ka signal
+            btn.innerText = "Searching Ads..."; 
             btn.disabled = true;
 
-            // Fallback Timer: 6 second wait karein (Adexium ko load hone ka time dein)
+            // Fallback Timer (Total safety)
             let fallbackTimeout = setTimeout(() => {
                 if(!adFinished) {
                     adFinished = true;
-                    console.log("Adexium timeout, switching to Monetag...");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                     runDynamicMonetag("10361814", claim);
-                    removeAdListeners();
                 }
-            }, 6000);
+            }, 12000); // 12 second total wait
 
-            const onAdReceived = (ad) => {
+            const requestAdWithRetry = () => {
+                console.log(`Adexium Attempt ${retryCount + 1}...`);
+                globalAdexium.requestAd('interstitial');
+            };
+
+            globalAdexium.on('adReceived', (ad) => {
                 if(!adFinished) {
                     adFinished = true;
                     clearTimeout(fallbackTimeout);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                     globalAdexium.displayAd(ad);
-                    setTimeout(claim, 7000); // Reward after viewing
-                    removeAdListeners();
+                    setTimeout(claim, 7000);
                 }
-            };
+            });
 
-            const onAdError = () => {
+            globalAdexium.on('noAdFound', () => {
                 if(!adFinished) {
-                    adFinished = true;
-                    clearTimeout(fallbackTimeout);
-                    runDynamicMonetag("10361814", claim);
-                    removeAdListeners();
+                    if(retryCount < maxRetries) {
+                        retryCount++;
+                        btn.innerText = `Retrying (${retryCount})...`;
+                        setTimeout(requestAdWithRetry, 2000); // 2 sec baad phir try karega
+                    } else {
+                        adFinished = true;
+                        clearTimeout(fallbackTimeout);
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        runDynamicMonetag("10361814", claim);
+                    }
                 }
-            };
+            });
 
-            const removeAdListeners = () => {
-                globalAdexium.off('adReceived', onAdReceived);
-                globalAdexium.off('noAdFound', onAdError);
-                globalAdexium.off('error', onAdError);
-            };
-
-            globalAdexium.on('adReceived', onAdReceived);
-            globalAdexium.on('noAdFound', onAdError);
-            globalAdexium.on('error', onAdError);
-
-            globalAdexium.requestAd('interstitial');
+            requestAdWithRetry();
 
         } else { 
             runDynamicMonetag("10361814", claim); 
@@ -740,6 +748,7 @@ if (typeof AdexiumWidget !== 'undefined') {
         TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
     }
 };
+    
 
         function startWatchTaskTimer(taskId) {
     window.activeTimers[taskId] = 10; // 10 second ka timer
