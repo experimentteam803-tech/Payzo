@@ -290,21 +290,7 @@
         const database = getDatabase(app);
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
-        let globalAdexium;
-if (typeof AdexiumWidget !== 'undefined') {
-    globalAdexium = new AdexiumWidget({ 
-        wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', 
-        adFormat: 'interstitial' 
-    });
-
-    // App khulne ke 10 second baad automatic ad dikhayega
-    // Isse RichAds aur Adexium ek saath clash nahi honge
-    setTimeout(() => {
-        console.log("Adexium Auto-Mode Triggered");
-        globalAdexium.autoMode(); 
-    }, 10000); 
-}
-
+        
         const AdController = window.Adsgram.init({ blockId: "19761" });
         window.miningAdsReq = 10;
         window.withdrawAdsReq = 10;
