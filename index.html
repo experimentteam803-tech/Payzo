@@ -297,8 +297,12 @@
         const dbRef = ref(database, userPath);
         let globalAdexium;
 if (typeof AdexiumWidget !== 'undefined') {
-    // Yahan apna main Adexium WID dalein jo automatic mein kaam kar raha tha
-    globalAdexium = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
+    globalAdexium = new AdexiumWidget({ 
+        wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', 
+        adFormat: 'interstitial' 
+    });
+    // App khulte hi ad mang lo taaki click ke waqt ready rahe
+    globalAdexium.requestAd('interstitial'); 
 }
 
         const AdController = window.Adsgram.init({ blockId: "19761" });
@@ -681,22 +685,32 @@ if (typeof AdexiumWidget !== 'undefined') {
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
             else if(adType === 'adexium' || adType === 'richads') {
                 if(typeof AdexiumWidget !== 'undefined' && globalAdexium) {
-                    try {
-                        globalAdexium.requestAd('interstitial');
-                        globalAdexium.on('adReceived', (ad) => { 
-                            globalAdexium.displayAd(ad); 
-                            setTimeout(claim, 7000); 
-                        });
-                        globalAdexium.on('noAdFound', () => {
-                            console.log("Adexium failed, trying fallback...");
-                            runDynamicMonetag("10361814", claim); 
-                        });
-                        globalAdexium.on('error', () => {
-                            runDynamicMonetag("10361814", claim);
-                        });
-                    } catch(e) { 
+                    // Pehle se loaded ad dikhane ki koshish karein
+                    globalAdexium.displayAd(); 
+                    
+                    // Nayi ad bhi request kar dein agle baar ke liye
+                    globalAdexium.requestAd('interstitial');
+
+                    globalAdexium.on('adReceived', (ad) => { 
+                        globalAdexium.displayAd(ad); 
+                        setTimeout(claim, 7000); 
+                    });
+
+                    // Agar 3 second tak kuch nahi hota, tabhi Monetag par jayein
+                    let fallbackTimeout = setTimeout(() => {
+                        console.log("Adexium taking too long, switching to Monetag...");
+                        runDynamicMonetag("10361814", claim);
+                    }, 3000);
+
+                    globalAdexium.on('adDisplayed', () => {
+                        clearTimeout(fallbackTimeout); // Agar ad dikh gayi toh fallback cancel
+                    });
+
+                    globalAdexium.on('noAdFound', () => {
+                        // Agar turant mana kar de toh Monetag
+                        clearTimeout(fallbackTimeout);
                         runDynamicMonetag("10361814", claim); 
-                    }
+                    });
                 } else { 
                     runDynamicMonetag("10361814", claim); 
                 }
