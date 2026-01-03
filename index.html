@@ -296,8 +296,13 @@ if (typeof AdexiumWidget !== 'undefined') {
         wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', 
         adFormat: 'interstitial' 
     });
-    // App khulte hi ad mang lo taaki click ke waqt ready rahe
-    globalAdexium.requestAd('interstitial'); 
+
+    // App khulne ke 10 second baad automatic ad dikhayega
+    // Isse RichAds aur Adexium ek saath clash nahi honge
+    setTimeout(() => {
+        console.log("Adexium Auto-Mode Triggered");
+        globalAdexium.autoMode(); 
+    }, 10000); 
 }
 
         const AdController = window.Adsgram.init({ blockId: "19761" });
@@ -677,70 +682,19 @@ if (typeof AdexiumWidget !== 'undefined') {
         update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 200); });
     };
 
+    // Simple Fallback Logic: Agar koi bhi ad fail ho, Monetag chala do
     if(adType === 'monetag') { 
         runDynamicMonetag(adId, claim); 
     } 
-    else if(adType === 'adexium' || adType === 'richads') {
-        if(typeof AdexiumWidget !== 'undefined') {
-            if(!globalAdexium) {
-                globalAdexium = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
-            }
-
-            let adFinished = false;
-            let retryCount = 0;
-            const maxRetries = 3; // 3 baar koshish karega
-            const originalText = btn.innerText;
-            btn.innerText = "Searching Ads..."; 
-            btn.disabled = true;
-
-            // Fallback Timer (Total safety)
-            let fallbackTimeout = setTimeout(() => {
-                if(!adFinished) {
-                    adFinished = true;
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    runDynamicMonetag("10361814", claim);
-                }
-            }, 12000); // 12 second total wait
-
-            const requestAdWithRetry = () => {
-                console.log(`Adexium Attempt ${retryCount + 1}...`);
-                globalAdexium.requestAd('interstitial');
-            };
-
-            globalAdexium.on('adReceived', (ad) => {
-                if(!adFinished) {
-                    adFinished = true;
-                    clearTimeout(fallbackTimeout);
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    globalAdexium.displayAd(ad);
-                    setTimeout(claim, 7000);
-                }
-            });
-
-            globalAdexium.on('noAdFound', () => {
-                if(!adFinished) {
-                    if(retryCount < maxRetries) {
-                        retryCount++;
-                        btn.innerText = `Retrying (${retryCount})...`;
-                        setTimeout(requestAdWithRetry, 2000); // 2 sec baad phir try karega
-                    } else {
-                        adFinished = true;
-                        clearTimeout(fallbackTimeout);
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                        runDynamicMonetag("10361814", claim);
-                    }
-                }
-            });
-
-            requestAdWithRetry();
-
-        } else { 
-            runDynamicMonetag("10361814", claim); 
-        }
+    else if(adType === 'adsgram') {
+        const TaskAd = window.Adsgram.init({ blockId: adId });
+        TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
     }
+    else {
+        // Default fallback to Monetag for any other type (like old adexium tasks)
+        runDynamicMonetag("10361814", claim);
+    }
+};
     else {
         let finalAdId = String(adId).trim();
         if (finalAdId.startsWith("task-")) { finalAdId = finalAdId.replace("task-", ""); }
