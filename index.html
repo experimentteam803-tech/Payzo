@@ -295,6 +295,11 @@
         const database = getDatabase(app);
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
+        let globalAdexium;
+if (typeof AdexiumWidget !== 'undefined') {
+    // Yahan apna main Adexium WID dalein jo automatic mein kaam kar raha tha
+    globalAdexium = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
+}
 
         const AdController = window.Adsgram.init({ blockId: "19761" });
         window.miningAdsReq = 10;
@@ -675,14 +680,26 @@
 
             if(adType === 'monetag') { runDynamicMonetag(adId, claim); } 
             else if(adType === 'adexium' || adType === 'richads') {
-                if(typeof AdexiumWidget !== 'undefined') {
+                if(typeof AdexiumWidget !== 'undefined' && globalAdexium) {
                     try {
-                        const adex = new AdexiumWidget({ wid: adId, adFormat: 'interstitial' });
-                        adex.requestAd('interstitial');
-                        adex.on('adReceived', (ad) => { adex.displayAd(ad); setTimeout(claim, 7000); });
-                        adex.on('noAdFound', () => alert("No ads available."));
-                    } catch(e) { alert("Ad error."); }
-                } else { alert("SDK not loaded."); }
+                        globalAdexium.requestAd('interstitial');
+                        globalAdexium.on('adReceived', (ad) => { 
+                            globalAdexium.displayAd(ad); 
+                            setTimeout(claim, 7000); 
+                        });
+                        globalAdexium.on('noAdFound', () => {
+                            console.log("Adexium failed, trying fallback...");
+                            runDynamicMonetag("10361814", claim); 
+                        });
+                        globalAdexium.on('error', () => {
+                            runDynamicMonetag("10361814", claim);
+                        });
+                    } catch(e) { 
+                        runDynamicMonetag("10361814", claim); 
+                    }
+                } else { 
+                    runDynamicMonetag("10361814", claim); 
+                }
             }
             else {
                 let finalAdId = String(adId).trim();
