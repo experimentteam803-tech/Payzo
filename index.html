@@ -26,9 +26,7 @@
         adFormat: 'interstitial'        
     });
 </script>
-    <!-- Adexora SDK -->
-<script src="https://adexora.com/cdn/ads.js?id=1301"></script>
-    <!-- AdsGram SDK -->
+        <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->
     <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
@@ -729,38 +727,6 @@
         window.adexiumAds.on('noAdFound', onNoAd);
 
         window.adexiumAds.requestAd('interstitial');
-    }
-
-        // --- ADEXORA MANUAL FLOW (NO FALLBACK - DEBUG MODE) ---
-    if(adType === 'adexora') {
-        btn.innerText = "Loading Ad...";
-        btn.disabled = true;
-
-        // 1. Pehle check karein ki script sahi se load hui hai ya nahi
-        if (typeof window.showAdexora !== 'function') {
-            alert("SYSTEM ERROR: Adexora SDK (ads.js) load nahi ho paya. Script link check karein.");
-            btn.innerText = "Watch";
-            btn.disabled = false;
-            return;
-        }
-
-        // 2. Adexora Ad Show karein
-        window.showAdexora()
-            .then(() => {
-                // ✅ Reward tabhi milega jab user ad poora dekh lega
-                claim(); 
-            })
-            .catch(e => {
-                // ❌ Agar ad fail hota hai, toh popup dikhayega aur button reset ho jayega
-                console.error("Adexora Error:", e);
-                
-                // Alert message taaki aapko pata chale ads kyu nahi aa rahe
-                alert("ADEXORA MSG: " + (e || "Ads not available or skipped by user."));
-                
-                // Button ko wapas normal kar dena bina reward diye
-                btn.innerText = "Watch";
-                btn.disabled = false;
-            });
     }
     // --- ADSGRAM & MONETAG (Pehle wala same rahega) ---
     else if(adType === 'adsgram') {
