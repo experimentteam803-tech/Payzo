@@ -732,38 +732,33 @@
     }
 
         // --- ADEXORA MANUAL FLOW ---
-    // --- ADEXORA MANUAL FLOW (DEBUG VERSION) ---
+    // --- ADEXORA MANUAL FLOW (NO FALLBACK - DEBUG MODE) ---
     if(adType === 'adexora') {
         btn.innerText = "Loading Ad...";
         btn.disabled = true;
 
-        // Check if function exists
+        // 1. Pehle check karein ki script sahi se load hui hai ya nahi
         if (typeof window.showAdexora !== 'function') {
-            alert("Error: Adexora SDK not loaded properly. Check your script link.");
+            alert("SYSTEM ERROR: Adexora SDK (ads.js) load nahi ho paya. Script link check karein.");
             btn.innerText = "Watch";
             btn.disabled = false;
             return;
         }
 
+        // 2. Adexora Ad Show karein
         window.showAdexora()
             .then(() => {
-                console.log("Adexora Success");
-                claim(); // Reward dein
+                // ✅ Reward tabhi milega jab user ad poora dekh lega
+                claim(); 
             })
             .catch(e => {
-                console.error("Adexora Error Detail:", e);
+                // ❌ Agar ad fail hota hai, toh popup dikhayega aur button reset ho jayega
+                console.error("Adexora Error:", e);
                 
-                // User ko error dikhane ke liye
-                alert("Adexora Error: " + (e.message || "No Ads Available right now."));
-
-                // Fallback: Agar aap chahte hain ki Adexora na chale toh Monetag chale:
-                runDynamicMonetag("10361814", () => {
-                    btn.innerText = "Watch";
-                    btn.disabled = false;
-                    claim();
-                });
-
-                // Button ko wapas normal karein agar fallback nahi chalana
+                // Alert message taaki aapko pata chale ads kyu nahi aa rahe
+                alert("ADEXORA MSG: " + (e || "Ads not available or skipped by user."));
+                
+                // Button ko wapas normal kar dena bina reward diye
                 btn.innerText = "Watch";
                 btn.disabled = false;
             });
