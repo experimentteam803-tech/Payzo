@@ -16,7 +16,7 @@
               appId: "5142",
             });
           </script>
-    <!-- Adexium SDK - Iska hona bahut zaruri hai -->
+    
 <<!-- Adexium SDK -->
 <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
 <script type="text/javascript">
@@ -26,6 +26,8 @@
         adFormat: 'interstitial'        
     });
 </script>
+    <!-- Adexora SDK -->
+<script src="https://adexora.com/assets/js/adexora.js?id=1301"></script>
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->
@@ -691,7 +693,6 @@
     };
 
     // --- ADEXIUM MANUAL FLOW ---
-    // --- ADEXIUM MANUAL FLOW (REWARD ON CLOSE) ---
     if(adType === 'adexium') {
         btn.innerText = "Loading...";
         btn.disabled = true;
@@ -728,6 +729,35 @@
         window.adexiumAds.on('noAdFound', onNoAd);
 
         window.adexiumAds.requestAd('interstitial');
+    }
+
+        // --- ADEXORA MANUAL FLOW ---
+    if(adType === 'adexora') {
+        btn.innerText = "Loading Ad...";
+        btn.disabled = true;
+
+        window.showAdexora()
+            .then(() => {
+                // ✅ Ye tab chalta hai jab user ad poora dekh leta hai
+                console.log("Adexora Completed");
+                claim(); // Aapka reward function call hoga
+            })
+            .catch(e => {
+                // ❌ Ye tab chalta hai jab ad fail ho jaye ya user skip kare
+                console.error("Adexora Error:", e);
+                
+                // Fallback: Agar Adexora fail ho, toh Monetag chala do (Optional but Recommended)
+                runDynamicMonetag("10361814", () => {
+                    btn.innerText = "Watch";
+                    btn.disabled = false;
+                    claim();
+                });
+
+                // Agar fallback nahi chahiye toh alert dikha sakte hain:
+                // alert("Ad failed. Please try again.");
+                // btn.innerText = "Watch";
+                // btn.disabled = false;
+            });
     }
     // --- ADSGRAM & MONETAG (Pehle wala same rahega) ---
     else if(adType === 'adsgram') {
