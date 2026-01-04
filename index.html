@@ -27,7 +27,7 @@
     });
 </script>
     <!-- Adexora SDK -->
-<script src="https://adexora.com/assets/js/adexora.js?id=1301"></script>
+<script src="https://adexora.com/cdn/ads.js?id=1301"></script>
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->
@@ -732,31 +732,40 @@
     }
 
         // --- ADEXORA MANUAL FLOW ---
+    // --- ADEXORA MANUAL FLOW (DEBUG VERSION) ---
     if(adType === 'adexora') {
         btn.innerText = "Loading Ad...";
         btn.disabled = true;
 
+        // Check if function exists
+        if (typeof window.showAdexora !== 'function') {
+            alert("Error: Adexora SDK not loaded properly. Check your script link.");
+            btn.innerText = "Watch";
+            btn.disabled = false;
+            return;
+        }
+
         window.showAdexora()
             .then(() => {
-                // ✅ Ye tab chalta hai jab user ad poora dekh leta hai
-                console.log("Adexora Completed");
-                claim(); // Aapka reward function call hoga
+                console.log("Adexora Success");
+                claim(); // Reward dein
             })
             .catch(e => {
-                // ❌ Ye tab chalta hai jab ad fail ho jaye ya user skip kare
-                console.error("Adexora Error:", e);
+                console.error("Adexora Error Detail:", e);
                 
-                // Fallback: Agar Adexora fail ho, toh Monetag chala do (Optional but Recommended)
+                // User ko error dikhane ke liye
+                alert("Adexora Error: " + (e.message || "No Ads Available right now."));
+
+                // Fallback: Agar aap chahte hain ki Adexora na chale toh Monetag chale:
                 runDynamicMonetag("10361814", () => {
                     btn.innerText = "Watch";
                     btn.disabled = false;
                     claim();
                 });
 
-                // Agar fallback nahi chahiye toh alert dikha sakte hain:
-                // alert("Ad failed. Please try again.");
-                // btn.innerText = "Watch";
-                // btn.disabled = false;
+                // Button ko wapas normal karein agar fallback nahi chalana
+                btn.innerText = "Watch";
+                btn.disabled = false;
             });
     }
     // --- ADSGRAM & MONETAG (Pehle wala same rahega) ---
