@@ -526,10 +526,10 @@
                 const lastClaim = window.lastClaimTime || window.miningStartTime;
                 if (calculationTime > lastClaim) {
                     const secondsPassed = (calculationTime - lastClaim) / 1000;
-                    let earnedAmount = Math.floor(secondsPassed * 0.125); 
+                    let earnedAmount = Math.floor((secondsPassed / 3600) * 250);
 
                     // --- ANTI-GLITCH SHIELD ---
-                    if (earnedAmount > 450) earnedAmount = 450; 
+                    if (earnedAmount > 450) earnedAmount = 250; 
 
                     if (earnedAmount > 0) {
                         const userSnap = await get(dbRef);
@@ -567,7 +567,7 @@
             setInterval(() => {
                 const now = Date.now();
                 if (now < window.miningEndTime) {
-                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 450));
+                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 250));
                     const rem = Math.round((window.miningEndTime - now)/1000);
                     document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
                 }
