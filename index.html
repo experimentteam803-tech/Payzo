@@ -23,7 +23,8 @@
     // Global instance for manual control (No autoMode)
     window.adexiumAds = new AdexiumWidget({
         wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', 
-        adFormat: 'interstitial'        
+        adFormat: 'interstitial',
+        debug: true 
     });
 </script>
     <!-- AdsGram SDK -->
@@ -691,32 +692,44 @@
     };
 
     // --- ADEXIUM MANUAL FLOW ---
+    // --- ADEXIUM MANUAL FLOW (REWARD ON CLOSE) ---
     if(adType === 'adexium') {
         btn.innerText = "Loading...";
         btn.disabled = true;
 
-        const onAdReceived = (ad) => { window.adexiumAds.displayAd(ad); };
-        const onAdDisplayed = () => { cleanup(); claim(); }; // Reward tabhi milega jab ad display ho jaye
-        const onNoAd = () => { 
+        const onAdReceived = (ad) => { 
+            window.adexiumAds.displayAd(ad); 
+        };
+
+        // YE CHANGE HAI: adDisplayed ki jagah adClosed use kar rahe hain
+        const onAdClosed = () => { 
             cleanup(); 
-            btn.innerText = "Watch"; btn.disabled = false;
-            alert("Ads not available. Try again later."); 
+            claim(); // Reward ab ad khatam hone (close) par milega
+        };
+
+        const onNoAd = () => { 
+            cleanup();
+            console.log("Adexium failed, switching to fallback...");
+            runDynamicMonetag("10361814", () => {
+                btn.innerText = "Watch";
+                btn.disabled = false;
+                claim(); 
+            });
         };
 
         const cleanup = () => {
             window.adexiumAds.off('adReceived', onAdReceived);
-            window.adexiumAds.off('adDisplayed', onAdDisplayed);
+            window.adexiumAds.off('adClosed', onAdClosed); // Event remove karna zaruri hai
             window.adexiumAds.off('noAdFound', onNoAd);
         };
 
-        // Listeners set karein
+        // Listeners ko register karein
         window.adexiumAds.on('adReceived', onAdReceived);
-        window.adexiumAds.on('adDisplayed', onAdDisplayed);
+        window.adexiumAds.on('adClosed', onAdClosed); // Jab user ad band karega
         window.adexiumAds.on('noAdFound', onNoAd);
 
-        // Manual Request
         window.adexiumAds.requestAd('interstitial');
-    } 
+    }
     // --- ADSGRAM & MONETAG (Pehle wala same rahega) ---
     else if(adType === 'adsgram') {
         const TaskAd = window.Adsgram.init({ blockId: adId });
