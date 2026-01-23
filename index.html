@@ -289,7 +289,7 @@
     <!-- Floating Icon -->
 <div id="taskTrigger" class="floating-task-icon" onclick="openAdminTaskModal()">🎯</div>
 
-<!-- Task Detail Modal -->
+<!-- Task Detail Modal (Timer wala) -->
 <div id="adminTaskModal" class="modal-overlay">
     <div class="task-modal-content">
         <div class="task-header">
@@ -299,16 +299,26 @@
         </div>
         <div class="task-body">
             <div id="at_instructions"></div>
+            
+            <!-- Download Button -->
             <button class="action-btn mine-btn" id="at_link_btn" style="margin-top: 20px; background: #ffd700;">
                 🚀 Complete & Download
             </button>
+
+            <!-- 10s Timer & Verify Section -->
+            <div id="verifySection" style="margin-top: 20px; text-align: center; display: none;">
+                <p id="timerText" style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Wait <span id="waitSec">10</span>s to verify...</p>
+                <button class="action-btn" id="verifyBtn" disabled style="background: #555; color: #fff; cursor: not-allowed; font-size: 14px;">
+                    🔍 Verify Now
+                </button>
+            </div>
+
             <button onclick="closeAdminTaskModal()" style="width:100%; background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-size:12px;">
                 Maybe Later
             </button>
         </div>
     </div>
 </div>
-
     <nav class="navbar">
         <button class="nav-btn active" onclick="showSection('home', this)"><i class="fas fa-home"></i></button>
         <button class="nav-btn" onclick="showSection('watch', this)"><i class="fas fa-tv"></i></button>
@@ -380,17 +390,21 @@
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
-        // --- ADMIN TASK LOGIC ---
+        // --- ADMIN TASK LOGIC (TIMER + RESULT POPUP) ---
+        let currentTaskData = null;
+
         function listenToAdminTask() {
             const taskRef = ref(database, 'admin_tasks/current_task');
             onValue(taskRef, (snapshot) => {
                 const taskData = snapshot.val();
+                currentTaskData = taskData;
                 const icon = document.getElementById('taskTrigger');
                 if (taskData && taskData.status === "active") {
                     icon.style.display = 'flex';
                     document.getElementById('at_title').innerText = taskData.title;
                     document.getElementById('at_logo').src = taskData.logo || 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png';
                     document.getElementById('at_reward').innerText = `💰 +${Number(taskData.reward).toLocaleString()} Coins`;
+                    
                     const instContainer = document.getElementById('at_instructions');
                     instContainer.innerHTML = '';
                     const lines = taskData.description.split('\\n'); 
@@ -399,18 +413,85 @@
                             instContainer.innerHTML += `<div class="task-instruction-item"><div class="inst-num">${index + 1}</div><div class="inst-text">${line}</div></div>`;
                         }
                     });
-                    document.getElementById('at_link_btn').onclick = () => window.open(taskData.link, '_blank');
+
+                    document.getElementById('at_link_btn').onclick = () => {
+                        window.open(taskData.link, '_blank');
+                        startVerifyTimer(); 
+                    };
                 } else {
                     icon.style.display = 'none';
                 }
             });
+
+            // Listen for Admin Approval/Rejection Result
+            onValue(ref(database, `task_results/${TELEGRAM_USER_ID}`), (snap) => {
+                const res = snap.val();
+                if(res) {
+                    if(res.status === 'Approved') {
+                        showGlobalResult("✅ Task Approved!", `Success! ${res.reward} coins added to wallet.`, "#32cd32");
+                    } else if(res.status === 'Rejected') {
+                        showGlobalResult("❌ Task Rejected", `Your verification failed. Try again properly.`, "#ff4d4d");
+                    }
+                    remove(ref(database, `task_results/${TELEGRAM_USER_ID}`)); 
+                }
+            });
         }
+
+        function startVerifyTimer() {
+            const vSection = document.getElementById('verifySection');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const secSpan = document.getElementById('waitSec');
+            const timerTxt = document.getElementById('timerText');
+            
+            vSection.style.display = 'block';
+            timerTxt.style.display = 'block';
+            verifyBtn.disabled = true;
+            verifyBtn.style.background = "#555";
+            
+            let timeLeft = 10;
+            const timer = setInterval(() => {
+                timeLeft--;
+                secSpan.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerTxt.style.display = 'none';
+                    verifyBtn.disabled = false;
+                    verifyBtn.style.background = "#32cd32";
+                    verifyBtn.style.color = "#000";
+                    verifyBtn.style.cursor = "pointer";
+                    verifyBtn.innerText = "✅ Verify Now";
+                }
+            }, 1000);
+
+            verifyBtn.onclick = async () => {
+                const vRef = push(ref(database, 'verify_requests'));
+                await set(vRef, {
+                    userId: TELEGRAM_USER_ID,
+                    userName: TELEGRAM_USER_NAME,
+                    taskTitle: currentTaskData.title,
+                    reward: currentTaskData.reward,
+                    timestamp: Date.now(),
+                    status: 'Pending'
+                });
+                alert("Request Sent! Admin will verify your task.");
+                closeAdminTaskModal();
+            };
+        }
+
+        function showGlobalResult(title, msg, color) {
+            document.getElementById('popupTitle').innerText = title;
+            document.getElementById('popupTitle').style.color = color;
+            document.getElementById('popupMessage').innerText = msg;
+            document.getElementById('globalPopup').style.display = 'flex';
+        }
+
         window.openAdminTaskModal = () => document.getElementById('adminTaskModal').style.display = 'flex';
-        window.closeAdminTaskModal = () => document.getElementById('adminTaskModal').style.display = 'none';
+        window.closeAdminTaskModal = () => {
+            document.getElementById('adminTaskModal').style.display = 'none';
+            document.getElementById('verifySection').style.display = 'none';
+        }
 
-        // Is function ko call karna mat bhuliyega
         listenToAdminTask();
-
         function loadUserData() {
             onValue(dbRef, (snap) => {
                 const data = snap.val();
