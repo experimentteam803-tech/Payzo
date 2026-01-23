@@ -390,40 +390,50 @@
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
-        // --- ADMIN TASK LOGIC (TIMER + RESULT POPUP) ---
+        // --- UPDATED: Task ID Check Logic ---
         let currentTaskData = null;
 
         function listenToAdminTask() {
             const taskRef = ref(database, 'admin_tasks/current_task');
-            onValue(taskRef, (snapshot) => {
+            
+            onValue(taskRef, async (snapshot) => {
                 const taskData = snapshot.val();
                 currentTaskData = taskData;
                 const icon = document.getElementById('taskTrigger');
-                if (taskData && taskData.status === "active") {
-                    icon.style.display = 'flex';
-                    document.getElementById('at_title').innerText = taskData.title;
-                    document.getElementById('at_logo').src = taskData.logo || 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png';
-                    document.getElementById('at_reward').innerText = `💰 +${Number(taskData.reward).toLocaleString()} Coins`;
-                    
-                    const instContainer = document.getElementById('at_instructions');
-                    instContainer.innerHTML = '';
-                    const lines = taskData.description.split('\\n'); 
-                    lines.forEach((line, index) => {
-                        if(line.trim() !== "") {
-                            instContainer.innerHTML += `<div class="task-instruction-item"><div class="inst-num">${index + 1}</div><div class="inst-text">${line}</div></div>`;
-                        }
-                    });
 
-                    document.getElementById('at_link_btn').onclick = () => {
-                        window.open(taskData.link, '_blank');
-                        startVerifyTimer(); 
-                    };
+                if (taskData && taskData.status === "active") {
+                    // Check if user already completed THIS specific taskId
+                    const completedPath = `users/${TELEGRAM_USER_ID}/completed_tasks/${taskData.taskId}`;
+                    const completedSnap = await get(ref(database, completedPath));
+
+                    if (completedSnap.exists()) {
+                        icon.style.display = 'none'; // Dubara nahi dikhayega
+                    } else {
+                        icon.style.display = 'flex'; // Naya task hai to dikhayega
+                        document.getElementById('at_title').innerText = taskData.title;
+                        document.getElementById('at_logo').src = taskData.logo || 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png';
+                        document.getElementById('at_reward').innerText = `💰 +${Number(taskData.reward).toLocaleString()} Coins`;
+                        
+                        const instContainer = document.getElementById('at_instructions');
+                        instContainer.innerHTML = '';
+                        const lines = taskData.description.split('\\n'); 
+                        lines.forEach((line, index) => {
+                            if(line.trim() !== "") {
+                                instContainer.innerHTML += `<div class="task-instruction-item"><div class="inst-num">${index + 1}</div><div class="inst-text">${line}</div></div>`;
+                            }
+                        });
+
+                        document.getElementById('at_link_btn').onclick = () => {
+                            window.open(taskData.link, '_blank');
+                            startVerifyTimer(); 
+                        };
+                    }
                 } else {
                     icon.style.display = 'none';
                 }
             });
 
-            // Listen for Admin Approval/Rejection Result
+            // Result Listener
             onValue(ref(database, `task_results/${TELEGRAM_USER_ID}`), (snap) => {
                 const res = snap.val();
                 if(res) {
@@ -470,6 +480,7 @@
                     userName: TELEGRAM_USER_NAME,
                     taskTitle: currentTaskData.title,
                     reward: currentTaskData.reward,
+                    taskId: currentTaskData.taskId, // Zaroori: ID bhej rahe hain
                     timestamp: Date.now(),
                     status: 'Pending'
                 });
@@ -477,7 +488,6 @@
                 closeAdminTaskModal();
             };
         }
-
         function showGlobalResult(title, msg, color) {
             document.getElementById('popupTitle').innerText = title;
             document.getElementById('popupTitle').style.color = color;
