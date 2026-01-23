@@ -123,6 +123,42 @@
         @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Floating Task Icon */
+.floating-task-icon {
+    position: fixed;
+    right: 20px;
+    bottom: 100px; 
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    border-radius: 50%;
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    z-index: 99;
+    cursor: pointer;
+    animation: pulseIcon 2s infinite;
+}
+@keyframes pulseIcon {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+.task-modal-content {
+    background: #1a1d26; border-radius: 25px; padding: 0; overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.3); width: 90%; max-width: 380px;
+}
+.task-header { background: linear-gradient(to bottom, rgba(255,215,0,0.1), transparent); padding: 30px 20px 20px; text-align: center; }
+.task-logo { width: 80px; height: 80px; border-radius: 18px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); object-fit: cover; border: 2px solid #333; }
+.task-title { font-family: 'Orbitron', sans-serif; font-size: 20px; color: #ffd700; }
+.task-body { padding: 20px; }
+.task-instruction-item { display: flex; gap: 12px; margin-bottom: 15px; align-items: flex-start; }
+.inst-num { background: #ffd700; color: #000; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.inst-text { font-size: 13px; color: #ccc; line-height: 1.5; text-align: left; }
+.reward-badge { background: rgba(50, 205, 50, 0.1); color: #32cd32; padding: 8px 15px; border-radius: 10px; font-size: 14px; font-weight: bold; display: inline-block; margin-top: 10px; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -250,6 +286,29 @@
         </section>
     </main>
 
+    <!-- Floating Icon -->
+<div id="taskTrigger" class="floating-task-icon" onclick="openAdminTaskModal()">🎯</div>
+
+<!-- Task Detail Modal -->
+<div id="adminTaskModal" class="modal-overlay">
+    <div class="task-modal-content">
+        <div class="task-header">
+            <img id="at_logo" src="" class="task-logo">
+            <h3 id="at_title" class="task-title">Loading...</h3>
+            <div id="at_reward" class="reward-badge">💰 +0 Coins</div>
+        </div>
+        <div class="task-body">
+            <div id="at_instructions"></div>
+            <button class="action-btn mine-btn" id="at_link_btn" style="margin-top: 20px; background: #ffd700;">
+                🚀 Complete & Download
+            </button>
+            <button onclick="closeAdminTaskModal()" style="width:100%; background:none; border:none; color:#777; margin-top:15px; cursor:pointer; font-size:12px;">
+                Maybe Later
+            </button>
+        </div>
+    </div>
+</div>
+
     <nav class="navbar">
         <button class="nav-btn active" onclick="showSection('home', this)"><i class="fas fa-home"></i></button>
         <button class="nav-btn" onclick="showSection('watch', this)"><i class="fas fa-tv"></i></button>
@@ -321,6 +380,36 @@
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
+        // --- ADMIN TASK LOGIC ---
+        function listenToAdminTask() {
+            const taskRef = ref(database, 'admin_tasks/current_task');
+            onValue(taskRef, (snapshot) => {
+                const taskData = snapshot.val();
+                const icon = document.getElementById('taskTrigger');
+                if (taskData && taskData.status === "active") {
+                    icon.style.display = 'flex';
+                    document.getElementById('at_title').innerText = taskData.title;
+                    document.getElementById('at_logo').src = taskData.logo || 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png';
+                    document.getElementById('at_reward').innerText = `💰 +${Number(taskData.reward).toLocaleString()} Coins`;
+                    const instContainer = document.getElementById('at_instructions');
+                    instContainer.innerHTML = '';
+                    const lines = taskData.description.split('\\n'); 
+                    lines.forEach((line, index) => {
+                        if(line.trim() !== "") {
+                            instContainer.innerHTML += `<div class="task-instruction-item"><div class="inst-num">${index + 1}</div><div class="inst-text">${line}</div></div>`;
+                        }
+                    });
+                    document.getElementById('at_link_btn').onclick = () => window.open(taskData.link, '_blank');
+                } else {
+                    icon.style.display = 'none';
+                }
+            });
+        }
+        window.openAdminTaskModal = () => document.getElementById('adminTaskModal').style.display = 'flex';
+        window.closeAdminTaskModal = () => document.getElementById('adminTaskModal').style.display = 'none';
+
+        // Is function ko call karna mat bhuliyega
+        listenToAdminTask();
 
         function loadUserData() {
             onValue(dbRef, (snap) => {
