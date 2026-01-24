@@ -146,8 +146,8 @@
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
         </div>
     </header>
-    <!-- Floating Task Emoji -->
-    <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:pointer;" onclick="openTaskList()">
+    <!-- Draggable Task Emoji -->
+    <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:grab; touch-action:none;">
         <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
             <span style="font-size: 25px;">🎯</span>
             <span style="position:absolute; top:-5px; right:-2px; background:red; color:white; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid white;">NEW</span>
@@ -892,6 +892,61 @@
         window.closeTaskDetails = () => document.getElementById('taskDetailModal').style.display = 'none';
         loadUserData();
         listenForTasks();
+        // --- Draggable Icon Logic ---
+        const taskIcon = document.getElementById('activeTaskIcon');
+        let isDragging = false, isMoved = false;
+        let startX, startY, iconX, iconY;
+
+        function startDrag(e) {
+            isDragging = true;
+            isMoved = false;
+            const touch = e.touches ? e.touches[0] : e;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            const rect = taskIcon.getBoundingClientRect();
+            iconX = rect.left;
+            iconY = rect.top;
+            taskIcon.style.transition = 'none';
+        }
+
+        function doDrag(e) {
+            if (!isDragging) return;
+            const touch = e.touches ? e.touches[0] : e;
+            let moveX = touch.clientX - startX;
+            let moveY = touch.clientY - startY;
+
+            if (Math.abs(moveX) > 5 || Math.abs(moveY) > 5) isMoved = true;
+
+            if (isMoved) {
+                e.preventDefault();
+                let newX = iconX + moveX;
+                let newY = iconY + moveY;
+                
+                // Boundaries (Screen se bahar na jaye)
+                newX = Math.max(0, Math.min(newX, window.innerWidth - 55));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - 55));
+
+                taskIcon.style.left = newX + 'px';
+                taskIcon.style.top = newY + 'px';
+                taskIcon.style.right = 'auto';
+            }
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            taskIcon.style.transition = 'all 0.2s ease';
+            // Agar hilaya nahi sirf tap kiya, toh list khulegi
+            if (!isMoved) openTaskList();
+        }
+
+        taskIcon.addEventListener('touchstart', startDrag, { passive: false });
+        taskIcon.addEventListener('touchmove', doDrag, { passive: false });
+        taskIcon.addEventListener('touchend', endDrag);
+        
+        taskIcon.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', doDrag);
+        document.addEventListener('mouseup', endDrag);
     </script>
     <!-- Task System Modals -->
     <div id="taskListModal" class="modal-overlay">
