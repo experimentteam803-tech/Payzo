@@ -123,6 +123,13 @@
         @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Task System Animations */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .task-step {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
+            margin-bottom: 8px; border-left: 3px solid #32cd32; font-size: 13px; line-height: 1.4;
+        }
+        .task-modal-content { background:#161616; padding:20px; border-radius:20px; width:95%; max-width:400px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -139,7 +146,13 @@
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
         </div>
     </header>
-
+    <!-- Floating Task Emoji -->
+    <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:pointer;" onclick="openTaskList()">
+        <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
+            <span style="font-size: 25px;">🎯</span>
+            <span style="position:absolute; top:-5px; right:-2px; background:red; color:white; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid white;">NEW</span>
+        </div>
+    </div>
     <main>
         <section id="home" class="section">
             <div class="balance-card">
@@ -163,7 +176,7 @@
             <button id="mineBtn" class="action-btn mine-btn" onclick="startDailyMining()" disabled>
                 🪙 Start Mining
             </button>
-            <p id="miningCountdown" style="text-align:center; margin-top:10px; font-size:12px; color:#90ee90;">Ready</p>
+            <p id="miningCountdown" style="text-align:center; margin-top:10px; font-size:12px; color:#90ee90;">Ready</p>         
         </section>
 
         <section id="watch" class="section">
@@ -812,7 +825,84 @@
                 }
             }
         }, 1000);
+        let currentSelectedTask = null;
+
+        function listenForTasks() {
+            onValue(ref(database, 'admin_tasks'), async (snap) => {
+                const tasks = snap.val();
+                const icon = document.getElementById('activeTaskIcon');
+                if (!tasks) { if(icon) icon.style.display = 'none'; return; }
+                const userTasksSnap = await get(ref(database, `${userPath}/completed_tasks`));
+                const userTasks = userTasksSnap.val() || {};
+                let hasVisibleTask = false;
+                const container = document.getElementById('taskItemsContainer');
+                if(container) {
+                    container.innerHTML = "";
+                    Object.keys(tasks).forEach(taskId => {
+                        const task = tasks[taskId];
+                        if (!userTasks[taskId] || userTasks[taskId].status === 'Rejected') {
+                            hasVisibleTask = true;
+                            const div = document.createElement('div');
+                            div.className = "ad-task-card";
+                            div.style.cursor = "pointer";
+                            div.onclick = () => openTaskDetails(taskId, task);
+                            div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#ffd700; font-weight:bold;">Reward: ${task.reward} Coins</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
+                            container.appendChild(div);
+                        }
+                    });
+                }
+                if(icon) icon.style.display = hasVisibleTask ? 'block' : 'none';
+            });
+        }
+
+        window.openTaskDetails = (id, task) => {
+            currentSelectedTask = { id, ...task };
+            const detailContent = document.getElementById('taskDetailContent');
+            const stepsHtml = task.desc.split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
+            detailContent.innerHTML = `<div style="text-align:center; margin-bottom:20px;"><img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;"><h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2><p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ${task.reward} Coins</p></div><div style="margin-bottom:20px;">${stepsHtml}</div><button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button><button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button><button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>`;
+            document.getElementById('taskListModal').style.display = 'none';
+            document.getElementById('taskDetailModal').style.display = 'flex';
+        };
+
+        window.handleTaskDownload = (link) => {
+            window.open(link, '_blank');
+            const btn = document.getElementById('taskDownloadBtn');
+            btn.disabled = true; btn.style.opacity = "0.5";
+            let sec = 10;
+            const timer = setInterval(() => {
+                btn.innerText = `Wait ${sec}s...`;
+                if(sec <= 0) { clearInterval(timer); btn.style.display = 'none'; document.getElementById('taskVerifyBtn').style.display = 'block'; }
+                sec--;
+            }, 1000);
+        };
+
+        window.submitTaskForVerify = async () => {
+            if (!currentSelectedTask) return;
+            const taskData = { taskId: currentSelectedTask.id, name: currentSelectedTask.name, reward: currentSelectedTask.reward, status: 'Pending', timestamp: Date.now() };
+            const updates = {};
+            updates[`${userPath}/completed_tasks/${currentSelectedTask.id}`] = taskData;
+            updates[`admin_review_tasks/${currentSelectedTask.id}_${TELEGRAM_USER_ID}`] = { ...taskData, userId: TELEGRAM_USER_ID, userName: TELEGRAM_USER_NAME };
+            await update(ref(database), updates);
+            alert("Verification Sent! Please wait for Admin approval.");
+            closeTaskDetails();
+        };
+
+        window.openTaskList = () => document.getElementById('taskListModal').style.display = 'flex';
+        window.closeTaskList = () => document.getElementById('taskListModal').style.display = 'none';
+        window.closeTaskDetails = () => document.getElementById('taskDetailModal').style.display = 'none';
         loadUserData();
+        listenForTasks();
     </script>
+    <!-- Task System Modals -->
+    <div id="taskListModal" class="modal-overlay">
+        <div class="task-modal-content">
+            <h3 style="color:#ffd700; margin-bottom:20px; text-align:center; font-family:'Orbitron';">Available Tasks</h3>
+            <div id="taskItemsContainer"></div>
+            <button class="action-btn" style="background:#333; margin-top:15px; color:#fff;" onclick="closeTaskList()">Close</button>
+        </div>
+    </div>
+    <div id="taskDetailModal" class="modal-overlay">
+        <div class="task-modal-content" id="taskDetailContent"></div>
+    </div>
 </body>
 </html>
