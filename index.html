@@ -258,7 +258,7 @@
             <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
             <div class="ref-info-card">
                 <div class="ref-step"><div class="step-num">1</div><div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div></div>
-                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;">700 Coins:</b> Get instantly when they signup.</div></div>
+                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;">500 Coins:</b> Get instantly when they signup.</div></div>
                 <div class="ref-step"><div class="step-num">3</div><div><b style="color:#ffd700;">5% Commission:</b> Get lifetime reward from their mining!</div></div>
             </div>
             <div class="submission-form" style="text-align:center;">
@@ -366,7 +366,7 @@
                 } else {
                     // --- REFERRAL LOGIC FOR NEW USER ---
                     const referrerId = tg.initDataUnsafe?.start_param; 
-                    const bonusAmount = 700; 
+                    const bonusAmount = 500; 
 
                     if (referrerId && referrerId !== TELEGRAM_USER_ID) {
                         const referrerRef = ref(database, 'users/' + referrerId);
