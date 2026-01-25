@@ -143,16 +143,14 @@
             <span id="username">Loading...</span>
         </div>
         <div class="header-right">
+            <!-- Customer Support Icon (Header mein Gift ke left mein) -->
+            <div style="cursor: pointer; font-size: 18px; background: rgba(0, 198, 255, 0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 198, 255, 0.3); margin-right: 8px;" onclick="contactSupport()">
+                <i class="fas fa-headset" style="color: #00c6ff;"></i>
+            </div>
+            
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
-        </div>
-    </header>
-    <!-- Floating Customer Support Icon -->
-    <div id="supportFloatingIcon" style="position:fixed; left:15px; top:55%; z-index:1000; cursor:pointer;" onclick="contactSupport()">
-        <div style="background: linear-gradient(45deg, #00c6ff, #0072ff); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0, 114, 255, 0.6); border: 2px solid #fff;">
-            <i class="fas fa-headset" style="font-size: 22px; color: white;"></i>
-        </div>
-        <span style="position:absolute; top:-5px; left:-2px; background:#fff; color:#0072ff; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid #0072ff;">HELP</span>
-    </div>
+        </div>        
+    </header>    
     <!-- Draggable Task Emoji -->
     <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:grab; touch-action:none;">
         <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
