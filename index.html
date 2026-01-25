@@ -146,6 +146,13 @@
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
         </div>
     </header>
+    <!-- Floating Customer Support Icon -->
+    <div id="supportFloatingIcon" style="position:fixed; left:15px; top:55%; z-index:1000; cursor:pointer;" onclick="contactSupport()">
+        <div style="background: linear-gradient(45deg, #00c6ff, #0072ff); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0, 114, 255, 0.6); border: 2px solid #fff;">
+            <i class="fas fa-headset" style="font-size: 22px; color: white;"></i>
+        </div>
+        <span style="position:absolute; top:-5px; left:-2px; background:#fff; color:#0072ff; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid #0072ff;">HELP</span>
+    </div>
     <!-- Draggable Task Emoji -->
     <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:grab; touch-action:none;">
         <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
@@ -370,6 +377,19 @@
         window.closeGlobalPopup = () => {
             document.getElementById('globalPopup').style.display = 'none';
             remove(ref(database, userPath + '/popup'));
+        };
+        
+        window.contactSupport = () => {
+            const userId = TELEGRAM_USER_ID; 
+            const supportLink = "https://t.me/@PayZoHelp"; // <-- Yahan apni Support ID daalein
+
+            // Clipboard par copy karne ka logic
+            navigator.clipboard.writeText(userId).then(() => {
+                alert(`📋 ID Copied: ${userId}\n\nUser ID copy ho gayi hai! Telegram par paste karke hume message karein.`);
+                window.open(supportLink, '_blank');
+            }).catch(err => {
+                window.open(supportLink, '_blank');
+            });
         };
 
         function startWithdrawHistoryListener() {
