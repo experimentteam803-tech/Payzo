@@ -340,21 +340,35 @@
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
 
-        function loadUserData() {
-            onValue(dbRef, (snap) => {
-                const data = snap.val();
-                if(data) {
-                    window.coins = data.coins || 0;
-                    window.adsWatched = data.adsWatched || 0;
-                    window.miningStartTime = data.miningStartTime || 0;
-                    window.miningEndTime = data.miningEndTime || 0;
-                    window.lastClaimTime = data.lastClaimTime || 0;
-                    document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
-                    checkMiningStatus();
-                } else {
-                    set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
-                }
-            });
+        // --- NAYE USER KE LIYE REFERRAL LOGIC (UPDATED) ---
+                    const referrerId = tg.initDataUnsafe?.start_param; 
+                    const bonusAmount = 700; 
+
+                    if (referrerId && referrerId !== TELEGRAM_USER_ID) {
+                        const referrerRef = ref(database, 'users/' + referrerId);
+                        get(referrerRef).then((rSnap) => {
+                            if (rSnap.exists()) {
+                                const rData = rSnap.val();
+                                update(referrerRef, { coins: (rData.coins || 0) + bonusAmount });
+                                
+                                // History mein entry
+                                const historyRef = push(ref(database, `users/${referrerId}/coin_history`));
+                                set(historyRef, { 
+                                    reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, 
+                                    amount: bonusAmount, 
+                                    timestamp: Date.now() 
+                                });
+
+                                // Referrer ki list mein is user ka naam add karna (Tracking ke liye)
+                                const refListRef = push(ref(database, `users/${referrerId}/referral_list`));
+                                set(refListRef, { name: TELEGRAM_USER_NAME, date: Date.now() });
+                            }
+                        });
+                    }
+                    set(dbRef, { 
+                        coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, 
+                        miningStartTime: 0, miningEndTime: 0, referredBy: referrerId || "Direct" 
+                    });
 
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
@@ -367,8 +381,27 @@
 
             startWithdrawHistoryListener();
             startPromoHistoryListener();
+            startReferralListListener();
             get(ref(database, 'claim_settings/common')).then(s => {
                 if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
+            });
+        }
+        function startReferralListListener() {
+            onValue(ref(database, `${userPath}/referral_list`), (snap) => {
+                const container = document.getElementById('referralList');
+                if(!container) return;
+                const data = snap.val();
+                if(!data) {
+                    container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No referrals yet. Start sharing!</p>`;
+                    return;
+                }
+                let html = "";
+                Object.keys(data).reverse().forEach(key => {
+                    const refUser = data[key];
+                    const joinDate = new Date(refUser.date).toLocaleDateString();
+                    html += `<div class="history-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius:10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 30px; height: 30px; background: #ffd700; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${refUser.name.charAt(0).toUpperCase()}</div><div><div style="font-size: 12px; font-weight: 600;">${refUser.name}</div><div style="font-size: 9px; color: #777;">Joined: ${joinDate}</div></div></div><div style="color: #32cd32; font-size: 10px; font-weight: bold;">+700</div></div>`;
+                });
+                container.innerHTML = html;
             });
         }
 
