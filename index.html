@@ -350,7 +350,21 @@
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
 
-        // --- NAYE USER KE LIYE REFERRAL LOGIC (UPDATED) ---
+        function loadUserData() {
+            // Check for existing data and handle Referral
+            get(dbRef).then((snap) => {
+                const data = snap.val();
+                if (data) {
+                    // --- PURANA LOGIC (No Change) ---
+                    window.coins = data.coins || 0;
+                    window.adsWatched = data.adsWatched || 0;
+                    window.miningStartTime = data.miningStartTime || 0;
+                    window.miningEndTime = data.miningEndTime || 0;
+                    window.lastClaimTime = data.lastClaimTime || 0;
+                    document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
+                    checkMiningStatus();
+                } else {
+                    // --- REFERRAL LOGIC FOR NEW USER ---
                     const referrerId = tg.initDataUnsafe?.start_param; 
                     const bonusAmount = 700; 
 
@@ -361,25 +375,23 @@
                                 const rData = rSnap.val();
                                 update(referrerRef, { coins: (rData.coins || 0) + bonusAmount });
                                 
-                                // History mein entry
-                                const historyRef = push(ref(database, `users/${referrerId}/coin_history`));
-                                set(historyRef, { 
-                                    reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, 
-                                    amount: bonusAmount, 
-                                    timestamp: Date.now() 
-                                });
+                                const hRef = push(ref(database, `users/${referrerId}/coin_history`));
+                                set(hRef, { reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, amount: bonusAmount, timestamp: Date.now() });
 
-                                // Referrer ki list mein is user ka naam add karna (Tracking ke liye)
                                 const refListRef = push(ref(database, `users/${referrerId}/referral_list`));
                                 set(refListRef, { name: TELEGRAM_USER_NAME, date: Date.now() });
                             }
                         });
                     }
+                    // Create New Account
                     set(dbRef, { 
                         coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, 
                         miningStartTime: 0, miningEndTime: 0, referredBy: referrerId || "Direct" 
                     });
+                }
+            }); // <-- Yeh bracket aapke code mein missing tha
 
+            // Popup Listener
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -389,6 +401,7 @@
                 }
             });
 
+            // Start All Necessary Listeners
             startWithdrawHistoryListener();
             startPromoHistoryListener();
             startReferralListListener();
