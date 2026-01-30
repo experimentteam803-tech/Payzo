@@ -352,45 +352,43 @@
 
         function loadUserData() {
             // Check for existing data and handle Referral
-            get(dbRef).then((snap) => {
-                const data = snap.val();
-                if (data) {
-                    // --- PURANA LOGIC (No Change) ---
-                    window.coins = data.coins || 0;
-                    window.adsWatched = data.adsWatched || 0;
-                    window.miningStartTime = data.miningStartTime || 0;
-                    window.miningEndTime = data.miningEndTime || 0;
-                    window.lastClaimTime = data.lastClaimTime || 0;
-                    document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
-                    checkMiningStatus();
-                } else {
-                    // --- REFERRAL LOGIC FOR NEW USER ---
-                    const referrerId = tg.initDataUnsafe?.start_param; 
-                    const bonusAmount = 500; 
+            onValue(dbRef, (snap) => {
+            const data = snap.val();
+            if (data) {
+                // --- AAPKA PURANA LOGIC (RETAINED) ---
+                window.coins = data.coins || 0;
+                window.adsWatched = data.adsWatched || 0;
+                window.miningStartTime = data.miningStartTime || 0;
+                window.miningEndTime = data.miningEndTime || 0;
+                window.lastClaimTime = data.lastClaimTime || 0;
+                document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
+                
+                // Mining status check
+                checkMiningStatus();
+            } else {
+                // --- REFERRAL LOGIC FOR NEW USER (RETAINED) ---
+                const referrerId = tg.initDataUnsafe?.start_param; 
+                const bonusAmount = 500; 
 
-                    if (referrerId && referrerId !== TELEGRAM_USER_ID) {
-                        const referrerRef = ref(database, 'users/' + referrerId);
-                        get(referrerRef).then((rSnap) => {
-                            if (rSnap.exists()) {
-                                const rData = rSnap.val();
-                                update(referrerRef, { coins: (rData.coins || 0) + bonusAmount });
-                                
-                                const hRef = push(ref(database, `users/${referrerId}/coin_history`));
-                                set(hRef, { reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, amount: bonusAmount, timestamp: Date.now() });
-
-                                const refListRef = push(ref(database, `users/${referrerId}/referral_list`));
-                                set(refListRef, { name: TELEGRAM_USER_NAME, date: Date.now() });
-                            }
-                        });
-                    }
-                    // Create New Account
-                    set(dbRef, { 
-                        coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, 
-                        miningStartTime: 0, miningEndTime: 0, referredBy: referrerId || "Direct" 
+                if (referrerId && referrerId !== TELEGRAM_USER_ID) {
+                    const referrerRef = ref(database, 'users/' + referrerId);
+                    get(referrerRef).then((rSnap) => {
+                        if (rSnap.exists()) {
+                            const rData = rSnap.val();
+                            update(referrerRef, { coins: (rData.coins || 0) + bonusAmount });
+                            const hRef = push(ref(database, `users/${referrerId}/coin_history`));
+                            set(hRef, { reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, amount: bonusAmount, timestamp: Date.now() });
+                            const refListRef = push(ref(database, `users/${referrerId}/referral_list`));
+                            set(refListRef, { name: TELEGRAM_USER_NAME, date: Date.now() });
+                        }
                     });
                 }
-            }); // <-- Yeh bracket aapke code mein missing tha
-
+                set(dbRef, { 
+                    coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, 
+                    miningStartTime: 0, miningEndTime: 0, referredBy: referrerId || "Direct" 
+                });
+            }
+        });
             // Popup Listener
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
@@ -842,10 +840,18 @@
         }
     }, 1000);
 }
-        
         window.startDailyMining = () => {
             const now = Date.now();
-            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000, lastClaimTime: now, adsWatched: 0 });
+            // Database update
+            update(dbRef, { 
+                miningStartTime: now, 
+                miningEndTime: now + 3600000, 
+                lastClaimTime: now, 
+                adsWatched: 0 
+            }).then(() => {
+                // Mining start hote hi turant UI refresh karne ke liye
+                checkMiningStatus();
+            });
         };
 
         window.submitPromotion = () => {
