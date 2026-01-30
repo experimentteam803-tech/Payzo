@@ -639,12 +639,17 @@
         }
 
         function startLiveCounter() {
-            setInterval(() => {
+            if (window.miningInterval) clearInterval(window.miningInterval);
+            window.miningInterval = setInterval(() => {
                 const now = Date.now();
-                if (now < window.miningEndTime) {
-                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 250));
+                if (window.miningEndTime && now < window.miningEndTime) {
+                    const elapsed = now - window.miningStartTime;
+                    const liveCoins = window.coins + Math.floor((elapsed / 3600000) * 250);
+                    updateCoinDisplays(liveCoins);
                     const rem = Math.round((window.miningEndTime - now)/1000);
                     document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
+                } else {
+                    clearInterval(window.miningInterval);
                 }
             }, 1000);
         }
