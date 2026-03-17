@@ -351,6 +351,21 @@
         window.currentMethod = "upi";
 
         function loadUserData() {
+            // --- SERVER DOWN LOGIC ---
+        const isServerDown = true; // Server chalu karne ke liye ise false kar dein
+        if (isServerDown) {
+            document.getElementById('popupTitle').innerText = "⚠️ Server Down";
+            document.getElementById('popupMessage').innerText = "Server is under maintenance. Please try again later.";
+            document.getElementById('globalPopup').style.display = 'flex';
+            
+            // Button click hone par app close ho jayega
+            window.closeGlobalPopup = () => {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.close();
+                }
+            };
+            return; // Niche ka koi bhi code load nahi hoga
+        }
             // Check for existing data and handle Referral
             onValue(dbRef, (snap) => {
             const data = snap.val();
