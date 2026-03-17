@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinMine - Professional Mining Hub</title>    
-
+    <title>CoinMine - Professional Mining Hub</title>
+    <!-- 1. Telegram Script (Top Priority) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>        
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -242,23 +243,13 @@
             <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
             <div class="ref-info-card">
                 <div class="ref-step"><div class="step-num">1</div><div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div></div>
-                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;">500 Coins:</b> Get instantly when they signup.</div></div>
+                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;">700 Coins:</b> Get instantly when they signup.</div></div>
                 <div class="ref-step"><div class="step-num">3</div><div><b style="color:#ffd700;">5% Commission:</b> Get lifetime reward from their mining!</div></div>
             </div>
             <div class="submission-form" style="text-align:center;">
                 <p id="refLink" style="font-size:11px; color:#ffd700; margin-bottom:15px; word-break:break-all;">Loading...</p>
                 <button class="action-btn ad-btn" onclick="shareReferralLink()">📢 Invite Friends Now</button>
             </div>
-            <!-- Referral Tracking List Start -->
-            <div class="history-container" style="margin-top: 25px; border-top: 1px solid rgba(255,215,0,0.2); padding-top: 15px;">
-                <div class="history-title" style="color: #ffd700; font-family: 'Orbitron'; font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-users"></i> My Referrals
-                </div>
-                <div id="referralList" class="history-list" style="max-height: 250px; overflow-y: auto;">
-                    <p style="font-size:10px; color:#555; text-align:center;">No referrals yet. Start sharing!</p>
-                </div>
-            </div>
-            <!-- Referral Tracking List End -->
         </section>
     </main>
 
@@ -274,7 +265,7 @@
         <div class="modal-content" style="text-align:center;">
             <h3 style="color:#ffd700; margin-bottom:15px;">🎁 Redeem Gift</h3>
             <input type="text" id="giftCode" placeholder="Enter Code" style="width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#000; color:#fff; margin-bottom:15px;">
-            <button class="action-btn mine-btn" id="joinChannelBtn" data-link="https://ads-page-phi.vercel.app/" onclick="window.open(this.dataset.link)">Fine & Claim Code Here</button>
+            <button class="action-btn mine-btn" id="joinChannelBtn" data-link="https://t.me/PayZos_Bot" onclick="window.open(this.dataset.link)">📢 JOIN TELEGRAM</button>
             <button class="action-btn ad-btn" style="margin-top:10px;" onclick="redeemGift()">Redeem Now</button>
             <button style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;" onclick="closeGiftModal()">Close</button>
         </div>
@@ -334,46 +325,22 @@
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
 
-        function loadUserData() {            
-            // Check for existing data and handle Referral
+        function loadUserData() {
             onValue(dbRef, (snap) => {
-            const data = snap.val();
-            if (data) {
-                // --- AAPKA PURANA LOGIC (RETAINED) ---
-                window.coins = data.coins || 0;
-                window.adsWatched = data.adsWatched || 0;
-                window.miningStartTime = data.miningStartTime || 0;
-                window.miningEndTime = data.miningEndTime || 0;
-                window.lastClaimTime = data.lastClaimTime || 0;
-                document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
-                
-                // Mining status check
-                checkMiningStatus();
-            } else {
-                // --- REFERRAL LOGIC FOR NEW USER (RETAINED) ---
-                const referrerId = tg.initDataUnsafe?.start_param; 
-                const bonusAmount = 500; 
-
-                if (referrerId && referrerId !== TELEGRAM_USER_ID) {
-                    const referrerRef = ref(database, 'users/' + referrerId);
-                    get(referrerRef).then((rSnap) => {
-                        if (rSnap.exists()) {
-                            const rData = rSnap.val();
-                            update(referrerRef, { coins: (rData.coins || 0) + bonusAmount });
-                            const hRef = push(ref(database, `users/${referrerId}/coin_history`));
-                            set(hRef, { reason: `Referral Bonus (User: ${TELEGRAM_USER_NAME}) 🤝`, amount: bonusAmount, timestamp: Date.now() });
-                            const refListRef = push(ref(database, `users/${referrerId}/referral_list`));
-                            set(refListRef, { name: TELEGRAM_USER_NAME, date: Date.now() });
-                        }
-                    });
+                const data = snap.val();
+                if(data) {
+                    window.coins = data.coins || 0;
+                    window.adsWatched = data.adsWatched || 0;
+                    window.miningStartTime = data.miningStartTime || 0;
+                    window.miningEndTime = data.miningEndTime || 0;
+                    window.lastClaimTime = data.lastClaimTime || 0;
+                    document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
+                    checkMiningStatus();
+                } else {
+                    set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
                 }
-                set(dbRef, { 
-                    coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, 
-                    miningStartTime: 0, miningEndTime: 0, referredBy: referrerId || "Direct" 
-                });
-            }
-        });
-            // Popup Listener
+            });
+
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -383,32 +350,12 @@
                 }
             });
 
-            // Start All Necessary Listeners
             startWithdrawHistoryListener();
             startPromoHistoryListener();
-            startReferralListListener();
             get(ref(database, 'claim_settings/common')).then(s => {
                 if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
             });
         }
-        function startReferralListListener() {
-            onValue(ref(database, `${userPath}/referral_list`), (snap) => {
-                const container = document.getElementById('referralList');
-                if(!container) return;
-                const data = snap.val();
-                if(!data) {
-                    container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No referrals yet. Start sharing!</p>`;
-                    return;
-                }
-                let html = "";
-                Object.keys(data).reverse().forEach(key => {
-                    const refUser = data[key];
-                    const joinDate = new Date(refUser.date).toLocaleDateString();
-                    html += `<div class="history-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius:10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="width: 30px; height: 30px; background: #ffd700; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${refUser.name.charAt(0).toUpperCase()}</div><div><div style="font-size: 12px; font-weight: 600;">${refUser.name}</div><div style="font-size: 9px; color: #777;">Joined: ${joinDate}</div></div></div><div style="color: #32cd32; font-size: 10px; font-weight: bold;">+700</div></div>`;
-                });
-                container.innerHTML = html; // Yeh line zaroori hai
-            }); // Yeh onValue ko band karta hai
-        } // Yeh function ko band karta hai
 
         window.closeGlobalPopup = () => {
             document.getElementById('globalPopup').style.display = 'none';
@@ -623,17 +570,12 @@
         }
 
         function startLiveCounter() {
-            if (window.miningInterval) clearInterval(window.miningInterval);
-            window.miningInterval = setInterval(() => {
+            setInterval(() => {
                 const now = Date.now();
-                if (window.miningEndTime && now < window.miningEndTime) {
-                    const elapsed = now - window.miningStartTime;
-                    const liveCoins = window.coins + Math.floor((elapsed / 3600000) * 250);
-                    updateCoinDisplays(liveCoins);
+                if (now < window.miningEndTime) {
+                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 250));
                     const rem = Math.round((window.miningEndTime - now)/1000);
                     document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
-                } else {
-                    clearInterval(window.miningInterval);
                 }
             }, 1000);
         }
@@ -829,18 +771,10 @@
         }
     }, 1000);
 }
+        
         window.startDailyMining = () => {
             const now = Date.now();
-            // Database update
-            update(dbRef, { 
-                miningStartTime: now, 
-                miningEndTime: now + 3600000, 
-                lastClaimTime: now, 
-                adsWatched: 0 
-            }).then(() => {
-                // Mining start hote hi turant UI refresh karne ke liye
-                checkMiningStatus();
-            });
+            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000, lastClaimTime: now, adsWatched: 0 });
         };
 
         window.submitPromotion = () => {
