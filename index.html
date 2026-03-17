@@ -16,7 +16,11 @@
               appId: "5142",
             });
           </script>
-        
+        <!-- AdsGram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <!-- Monetag SDK -->
+    <script src='//whephiwums.com/vignette.min.js' data-zone='10361814' data-sdk='show_10361814'></script>
+   
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -490,38 +494,37 @@
         window.handleWithdrawal = () => {
             const a = Number(document.getElementById('withdrawAmount').value);
             const d = document.getElementById('withdrawAddress').value;
+            
             let minLimit = 10000;
             if (window.currentMethod === 'paypal') minLimit = 100000;
             else if (window.currentMethod === 'crypto') minLimit = 100000;
+            
             if (a < minLimit) return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
             if (a > window.coins) return alert("Insufficient Balance!");
             if (!d) return alert("Please enter payment address/ID");
 
-            if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch Ad to withdraw.`)) {
-                    AdController.show().then((result) => {
-                        if (result.done) { window.withdrawAdsCounter++; if(window.withdrawAdsCounter >= window.withdrawAdsReq) alert("Ads complete!"); }
-                    }).catch(() => {
-                        if(typeof AdexiumWidget !== 'undefined') {
-                            const rich = new AdexiumWidget({ wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634', adFormat: 'interstitial' });
-                            rich.requestAd('interstitial');
-                            rich.on('adReceived', (ad) => { rich.displayAd(ad); window.withdrawAdsCounter++; });
-                        } else {
-                            runDynamicMonetag("10361814", () => { window.withdrawAdsCounter++; });
-                        }
-                    });
-                }
-                return;
-            }
-            const rData = { amount: a, address: d, method: window.currentMethod, status: 'Pending', timestamp: Date.now(), userId: TELEGRAM_USER_ID };
+            // --- ADS LOGIC REMOVED ---
+
+            const rData = { 
+                amount: a, 
+                address: d, 
+                method: window.currentMethod, 
+                status: 'Pending', 
+                timestamp: Date.now(), 
+                userId: TELEGRAM_USER_ID 
+            };
+
             const key = push(ref(database, 'withdrawals')).key;
             const updates = {};
             updates['withdrawals/' + key] = rData;
             updates[`${userPath}/withdrawals/${key}`] = rData;
             updates[`${userPath}/coins`] = window.coins - a;
-            update(ref(database), updates);
-            window.withdrawAdsCounter = 0;
-            alert("Withdrawal Requested!");
+            
+            update(ref(database), updates).then(() => {
+                alert("Withdrawal Requested!");
+                document.getElementById('withdrawAmount').value = "";
+                document.getElementById('withdrawAddress').value = "";
+            });
         };
 
         window.setMethod = (m, b) => {
