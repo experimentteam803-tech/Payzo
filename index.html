@@ -455,12 +455,15 @@
         };
 
         window.watchAd = () => {
-            const btn = document.getElementById('adWatchBtn');
-            if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
-            if(btn.disabled) return;
-            AdController.show().then((result) => { if (result.done) handleAdSuccess(); }).catch(() => {
-                runDynamicMonetag("10361814", handleAdSuccess);
-            });
+            // Mining Ads block karne ke liye popup logic
+            document.getElementById('popupTitle').innerText = "⚠️ Ads Server Down";
+            document.getElementById('popupMessage').innerText = "Ads server is currently down for maintenance. Please try again later. Mining is temporarily unavailable.";
+            document.getElementById('globalPopup').style.display = 'flex';
+            
+            // Popup close karne ka logic (taaki user wapas home par aa sake)
+            window.closeGlobalPopup = () => {
+                document.getElementById('globalPopup').style.display = 'none';
+            };
         };
 
         function handleAdSuccess() {
