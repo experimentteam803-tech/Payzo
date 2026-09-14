@@ -455,15 +455,17 @@
         };
 
         window.watchAd = () => {
-            // Mining Ads block karne ke liye popup logic
-            document.getElementById('popupTitle').innerText = "⚠️ Ads Server Down";
-            document.getElementById('popupMessage').innerText = "Ads server is currently down for maintenance. Please try again later. Mining is temporarily unavailable.";
-            document.getElementById('globalPopup').style.display = 'flex';
-            
-            // Popup close karne ka logic (taaki user wapas home par aa sake)
-            window.closeGlobalPopup = () => {
-                document.getElementById('globalPopup').style.display = 'none';
-            };
+            const btn = document.getElementById('adWatchBtn');
+            if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
+            if(btn.disabled) return;
+
+            // Asli Ad logic
+            AdController.show().then((result) => { 
+                if (result.done) handleAdSuccess(); 
+            }).catch(() => {
+                // Fallback to Monetag if Adsgram fails
+                runDynamicMonetag("10361814", handleAdSuccess);
+            });
         };
 
         function handleAdSuccess() {
@@ -506,7 +508,23 @@
             if (a > window.coins) return alert("Insufficient Balance!");
             if (!d) return alert("Please enter payment address/ID");
 
-            // --- ADS LOGIC REMOVED ---
+            // --- ADS LOGIC RE-ENABLED ---
+            if(window.withdrawAdsCounter < window.withdrawAdsReq) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch an ad to proceed with withdrawal?`)) {
+                    AdController.show().then((result) => {
+                        if (result.done) { 
+                            window.withdrawAdsCounter++; 
+                            alert(`Ad watched! (${window.withdrawAdsCounter}/${window.withdrawAdsReq})`);
+                        }
+                    }).catch(() => {
+                        runDynamicMonetag("10361814", () => { 
+                            window.withdrawAdsCounter++; 
+                            alert(`Ad watched! (${window.withdrawAdsCounter}/${window.withdrawAdsReq})`);
+                        });
+                    });
+                }
+                return;
+            }
 
             const rData = { 
                 amount: a, 
@@ -524,7 +542,8 @@
             updates[`${userPath}/coins`] = window.coins - a;
             
             update(ref(database), updates).then(() => {
-                alert("Withdrawal Requested!");
+                alert("Withdrawal Requested Successfully!");
+                window.withdrawAdsCounter = 0; // Reset counter after success
                 document.getElementById('withdrawAmount').value = "";
                 document.getElementById('withdrawAddress').value = "";
             });
