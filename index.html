@@ -897,7 +897,28 @@
             currentSelectedTask = { id, ...task };
             const detailContent = document.getElementById('taskDetailContent');
             const stepsHtml = task.desc.split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
-            detailContent.innerHTML = `<div style="text-align:center; margin-bottom:20px;"><img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;"><h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2><p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ${task.reward} Coins</p></div><div style="margin-bottom:20px;">${stepsHtml}</div><button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button><button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button><button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>`;
+            
+            // Bot Username: taskVideoGuide_bot
+            const botUsername = "taskVideoGuide_bot";
+
+            detailContent.innerHTML = `
+                <div style="text-align:center; margin-bottom:20px;">
+                    <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
+                    <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
+                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ${task.reward} Coins</p>
+                </div>
+                <div style="margin-bottom:20px;">${stepsHtml}</div>
+                
+                <!-- Naya Video Guide Button -->
+                <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" 
+                    onclick="window.open('https://t.me/${botUsername}?start=${task.videoId || 'task1'}', '_blank')">
+                    🎬 Watch Video Guide
+                </button>
+
+                <button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button>
+                <button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button>
+                <button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>
+            `;
             document.getElementById('taskListModal').style.display = 'none';
             document.getElementById('taskDetailModal').style.display = 'flex';
         };
