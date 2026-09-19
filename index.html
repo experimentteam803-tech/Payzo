@@ -55,7 +55,7 @@ body {
     background-attachment: fixed;
 }
 
-/* --- 3D REALISTIC EARTH (Photo Match) --- */
+/* --- REALISTIC 3D EARTH (FIXED) --- */
 .mining-visualizer {
     position: relative;
     width: 300px;
@@ -67,75 +67,68 @@ body {
 }
 
 .earth-3d {
-    width: 210px;
-    height: 210px;
-    /* High Quality Earth Texture */
-    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Earth_Western_Hemisphere_transparent_background.png/600px-Earth_Western_Hemisphere_transparent_background.png');
+    width: 200px;
+    height: 200px;
+    /* High Quality Seamless Earth Texture */
+    background: url('https://i.imgur.com/727miS6.jpg'); 
     background-size: cover;
-    background-repeat: repeat-x;
     border-radius: 50%;
-    /* Realistic 3D Spherical Lighting */
-    box-shadow: 
-        inset -30px -20px 50px rgba(0,0,0,0.9), 
-        inset 10px 10px 30px rgba(255,255,255,0.1),
-        0 0 30px rgba(66, 135, 245, 0.3);
-    animation: rotateEarth 25s linear infinite;
     position: relative;
     z-index: 5;
+    /* Realistic 3D Spherical Lighting (Shadows) */
+    box-shadow: 
+        inset 20px 0 80px 6px rgba(0, 0, 0, 1),      /* Dark Side */
+        inset -15px -10px 40px rgba(255, 255, 255, 0.1), /* Light Highlight */
+        0 0 50px rgba(66, 135, 245, 0.3);            /* Atmosphere Glow */
+    animation: rotateEarth 30s linear infinite;
 }
 
 @keyframes rotateEarth {
     from { background-position: 0 0; }
-    to { background-position: 600px 0; }
+    to { background-position: 400px 0; } /* Texture movement for rotation */
 }
 
-/* --- REAL ROCKY ASTEROID --- */
+/* --- ROCKY ASTEROID --- */
 .asteroid {
     position: absolute;
-    width: 25px;
-    height: 22px;
-    /* Stone Texture using Gradients & Shapes */
-    background: #4b3d3d;
-    background-image: radial-gradient(circle at 30% 30%, #6d5c5c, #2a1f1f);
-    /* Irregular shape like a real stone */
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    box-shadow: inset -3px -3px 8px rgba(0,0,0,0.7), 0 0 15px rgba(255, 69, 0, 0.6);
+    width: 22px;
+    height: 20px;
+    background: radial-gradient(circle at 30% 30%, #6d5c5c, #2a1f1f);
+    border-radius: 40% 60% 50% 50%;
+    box-shadow: inset -3px -3px 8px rgba(0,0,0,0.8), 0 0 15px #ff4500;
     z-index: 10;
     pointer-events: none;
 }
 
-/* Fire Tail for Asteroid */
 .asteroid::after {
     content: '';
     position: absolute;
-    top: -30px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
-    width: 8px;
-    height: 50px;
-    background: linear-gradient(to bottom, transparent, #ff4500, #ff8c00, #ffff00);
-    filter: blur(3px);
-    border-radius: 50%;
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, #ff4500, #ffff00);
+    filter: blur(2px);
 }
 
-/* Impact Fire Explosion */
+/* Impact Explosion */
 .impact-fire {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     background: radial-gradient(circle, #fff 5%, #ffea00 20%, #ff4500 50%, transparent 80%);
     border-radius: 50%;
     transform: scale(0);
-    animation: explode 0.7s ease-out forwards;
+    animation: explode 0.6s ease-out forwards;
     z-index: 11;
 }
 
 @keyframes explode {
     0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(3); opacity: 0; }
+    100% { transform: scale(2.5); opacity: 0; }
 }
 
-/* Screen Shake */
 .shake { animation: shakeScreen 0.1s infinite; }
 @keyframes shakeScreen {
     0% { transform: translate(0,0); }
@@ -249,14 +242,14 @@ body {
             </div>
 
             <div class="mining-visualizer" id="mineCircle">
-    <!-- Atmosphere Glow -->
-    <div style="position:absolute; width:260px; height:260px; background:radial-gradient(circle, rgba(66,135,245,0.15) 0%, transparent 70%); border-radius:50%;"></div>
+    <!-- Atmosphere Glow behind Earth -->
+    <div style="position:absolute; width:260px; height:260px; background:radial-gradient(circle, rgba(66,135,245,0.1) 0%, transparent 70%); border-radius:50%;"></div>
     
+    <!-- The 3D Earth -->
     <div class="earth-3d" id="earth"></div>
-    <div id="asteroid-container" style="position:absolute; width:100%; height:100%; pointer-events:none;"></div>
     
-    <!-- Balance Text -->
-    <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:24px; color:#fff; text-shadow:0 0 20px #000; font-weight:bold;" id="coinInsideCircle">0</div>
+    <!-- Container for Asteroids -->
+    <div id="asteroid-container" style="position:absolute; width:100%; height:100%; pointer-events:none;"></div>
 </div>
             <div style="text-align:center; margin-bottom:20px;">
                 <button id="adWatchBtn" class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
@@ -716,7 +709,7 @@ body {
                 earth.style.animationDuration = "15s"; // Mining ke waqt tez ghumega
                 startAsteroidShower();
             } else {
-                earth.style.animationDuration = "25s";
+                earth.style.animationDuration = "30s";
                 stopAsteroidShower();
             }
             mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
@@ -725,7 +718,7 @@ body {
 
         function startAsteroidShower() {
             if (asteroidInterval) return;
-            asteroidInterval = setInterval(() => spawnAsteroid(), 2000); // Har 2 sec mein impact
+            asteroidInterval = setInterval(() => spawnAsteroid(), 2500); 
         }
 
         function stopAsteroidShower() {
@@ -738,7 +731,6 @@ body {
             const asteroid = document.createElement('div');
             asteroid.className = 'asteroid';
             
-            // Random start positions
             const startX = Math.random() > 0.5 ? -60 : 360;
             const startY = Math.random() * 300 - 50;
 
@@ -746,11 +738,10 @@ body {
             asteroid.style.top = startY + 'px';
             container.appendChild(asteroid);
 
-            // Move to Earth Center
             const anim = asteroid.animate([
                 { left: startX + 'px', top: startY + 'px', transform: 'rotate(0deg)' },
                 { left: '140px', top: '140px', transform: 'rotate(720deg)' }
-            ], { duration: 900, easing: 'ease-in' });
+            ], { duration: 1000, easing: 'ease-in' });
 
             anim.onfinish = () => {
                 asteroid.remove();
@@ -762,20 +753,26 @@ body {
             const container = document.getElementById('asteroid-container');
             const fire = document.createElement('div');
             fire.className = 'impact-fire';
-            fire.style.left = (x - 40) + 'px';
-            fire.style.top = (y - 40) + 'px';
+            fire.style.left = (x - 35) + 'px';
+            fire.style.top = (y - 35) + 'px';
             container.appendChild(fire);
 
-            // Vibration (Mobile)
-            if (navigator.vibrate) navigator.vibrate(70); 
-            
-            // Screen Shake
+            if (navigator.vibrate) navigator.vibrate(60); 
             document.body.classList.add('shake');
             setTimeout(() => {
                 document.body.classList.remove('shake');
                 fire.remove();
             }, 600);
         }
+
+        // Updated to remove circle text update
+        function updateCoinDisplays(v) {
+            const f = Math.floor(v).toLocaleString();
+            document.getElementById('totalCoins').innerText = f;
+            document.getElementById('walletCoins').innerText = f;
+            // Circle text update line removed
+        }
+        
         function startLiveCounter() {
             setInterval(() => {
                 const now = Date.now();
