@@ -49,6 +49,7 @@
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
         /* --- REALISTIC 3D EARTH --- */
+/* --- REALISTIC 3D EARTH --- */
 .mining-visualizer {
     position: relative;
     width: 300px;
@@ -62,15 +63,15 @@
 .earth-3d {
     width: 200px;
     height: 200px;
-    /* High Quality Stable Texture */
-    background: url('https://raw.githubusercontent.com/tuchkarem/earth-3d/master/earth.jpg');
+    /* High Quality Stable Texture Link */
+    background: url('https://storage.googleapis.com/gd-hub-assets/earth_daymap.jpg');
     background-size: cover;
     border-radius: 50%;
     position: relative;
     z-index: 5;
-    /* Spherical 3D Effect (Shadows) */
+    /* 3D Spherical Shadows */
     box-shadow: 
-        inset 20px 0 60px 10px rgba(0,0,0,0.9), 
+        inset 25px 0 70px 10px rgba(0,0,0,0.9), 
         inset -10px -10px 30px rgba(255,255,255,0.1),
         0 0 40px rgba(66, 135, 245, 0.3);
     animation: rotateEarth 25s linear infinite;
@@ -79,6 +80,18 @@
 @keyframes rotateEarth {
     from { background-position: 0 0; }
     to { background-position: 400px 0; }
+}
+
+/* --- ONLY EARTH SHAKE ANIMATION --- */
+.earth-shake {
+    animation: miniShake 0.2s ease-in-out;
+}
+
+@keyframes miniShake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(-3px, 3px); }
+    50% { transform: translate(3px, -3px); }
+    75% { transform: translate(-3px, -3px); }
 }
 
 /* Rocky Asteroid */
@@ -101,11 +114,9 @@
     position: absolute; width: 70px; height: 70px;
     background: radial-gradient(circle, #fff 5%, #ffea00 20%, #ff4500 50%, transparent 80%);
     border-radius: 50%; transform: scale(0);
-    animation: explode 0.6s ease-out forwards; z-index: 11;
+    animation: explode 0.7s ease-out forwards; z-index: 11;
 }
 @keyframes explode { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
-.shake { animation: shakeScreen 0.1s infinite; }
-@keyframes shakeScreen { 0% { transform: translate(0,0); } 50% { transform: translate(-5px, 5px); } 100% { transform: translate(5px, -5px); } }
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
@@ -724,17 +735,23 @@
 
         function triggerImpact(x, y) {
             const container = document.getElementById('asteroid-container');
-            if(!container) return;
+            const earth = document.getElementById('earth'); // Earth element ko pakda
+            if(!container || !earth) return;
+
             const fire = document.createElement('div');
             fire.className = 'impact-fire';
             fire.style.left = (x - 35) + 'px';
             fire.style.top = (y - 35) + 'px';
             container.appendChild(fire);
 
-            if (navigator.vibrate) navigator.vibrate(60); 
-            document.body.classList.add('shake');
+            // 1. Vibration (Mobile Haptics)
+            if (navigator.vibrate) navigator.vibrate(50); 
+
+            // 2. ONLY EARTH SHAKE (Not full screen)
+            earth.classList.add('earth-shake');
+            
             setTimeout(() => {
-                document.body.classList.remove('shake');
+                earth.classList.remove('earth-shake');
                 fire.remove();
             }, 600);
         }
