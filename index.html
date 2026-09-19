@@ -751,13 +751,6 @@
             if(walletEl) walletEl.innerText = f;
         }
 
-        function updateCoinDisplays(v) {
-    const f = Math.floor(v).toLocaleString();
-    document.getElementById('totalCoins').innerText = f;
-    document.getElementById('walletCoins').innerText = f;
-    document.getElementById('coinInsideCircle').innerText = f;
-    // Wallet value (₹) wali line yahan se hata di gayi hai
-}
 
         window.showSection = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
