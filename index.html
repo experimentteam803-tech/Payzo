@@ -48,11 +48,17 @@
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- 3D EARTH & ASTEROID SYSTEM --- */
+        /* --- UNIVERSAL SPACE BACKGROUND --- */
+body {
+    background: #050505 url('https://www.transparenttextures.com/patterns/stardust.png'); /* Stars effect */
+    background-attachment: fixed;
+}
+
+/* --- REALISTIC 3D EARTH --- */
 .mining-visualizer {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 300px;
+    height: 300px;
     margin: 20px auto;
     display: flex;
     align-items: center;
@@ -60,18 +66,19 @@
     perspective: 1000px;
 }
 
-/* Rotating Earth */
 .earth-3d {
-    width: 180px;
-    height: 180px;
+    width: 190px;
+    height: 190px;
     background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_copy.jpg/640px-The_Blue_Marble_copy.jpg');
-    background-size: cover;
+    background-size: auto 100%;
     border-radius: 50%;
-    box-shadow: inset -20px -20px 50px rgba(0,0,0,0.8), 0 0 50px rgba(59, 130, 246, 0.4);
-    animation: rotateEarth 15s linear infinite;
+    /* Realistic 3D Shadow */
+    box-shadow: inset -25px -20px 40px rgba(0,0,0,0.9), 
+                0 0 40px rgba(59, 130, 246, 0.5);
+    animation: rotateEarth 20s linear infinite;
     position: relative;
     z-index: 5;
-    transition: 0.5s;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 @keyframes rotateEarth {
@@ -79,58 +86,57 @@
     to { background-position: 640px 0; }
 }
 
-/* Asteroid Style */
+/* --- REALISTIC ROCKY ASTEROID --- */
 .asteroid {
     position: absolute;
-    width: 15px;
-    height: 15px;
-    background: #555;
-    border-radius: 40% 60% 50% 50%;
-    box-shadow: inset -2px -2px 5px #000, 0 0 10px #ff4500;
+    width: 20px;
+    height: 18px;
+    /* Rocky Texture using Gradients */
+    background: radial-gradient(circle at 30% 30%, #8b4513, #4b250a);
+    border-radius: 40% 70% 50% 60%; /* Irregular shape like a stone */
+    box-shadow: inset -3px -3px 5px rgba(0,0,0,0.8), 0 0 15px #ff4500;
     z-index: 10;
     pointer-events: none;
 }
 
-/* Fire Tail for Asteroid */
+/* Fire Tail */
 .asteroid::after {
     content: '';
     position: absolute;
-    top: -20px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 30px;
-    background: linear-gradient(to bottom, transparent, #ff4500, #ffff00);
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, #ff4500, #ff8c00, #ffff00);
     filter: blur(2px);
+    border-radius: 50%;
 }
 
-/* Impact Fire Animation */
+/* Impact Explosion */
 .impact-fire {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, #ffff00, #ff4500, transparent);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #fff 10%, #ff4500 40%, transparent 70%);
     border-radius: 50%;
     transform: scale(0);
-    animation: explode 0.5s ease-out forwards;
+    animation: explode 0.6s ease-out forwards;
     z-index: 11;
 }
 
 @keyframes explode {
     0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
+    50% { transform: scale(1.5); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
 }
 
-/* Screen Shake Effect */
-.shake {
-    animation: shakeScreen 0.2s ease-in-out;
-}
-
+.shake { animation: shakeScreen 0.15s infinite; }
 @keyframes shakeScreen {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(-5px, 5px); }
-    50% { transform: translate(5px, -5px); }
-    75% { transform: translate(-5px, -5px); }
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-4px, 4px); }
+    50% { transform: translate(4px, -4px); }
+    100% { transform: translate(0,0); }
 }
         /* Watch Page Cards */
         .ad-task-card {
@@ -239,10 +245,14 @@
             </div>
 
             <div class="mining-visualizer" id="mineCircle">
+    <!-- Space Glow behind Earth -->
+    <div style="position:absolute; width:250px; height:250px; background:radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%);"></div>
+    
     <div class="earth-3d" id="earth"></div>
-    <div id="asteroid-container" style="position:absolute; width:100%; height:100%; overflow:hidden; pointer-events:none;"></div>
-    <!-- Coins inside circle text agar chahiye toh yahan rehne dein -->
-    <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:20px; color:#fff; text-shadow:0 0 10px #000;" id="coinInsideCircle">0</div>
+    <div id="asteroid-container" style="position:absolute; width:100%; height:100%; pointer-events:none;"></div>
+    
+    <!-- Balance Text on top of Earth -->
+    <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:22px; color:#fff; text-shadow:0 0 15px #000; font-weight:bold;" id="coinInsideCircle">0</div>
 </div>
 
             <div style="text-align:center; margin-bottom:20px;">
@@ -699,22 +709,20 @@
             const earth = document.getElementById('earth');
             const mineBtn = document.getElementById('mineBtn');
             
-            document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
-            mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
-
             if (isActive) {
-                earth.style.boxShadow = "0 0 60px rgba(50, 205, 50, 0.6)";
+                earth.style.boxShadow = "0 0 60px rgba(50, 205, 50, 0.4), inset -25px -20px 40px rgba(0,0,0,0.9)";
                 startAsteroidShower();
             } else {
-                earth.style.boxShadow = "0 0 50px rgba(59, 130, 246, 0.4)";
+                earth.style.boxShadow = "0 0 40px rgba(59, 130, 246, 0.3), inset -25px -20px 40px rgba(0,0,0,0.9)";
                 stopAsteroidShower();
             }
+            mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
             updateCoinDisplays(window.coins);
         }
 
         function startAsteroidShower() {
             if (asteroidInterval) return;
-            asteroidInterval = setInterval(() => spawnAsteroid(), 2500);
+            asteroidInterval = setInterval(() => spawnAsteroid(), 2000); // Har 2 sec mein ek patthar
         }
 
         function stopAsteroidShower() {
@@ -727,24 +735,23 @@
             const asteroid = document.createElement('div');
             asteroid.className = 'asteroid';
             
-            const side = Math.floor(Math.random() * 3);
-            let startX, startY;
-            if(side === 0) { startX = -30; startY = Math.random() * 200; }
-            else if(side === 1) { startX = 300; startY = Math.random() * 200; }
-            else { startX = Math.random() * 200; startY = -30; }
+            // Random start positions from corners
+            const startX = Math.random() > 0.5 ? -50 : 350;
+            const startY = Math.random() * 300 - 50;
 
             asteroid.style.left = startX + 'px';
             asteroid.style.top = startY + 'px';
             container.appendChild(asteroid);
 
+            // Path to Earth center
             const anim = asteroid.animate([
-                { left: startX + 'px', top: startY + 'px' },
-                { left: '130px', top: '130px' }
-            ], { duration: 1200, easing: 'ease-in' });
+                { left: startX + 'px', top: startY + 'px', transform: 'rotate(0deg)' },
+                { left: '140px', top: '140px', transform: 'rotate(360deg)' }
+            ], { duration: 1000, easing: 'linear' });
 
             anim.onfinish = () => {
                 asteroid.remove();
-                triggerImpact(130, 130);
+                triggerImpact(140, 140);
             };
         }
 
@@ -752,13 +759,18 @@
             const container = document.getElementById('asteroid-container');
             const fire = document.createElement('div');
             fire.className = 'impact-fire';
-            fire.style.left = (x - 5) + 'px';
-            fire.style.top = (y - 5) + 'px';
+            fire.style.left = (x - 30) + 'px';
+            fire.style.top = (y - 30) + 'px';
             container.appendChild(fire);
 
-            if (navigator.vibrate) navigator.vibrate(40); 
+            // Vibration & Shake
+            if (navigator.vibrate) navigator.vibrate(60); 
             document.body.classList.add('shake');
-            setTimeout(() => { document.body.classList.remove('shake'); fire.remove(); }, 500);
+            
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+                fire.remove();
+            }, 600);
         }
 
         function startLiveCounter() {
