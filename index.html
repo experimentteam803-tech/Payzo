@@ -883,7 +883,8 @@
                             div.className = "ad-task-card";
                             div.style.cursor = "pointer";
                             div.onclick = () => openTaskDetails(taskId, task);
-                            div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#ffd700; font-weight:bold;">Reward: ${task.reward} Coins</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
+                            const rupeeValue = (task.reward / 100).toFixed(2);
+                        div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#32cd32; font-weight:bold;">Reward: ₹${rupeeValue}</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
                             container.appendChild(div);
                         }
                     });
@@ -904,7 +905,7 @@
                 <div style="text-align:center; margin-bottom:20px;">
                     <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
                     <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
-                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ${task.reward} Coins</p>
+                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / 100).toFixed(2)}</p>
                 </div>
                 <div style="margin-bottom:20px;">${stepsHtml}</div>
                 
