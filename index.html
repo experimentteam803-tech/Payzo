@@ -494,21 +494,21 @@
             }, 1000);
         }
 
-        window.handleWithdrawal = () => {
+        window.handleWithdrawal = async () => {
             const a = Number(document.getElementById('withdrawAmount').value);
             const d = document.getElementById('withdrawAddress').value;
             
-            let minLimit = 1000;
-            if (window.currentMethod === 'paypal') minLimit = 10000;
-            else if (window.currentMethod === 'crypto') minLimit = 10000;
+            let minLimit = 1000; // Aapka naya limit 1000 coins
+            if (window.currentMethod === 'paypal') minLimit = 5000;
+            else if (window.currentMethod === 'crypto') minLimit = 5000;
             
             if (a < minLimit) return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
             if (a > window.coins) return alert("Insufficient Balance!");
             if (!d) return alert("Please enter payment address/ID");
 
-            // --- ADS LOGIC RE-ENABLED ---
+            // --- 1. ADS CHECK (Pehle se jo hai) ---
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch an ad to proceed with withdrawal?`)) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch an ad to proceed?`)) {
                     AdController.show().then((result) => {
                         if (result.done) { 
                             window.withdrawAdsCounter++; 
@@ -517,20 +517,45 @@
                     }).catch(() => {
                         runDynamicMonetag("10361814", () => { 
                             window.withdrawAdsCounter++; 
-                            alert(`Ad watched! (${window.withdrawAdsCounter}/${window.withdrawAdsReq})`);
                         });
                     });
                 }
                 return;
             }
 
+            // --- 2. TASK COMPLETION CHECK (NAYA FEATURE) ---
+            try {
+                // Database se user ke completed tasks check karein
+                const taskSnap = await get(ref(database, `${userPath}/completed_tasks`));
+                let hasValidTask = false;
+
+                if (taskSnap.exists()) {
+                    const tasks = taskSnap.val();
+                    // Check karein ki kya koi aisa task hai jo 'Rejected' nahi hai
+                    hasValidTask = Object.values(tasks).some(t => t.status !== 'Rejected');
+                }
+
+                if (!hasValidTask) {
+                    // Agar koi task nahi kiya toh Popup dikhao
+                    document.getElementById('popupTitle').innerText = "⚠️ Task Required";
+                    document.getElementById('popupMessage').innerText = "Withdrawal karne ke liye aapko kam se kam 1 Task pura karna zaroori hai. Kripya Home screen par 🎯 icon par click karke koi bhi ek task complete karein.";
+                    document.getElementById('globalPopup').style.display = 'flex';
+                    return; // Withdrawal process yahin rok dein
+                }
+            } catch (error) {
+                console.error("Task check error:", error);
+                return alert("Technical error, please try again.");
+            }
+
+            // --- 3. FINAL WITHDRAWAL SUBMISSION ---
             const rData = { 
                 amount: a, 
                 address: d, 
                 method: window.currentMethod, 
                 status: 'Pending', 
                 timestamp: Date.now(), 
-                userId: TELEGRAM_USER_ID 
+                userId: TELEGRAM_USER_ID,
+                userEmail: TELEGRAM_USER_NAME // Ya email agar available ho
             };
 
             const key = push(ref(database, 'withdrawals')).key;
@@ -541,7 +566,7 @@
             
             update(ref(database), updates).then(() => {
                 alert("Withdrawal Requested Successfully!");
-                window.withdrawAdsCounter = 0; // Reset counter after success
+                window.withdrawAdsCounter = 0;
                 document.getElementById('withdrawAmount').value = "";
                 document.getElementById('withdrawAddress').value = "";
             });
