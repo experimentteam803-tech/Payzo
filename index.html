@@ -9,17 +9,18 @@
     
     <!-- 2. RichAds SDKs -->
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-          <script>
-            window.TelegramAdsController = new TelegramAdsController();
-            window.TelegramAdsController.initialize({
-              pubId: "996843",
-              appId: "5142",
-            });
-          </script>
-        <!-- AdsGram SDK -->
+    <script>
+        window.TelegramAdsController = new TelegramAdsController();
+        window.TelegramAdsController.initialize({
+            pubId: "996843",
+            appId: "5142",
+        });
+    </script>
+    <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->    
-   <script src='//libtl.com/sdk.js' data-zone='10361814' data-sdk='show_10361814'></script>
+    <script src='//libtl.com/sdk.js' data-zone='10361814' data-sdk='show_10361814'></script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
@@ -44,94 +45,164 @@
         #home{display:block;}
 
         /* Home Balance */
-        .balance-card { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; }
+        .balance-card { position: relative; background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; transition: transform 0.2s; }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- 3D EARTH & ASTEROID SYSTEM --- */
-.mining-visualizer {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    margin: 20px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 1000px;
-}
+        /* --- 3D EARTH (earth.png) & MINING VISUALIZER --- */
+        .mining-visualizer {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 15px auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* Rotating Earth */
-.earth-3d {
-    width: 180px;
-    height: 180px;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_copy.jpg/640px-The_Blue_Marble_copy.jpg');
-    background-size: cover;
-    border-radius: 50%;
-    box-shadow: inset -20px -20px 50px rgba(0,0,0,0.8), 0 0 50px rgba(59, 130, 246, 0.4);
-    animation: rotateEarth 15s linear infinite;
-    position: relative;
-    z-index: 5;
-    transition: 0.5s;
-}
+        /* Earth Wrapper with 3D Sphere Glow */
+        .earth-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 35px rgba(0, 162, 255, 0.5), inset -25px -20px 40px rgba(0,0,0,0.85);
+            overflow: hidden;
+            transition: box-shadow 0.4s ease;
+        }
 
-@keyframes rotateEarth {
-    from { background-position: 0 0; }
-    to { background-position: 640px 0; }
-}
+        /* Rotating Earth using earth.png */
+        .earth-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            animation: rotateEarth 22s linear infinite;
+            pointer-events: none;
+            user-select: none;
+        }
 
-/* Asteroid Style */
-.asteroid {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background: #555;
-    border-radius: 40% 60% 50% 50%;
-    box-shadow: inset -2px -2px 5px #000, 0 0 10px #ff4500;
-    z-index: 10;
-    pointer-events: none;
-}
+        @keyframes rotateEarth {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-/* Fire Tail for Asteroid */
-.asteroid::after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 30px;
-    background: linear-gradient(to bottom, transparent, #ff4500, #ffff00);
-    filter: blur(2px);
-}
+        /* Spherical Shade Overlay for Real 3D Planet Feel */
+        .earth-3d-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.85) 100%);
+            box-shadow: inset -20px -20px 35px rgba(0, 0, 0, 0.9);
+            pointer-events: none;
+            z-index: 6;
+        }
 
-/* Impact Fire Animation */
-.impact-fire {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, #ffff00, #ff4500, transparent);
-    border-radius: 50%;
-    transform: scale(0);
-    animation: explode 0.5s ease-out forwards;
-    z-index: 11;
-}
+        /* Earth Vibration on Impact */
+        .earth-vibrate {
+            animation: earthShakeAnim 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
 
-@keyframes explode {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
-}
+        @keyframes earthShakeAnim {
+            10%, 90% { transform: translate3d(-3px, -2px, 0); }
+            20%, 80% { transform: translate3d(4px, 3px, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 2px, 0); }
+            40%, 60% { transform: translate3d(4px, -3px, 0); }
+        }
 
-/* Screen Shake Effect */
-.shake {
-    animation: shakeScreen 0.2s ease-in-out;
-}
+        /* Realistic Stone Asteroid */
+        .realistic-asteroid {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle at 35% 30%, #b8aea2 0%, #4f4942 50%, #171513 100%);
+            border-radius: 42% 58% 65% 35% / 40% 45% 55% 60%;
+            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.9), inset 2px 2px 4px rgba(255,255,255,0.35), 0 0 12px rgba(255, 69, 0, 0.9);
+            z-index: 12;
+            pointer-events: none;
+        }
 
-@keyframes shakeScreen {
-    0%, 100% { transform: translate(0, 0); }
-    25% { transform: translate(-5px, 5px); }
-    50% { transform: translate(5px, -5px); }
-    75% { transform: translate(-5px, -5px); }
-}
+        .realistic-asteroid::before {
+            content: '';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 35px;
+            background: linear-gradient(to top, #ff2200, #ff8800, #ffea00, transparent);
+            border-radius: 50%;
+            filter: blur(1.5px);
+        }
+
+        /* Impact Shockwave */
+        .realistic-impact {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ffffff 0%, #ffcc00 30%, #ff3b00 65%, transparent 75%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            animation: impactBurst 0.45s ease-out forwards;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        @keyframes impactBurst {
+            0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; filter: brightness(2); }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: blur(3px); }
+        }
+
+        /* Flying Coins Debris toward Balance */
+        .flying-coin-debris {
+            position: fixed;
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%);
+            border-radius: 50%;
+            border: 1px solid #ffffff;
+            box-shadow: 0 0 12px #ffd700, 0 0 20px #ff9900;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: all 0.85s cubic-bezier(0.12, 0.8, 0.32, 1);
+        }
+
+        .rock-fragment {
+            position: absolute;
+            background: #6e655f;
+            border-radius: 30%;
+            pointer-events: none;
+            z-index: 20;
+            animation: scatterRock 0.6s ease-out forwards;
+        }
+
+        @keyframes scatterRock {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .screen-shake {
+            animation: screenRumble 0.22s ease-in-out;
+        }
+
+        @keyframes screenRumble {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-3px, 3px); }
+            50% { transform: translate(3px, -2px); }
+            75% { transform: translate(-2px, -3px); }
+        }
+
         /* Watch Page Cards */
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
@@ -150,11 +221,10 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 250px; /* Box ki height fix ki */
-            overflow-y: auto;  /* Scroll enable kiya */
+            max-height: 250px;
+            overflow-y: auto;
             padding-right: 5px;
         }
-        /* Scrollbar ko sundar banane ke liye */
         .history-list::-webkit-scrollbar { width: 4px; }
         .history-list::-webkit-scrollbar-thumb { background: rgba(50, 205, 50, 0.3); border-radius: 10px; }
         .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
@@ -196,6 +266,7 @@
         @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         /* Task System Animations */
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .task-step {
@@ -206,7 +277,6 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
@@ -216,7 +286,6 @@
             <span id="username">Loading...</span>
         </div>
         <div class="header-right">
-            <!-- Customer Support Icon (Header mein Gift ke left mein) -->
             <div style="cursor: pointer; font-size: 18px; background: rgba(0, 198, 255, 0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 198, 255, 0.3); margin-right: 8px;" onclick="contactSupport()">
                 <i class="fas fa-headset" style="color: #00c6ff;"></i>
             </div>
@@ -224,6 +293,7 @@
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
         </div>        
     </header>    
+
     <!-- Draggable Task Emoji -->
     <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:grab; touch-action:none;">
         <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
@@ -231,19 +301,23 @@
             <span style="position:absolute; top:-5px; right:-2px; background:red; color:white; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid white;">NEW</span>
         </div>
     </div>
+
     <main>
         <section id="home" class="section">
-            <div class="balance-card">
+            <div class="balance-card" id="balanceCard">
                 <h2>Net Balance</h2>
                 <div id="totalCoins">0</div>
             </div>
 
+            <!-- 3D Earth Display (Rotates earth.png) -->
             <div class="mining-visualizer" id="mineCircle">
-    <div class="earth-3d" id="earth"></div>
-    <div id="asteroid-container" style="position:absolute; width:100%; height:100%; overflow:hidden; pointer-events:none;"></div>
-    <!-- Coins inside circle text agar chahiye toh yahan rehne dein -->
-    <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:20px; color:#fff; text-shadow:0 0 10px #000;" id="coinInsideCircle">0</div>
-</div>
+                <div class="earth-container" id="earthBox">
+                    <img src="earth.png" alt="Earth" class="earth-img" id="earthImg" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80'">
+                    <div class="earth-3d-shadow"></div>
+                </div>
+                <div id="asteroid-container" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; z-index:15;"></div>
+                <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:18px; color:#fff; text-shadow:0 0 10px #000; pointer-events:none;" id="coinInsideCircle">0</div>
+            </div>
 
             <div style="text-align:center; margin-bottom:20px;">
                 <button id="adWatchBtn" class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
@@ -450,9 +524,8 @@
         
         window.contactSupport = () => {
             const userId = TELEGRAM_USER_ID; 
-            const supportLink = "https://t.me/PayZoHelp"; // <-- Yahan apni Support ID daalein
+            const supportLink = "https://t.me/PayZoHelp";
 
-            // Clipboard par copy karne ka logic
             navigator.clipboard.writeText(userId).then(() => {
                 alert(`📋 ID Copied: ${userId}\n\nUser ID copy ho gayi hai! Telegram par paste karke hume message karein.`);
                 window.open(supportLink, '_blank');
@@ -478,7 +551,6 @@
                 if(item.method === window.currentMethod) {
                     found = true;
                     const statusClass = `status-${item.status.toLowerCase()}`;
-                    // ₹ Value calculate karein (Coins / 1000)
                     const rupeesValue = (item.amount / 100).toFixed(2);
                     html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins <b style="color:#90ee90;">(₹${rupeesValue})</b></span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
                 }
@@ -530,11 +602,9 @@
             if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
             if(btn.disabled) return;
 
-            // Asli Ad logic
             AdController.show().then((result) => { 
                 if (result.done) handleAdSuccess(); 
             }).catch(() => {
-                // Fallback to Monetag if Adsgram fails
                 runDynamicMonetag("10361814", handleAdSuccess);
             });
         };
@@ -571,7 +641,7 @@
             const a = Number(document.getElementById('withdrawAmount').value);
             const d = document.getElementById('withdrawAddress').value;
             
-            let minLimit = 1000; // Aapka naya limit 1000 coins
+            let minLimit = 1000;
             if (window.currentMethod === 'paypal') minLimit = 5000;
             else if (window.currentMethod === 'crypto') minLimit = 5000;
             
@@ -579,7 +649,6 @@
             if (a > window.coins) return alert("Insufficient Balance!");
             if (!d) return alert("Please enter payment address/ID");
 
-            // --- 1. ADS CHECK (Pehle se jo hai) ---
             if(window.withdrawAdsCounter < window.withdrawAdsReq) {
                 if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch an ad to proceed?`)) {
                     AdController.show().then((result) => {
@@ -596,31 +665,26 @@
                 return;
             }
 
-            // --- 2. TASK COMPLETION CHECK (NAYA FEATURE) ---
             try {
-                // Database se user ke completed tasks check karein
                 const taskSnap = await get(ref(database, `${userPath}/completed_tasks`));
                 let hasValidTask = false;
 
                 if (taskSnap.exists()) {
                     const tasks = taskSnap.val();
-                    // Check karein ki kya koi aisa task hai jo 'Rejected' nahi hai
                     hasValidTask = Object.values(tasks).some(t => t.status !== 'Rejected');
                 }
 
                 if (!hasValidTask) {
-                    // Agar koi task nahi kiya toh Popup dikhao
                     document.getElementById('popupTitle').innerText = "⚠️ Task Required";
                     document.getElementById('popupMessage').innerText = "Withdrawal karne ke liye aapko kam se kam 1 Task pura karna zaroori hai. Kripya Home screen par 🎯 icon par click karke koi bhi ek task complete karein.";
                     document.getElementById('globalPopup').style.display = 'flex';
-                    return; // Withdrawal process yahin rok dein
+                    return;
                 }
             } catch (error) {
                 console.error("Task check error:", error);
                 return alert("Technical error, please try again.");
             }
 
-            // --- 3. FINAL WITHDRAWAL SUBMISSION ---
             const rData = { 
                 amount: a, 
                 address: d, 
@@ -628,7 +692,7 @@
                 status: 'Pending', 
                 timestamp: Date.now(), 
                 userId: TELEGRAM_USER_ID,
-                userEmail: TELEGRAM_USER_NAME // Ya email agar available ho
+                userEmail: TELEGRAM_USER_NAME
             };
 
             const key = push(ref(database, 'withdrawals')).key;
@@ -666,7 +730,6 @@
                     const secondsPassed = (calculationTime - lastClaim) / 1000;
                     let earnedAmount = Math.floor((secondsPassed / 3600) * 250);
 
-                    // --- ANTI-GLITCH SHIELD ---
                     if (earnedAmount > 450) earnedAmount = 250; 
 
                     if (earnedAmount > 0) {
@@ -674,7 +737,7 @@
                         const currentCoins = userSnap.val().coins || 0;
                         const historyRef = push(ref(database, userPath + '/coin_history'));
                         
-                        if(earnedAmount > 500) return; // Security block
+                        if(earnedAmount > 500) return;
 
                         await update(dbRef, {
                             coins: currentCoins + earnedAmount,
@@ -693,20 +756,20 @@
             } else updateMiningUI(false);
         }
 
+        /* --- ASTEROID, EARTH VIBRATION & COIN ANIMATION --- */
         let asteroidInterval;
 
         function updateMiningUI(isActive) {
-            const earth = document.getElementById('earth');
+            const earthBox = document.getElementById('earthBox');
             const mineBtn = document.getElementById('mineBtn');
             
-            document.getElementById('mineCircle').classList.toggle('mining-active-glow', isActive);
             mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
 
             if (isActive) {
-                earth.style.boxShadow = "0 0 60px rgba(50, 205, 50, 0.6)";
+                earthBox.style.boxShadow = "0 0 50px rgba(50, 205, 50, 0.7), inset -25px -20px 40px rgba(0,0,0,0.85)";
                 startAsteroidShower();
             } else {
-                earth.style.boxShadow = "0 0 50px rgba(59, 130, 246, 0.4)";
+                earthBox.style.boxShadow = "0 0 35px rgba(0, 162, 255, 0.5), inset -25px -20px 40px rgba(0,0,0,0.85)";
                 stopAsteroidShower();
             }
             updateCoinDisplays(window.coins);
@@ -714,7 +777,8 @@
 
         function startAsteroidShower() {
             if (asteroidInterval) return;
-            asteroidInterval = setInterval(() => spawnAsteroid(), 2500);
+            spawnAsteroid();
+            asteroidInterval = setInterval(() => spawnAsteroid(), 2600);
         }
 
         function stopAsteroidShower() {
@@ -724,41 +788,121 @@
 
         function spawnAsteroid() {
             const container = document.getElementById('asteroid-container');
+            if (!container) return;
+
             const asteroid = document.createElement('div');
-            asteroid.className = 'asteroid';
-            
-            const side = Math.floor(Math.random() * 3);
-            let startX, startY;
-            if(side === 0) { startX = -30; startY = Math.random() * 200; }
-            else if(side === 1) { startX = 300; startY = Math.random() * 200; }
-            else { startX = Math.random() * 200; startY = -30; }
+            asteroid.className = 'realistic-asteroid';
+
+            const angles = [ -45, 30, 135, 210, 0, 80, 190 ];
+            const randomAngle = angles[Math.floor(Math.random() * angles.length)];
+            const dist = 170;
+            const center = 140; // Mining Visualizer Half (280/2)
+
+            const startX = center + Math.cos(randomAngle * Math.PI / 180) * dist;
+            const startY = center + Math.sin(randomAngle * Math.PI / 180) * dist;
+
+            const hitTargetX = center + (Math.random() * 60 - 30);
+            const hitTargetY = center + (Math.random() * 60 - 30);
+
+            const flightAngle = Math.atan2(hitTargetY - startY, hitTargetX - startX) * 180 / Math.PI + 90;
+            asteroid.style.transform = `rotate(${flightAngle}deg)`;
 
             asteroid.style.left = startX + 'px';
             asteroid.style.top = startY + 'px';
             container.appendChild(asteroid);
 
             const anim = asteroid.animate([
-                { left: startX + 'px', top: startY + 'px' },
-                { left: '130px', top: '130px' }
-            ], { duration: 1200, easing: 'ease-in' });
+                { left: startX + 'px', top: startY + 'px', transform: `rotate(${flightAngle}deg) scale(0.6)` },
+                { left: hitTargetX + 'px', top: hitTargetY + 'px', transform: `rotate(${flightAngle}deg) scale(1.15)` }
+            ], { duration: 900, easing: 'cubic-bezier(0.5, 0, 0.75, 0)' });
 
             anim.onfinish = () => {
                 asteroid.remove();
-                triggerImpact(130, 130);
+                triggerEarthCollision(hitTargetX, hitTargetY);
             };
         }
 
-        function triggerImpact(x, y) {
+        function triggerEarthCollision(x, y) {
             const container = document.getElementById('asteroid-container');
-            const fire = document.createElement('div');
-            fire.className = 'impact-fire';
-            fire.style.left = (x - 5) + 'px';
-            fire.style.top = (y - 5) + 'px';
-            container.appendChild(fire);
+            const earthBox = document.getElementById('earthBox');
 
-            if (navigator.vibrate) navigator.vibrate(40); 
-            document.body.classList.add('shake');
-            setTimeout(() => { document.body.classList.remove('shake'); fire.remove(); }, 500);
+            // 1. Shockwave Spark
+            const impact = document.createElement('div');
+            impact.className = 'realistic-impact';
+            impact.style.left = x + 'px';
+            impact.style.top = y + 'px';
+            container.appendChild(impact);
+            setTimeout(() => impact.remove(), 450);
+
+            // 2. Earth Vibration
+            earthBox.classList.remove('earth-vibrate');
+            void earthBox.offsetWidth;
+            earthBox.classList.add('earth-vibrate');
+            setTimeout(() => earthBox.classList.remove('earth-vibrate'), 350);
+
+            document.body.classList.add('screen-shake');
+            setTimeout(() => document.body.classList.remove('screen-shake'), 220);
+
+            if (navigator.vibrate) navigator.vibrate([35, 20, 25]);
+
+            // 3. Scatter Earth Fragments
+            for(let i = 0; i < 5; i++) {
+                const rock = document.createElement('div');
+                rock.className = 'rock-fragment';
+                const size = Math.random() * 5 + 3;
+                rock.style.width = size + 'px';
+                rock.style.height = size + 'px';
+                rock.style.left = x + 'px';
+                rock.style.top = y + 'px';
+                rock.style.setProperty('--tx', `${(Math.random() - 0.5) * 80}px`);
+                rock.style.setProperty('--ty', `${(Math.random() - 0.5) * 80}px`);
+                container.appendChild(rock);
+                setTimeout(() => rock.remove(), 600);
+            }
+
+            // 4. Flying Gold Coins into Net Balance
+            const coinCount = Math.floor(Math.random() * 2) + 2;
+            for(let c = 0; c < coinCount; c++) {
+                setTimeout(() => {
+                    spawnFlyingCoinToBalance(x, y);
+                }, c * 80);
+            }
+        }
+
+        function spawnFlyingCoinToBalance(relX, relY) {
+            const container = document.getElementById('asteroid-container');
+            const target = document.getElementById('totalCoins');
+            if (!container || !target) return;
+
+            const cRect = container.getBoundingClientRect();
+            const startScreenX = cRect.left + relX;
+            const startScreenY = cRect.top + relY;
+
+            const tRect = target.getBoundingClientRect();
+            const destX = tRect.left + tRect.width / 2;
+            const destY = tRect.top + tRect.height / 2;
+
+            const coin = document.createElement('div');
+            coin.className = 'flying-coin-debris';
+            coin.innerHTML = "🪙";
+            coin.style.left = startScreenX + 'px';
+            coin.style.top = startScreenY + 'px';
+            coin.style.transform = `translate(-50%, -50%) scale(0.6)`;
+            document.body.appendChild(coin);
+
+            requestAnimationFrame(() => {
+                coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.1) rotate(${Math.random() * 360}deg)`;
+                coin.style.opacity = '0.9';
+            });
+
+            setTimeout(() => {
+                coin.remove();
+                const balanceCard = document.getElementById('balanceCard');
+                if (balanceCard) {
+                    balanceCard.style.transform = 'scale(1.03)';
+                    setTimeout(() => balanceCard.style.transform = 'scale(1)', 150);
+                }
+            }, 850);
         }
 
         function startLiveCounter() {
@@ -773,12 +917,11 @@
         }
 
         function updateCoinDisplays(v) {
-    const f = Math.floor(v).toLocaleString();
-    document.getElementById('totalCoins').innerText = f;
-    document.getElementById('walletCoins').innerText = f;
-    document.getElementById('coinInsideCircle').innerText = f;
-    // Wallet value (₹) wali line yahan se hata di gayi hai
-}
+            const f = Math.floor(v).toLocaleString();
+            document.getElementById('totalCoins').innerText = f;
+            document.getElementById('walletCoins').innerText = f;
+            document.getElementById('coinInsideCircle').innerText = f;
+        }
 
         window.showSection = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -827,7 +970,6 @@
                             btnText = activeTimer + "s"; 
                             btnDisabled = true; 
                         } else if (isCooldown) { 
-                            // Yahan live update ke liye attributes jode gaye hain
                             btnText = "Next in " + formatCooldown(cooldownEndTime - now); 
                             btnDisabled = true; 
                             extraClass = "cooldown-timer";
@@ -867,102 +1009,94 @@
         }
 
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
-    const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
-    const userData = uSnap.val() || { count: 0, lastDone: 0 };
-    const now = Date.now();
-    const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
-    
-    if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
-    if (btn.disabled) return; 
+            const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
+            const userData = uSnap.val() || { count: 0, lastDone: 0 };
+            const now = Date.now();
+            const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
+            
+            if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
+            if (btn.disabled) return; 
 
-    // Reward function (Isse aapka history aur balance update hota hai)
-    const claim = () => {
-        startWatchTaskTimer(id);
-        const newCount = userData.count + 1;
-        const historyRef = push(ref(database, userPath + '/coin_history'));
-        const updates = {};
-        updates[`coins`] = window.coins + reward;
-        updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-        if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-        else updates[`ad_stats/${id}/count`] = newCount;
-        update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
-    };
+            const claim = () => {
+                startWatchTaskTimer(id);
+                const newCount = userData.count + 1;
+                const historyRef = push(ref(database, userPath + '/coin_history'));
+                const updates = {};
+                updates[`coins`] = window.coins + reward;
+                updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
+                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+                else updates[`ad_stats/${id}/count`] = newCount;
+                update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
+            };
 
-    // --- ADEXIUM MANUAL FLOW ---
-    if(adType === 'adexium') {
-        btn.innerText = "Loading...";
-        btn.disabled = true;
+            if(adType === 'adexium') {
+                btn.innerText = "Loading...";
+                btn.disabled = true;
 
-        const onAdReceived = (ad) => { 
-            window.adexiumAds.displayAd(ad); 
+                const onAdReceived = (ad) => { 
+                    window.adexiumAds.displayAd(ad); 
+                };
+
+                const onAdClosed = () => { 
+                    cleanup(); 
+                    claim(); 
+                };
+
+                const onNoAd = () => { 
+                    cleanup();
+                    console.log("Adexium failed, switching to fallback...");
+                    runDynamicMonetag("10361814", () => {
+                        btn.innerText = "Watch";
+                        btn.disabled = false;
+                        claim(); 
+                    });
+                };
+
+                const cleanup = () => {
+                    window.adexiumAds.off('adReceived', onAdReceived);
+                    window.adexiumAds.off('adClosed', onAdClosed);
+                    window.adexiumAds.off('noAdFound', onNoAd);
+                };
+
+                window.adexiumAds.on('adReceived', onAdReceived);
+                window.adexiumAds.on('adClosed', onAdClosed);
+                window.adexiumAds.on('noAdFound', onNoAd);
+
+                window.adexiumAds.requestAd('interstitial');
+            }
+            else if(adType === 'adsgram') {
+                const TaskAd = window.Adsgram.init({ blockId: adId });
+                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
+            }
+            else {
+                runDynamicMonetag(adId || "10361814", claim);
+            }
         };
-
-        // YE CHANGE HAI: adDisplayed ki jagah adClosed use kar rahe hain
-        const onAdClosed = () => { 
-            cleanup(); 
-            claim(); // Reward ab ad khatam hone (close) par milega
-        };
-
-        const onNoAd = () => { 
-            cleanup();
-            console.log("Adexium failed, switching to fallback...");
-            runDynamicMonetag("10361814", () => {
-                btn.innerText = "Watch";
-                btn.disabled = false;
-                claim(); 
-            });
-        };
-
-        const cleanup = () => {
-            window.adexiumAds.off('adReceived', onAdReceived);
-            window.adexiumAds.off('adClosed', onAdClosed); // Event remove karna zaruri hai
-            window.adexiumAds.off('noAdFound', onNoAd);
-        };
-
-        // Listeners ko register karein
-        window.adexiumAds.on('adReceived', onAdReceived);
-        window.adexiumAds.on('adClosed', onAdClosed); // Jab user ad band karega
-        window.adexiumAds.on('noAdFound', onNoAd);
-
-        window.adexiumAds.requestAd('interstitial');
-    }
-    // --- ADSGRAM & MONETAG (Pehle wala same rahega) ---
-    else if(adType === 'adsgram') {
-        const TaskAd = window.Adsgram.init({ blockId: adId });
-        TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
-    }
-    else {
-        runDynamicMonetag(adId || "10361814", claim);
-    }
-};
-    
 
         function startWatchTaskTimer(taskId) {
-    window.activeTimers[taskId] = 10; // 10 second ka timer
-    const timerInterval = setInterval(() => {
-        window.activeTimers[taskId]--;
-        const btn = document.getElementById(`btn-${taskId}`);
+            window.activeTimers[taskId] = 10;
+            const timerInterval = setInterval(() => {
+                window.activeTimers[taskId]--;
+                const btn = document.getElementById(`btn-${taskId}`);
 
-        if (window.activeTimers[taskId] <= 0) {
-            // Timer khatam hone par ye chalega
-            clearInterval(timerInterval);
-            delete window.activeTimers[taskId];
-            
-            if (btn) {
-                btn.innerText = "Watch"; // Wapas "Watch" likho
-                btn.disabled = false;    // Button ko chalu karo
-                btn.style.background = "#fff"; // Original color (white)
-                btn.style.color = "#000";      // Original text color (black)
-            }
-        } else {
-            // Jab tak timer chal raha hai
-            if (btn) {
-                btn.innerText = window.activeTimers[taskId] + "s";
-                btn.disabled = true; // Timer ke waqt button band rakho
-            }
+                if (window.activeTimers[taskId] <= 0) {
+                    clearInterval(timerInterval);
+                    delete window.activeTimers[taskId];
+                    
+                    if (btn) {
+                        btn.innerText = "Watch";
+                        btn.disabled = false;
+                        btn.style.background = "#fff";
+                        btn.style.color = "#000";
+                    }
+                } else {
+                    if (btn) {
+                        btn.innerText = window.activeTimers[taskId] + "s";
+                        btn.disabled = true;
+                    }
+                }
+            }, 1000);
         }
-    }, 1000);
-}
         
         window.startDailyMining = () => {
             const now = Date.now();
@@ -988,38 +1122,33 @@
             }
         }, 120000);
 
-        // Live Cooldown Ticker (Har 1 second mein update hoga)
         setInterval(() => {
             const now = Date.now();
             
-            // Sirf un buttons ko update karega jo cooldown mein hain
             const cooldownButtons = document.querySelectorAll('.cooldown-timer');
             cooldownButtons.forEach(btn => {
                 const expireTime = parseInt(btn.getAttribute('data-expire'));
                 const timeLeft = expireTime - now;
 
                 if (timeLeft <= 0) {
-                    // Time khatam: Button ko wapas normal karo
                     btn.classList.remove('cooldown-timer');
                     btn.innerText = "Watch";
                     btn.disabled = false;
                     btn.style.background = "#fff";
                     btn.style.color = "#000";
-                    // Data refresh karne ke liye ek baar call karein
                     if(typeof loadAdTasks === 'function') loadAdTasks();
                 } else {
-                    // Live countdown text update
                     btn.innerText = "Next in " + formatCooldown(timeLeft);
                 }
             });
 
-            // Har 60 second mein background refresh (Original logic)
             if (Math.floor(now / 1000) % 60 === 0) {
                 if (document.getElementById('watch').style.display === 'block') { 
                     loadAdTasks(); 
                 }
             }
         }, 1000);
+
         let currentSelectedTask = null;
 
         function listenForTasks() {
@@ -1042,7 +1171,7 @@
                             div.style.cursor = "pointer";
                             div.onclick = () => openTaskDetails(taskId, task);
                             const rupeeValue = (task.reward / 100).toFixed(2);
-                        div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#32cd32; font-weight:bold;">Reward: ₹${rupeeValue}</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
+                            div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#32cd32; font-weight:bold;">Reward: ₹${rupeeValue}</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
                             container.appendChild(div);
                         }
                     });
@@ -1056,7 +1185,6 @@
             const detailContent = document.getElementById('taskDetailContent');
             const stepsHtml = task.desc.split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
             
-            // Bot Username: taskVideoGuide_bot
             const botUsername = "taskVideoGuide_bot";
 
             detailContent.innerHTML = `
@@ -1067,7 +1195,6 @@
                 </div>
                 <div style="margin-bottom:20px;">${stepsHtml}</div>
                 
-                <!-- Naya Video Guide Button -->
                 <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" 
                     onclick="window.open('https://t.me/${botUsername}?start=${task.videoId || 'task1'}', '_blank')">
                     🎬 Watch Video Guide
@@ -1109,6 +1236,7 @@
         window.closeTaskDetails = () => document.getElementById('taskDetailModal').style.display = 'none';
         loadUserData();
         listenForTasks();
+        
         // --- Draggable Icon Logic ---
         const taskIcon = document.getElementById('activeTaskIcon');
         let isDragging = false, isMoved = false;
@@ -1139,7 +1267,6 @@
                 let newX = iconX + moveX;
                 let newY = iconY + moveY;
                 
-                // Boundaries (Screen se bahar na jaye)
                 newX = Math.max(0, Math.min(newX, window.innerWidth - 55));
                 newY = Math.max(0, Math.min(newY, window.innerHeight - 55));
 
@@ -1153,7 +1280,6 @@
             if (!isDragging) return;
             isDragging = false;
             taskIcon.style.transition = 'all 0.2s ease';
-            // Agar hilaya nahi sirf tap kiya, toh list khulegi
             if (!isMoved) openTaskList();
         }
 
@@ -1165,6 +1291,7 @@
         document.addEventListener('mousemove', doDrag);
         document.addEventListener('mouseup', endDrag);
     </script>
+    
     <!-- Task System Modals -->
     <div id="taskListModal" class="modal-overlay">
         <div class="task-modal-content">
