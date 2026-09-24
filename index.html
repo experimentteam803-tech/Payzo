@@ -23,12 +23,31 @@
     
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
-        body{ background: radial-gradient(circle at center, #10141d 0%, #050505 100%); color:white; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
+        
+        /* Deep Cosmic Space & Starfield Background */
+        body { 
+            background-color: #030611;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 100px 150px, #b0d4ff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 250px 80px, #ffeaa7, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 320px 220px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 450px 110px, #74b9ff, rgba(0,0,0,0)),
+                radial-gradient(circle at 50% 20%, rgba(13, 27, 62, 0.75) 0%, rgba(5, 8, 22, 0.95) 60%, #020409 100%);
+            background-repeat: repeat;
+            background-size: 550px 550px, 450px 450px, 350px 350px, 280px 280px, 600px 600px, 100% 100%;
+            color: white; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-x: hidden; 
+        }
 
         /* Header */
         header{
             display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+            background: rgba(4, 7, 18, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
             position:fixed; top:0; z-index:100;
         }
         .header-right { display: flex; gap: 15px; align-items: center; }
@@ -45,11 +64,22 @@
         #home{display:block;}
 
         /* Home Balance */
-        .balance-card { position: relative; background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 25px 20px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 25px; transition: transform 0.2s; }
+        .balance-card { 
+            position: relative; 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(10px);
+            border-radius: 20px; 
+            padding: 25px 20px; 
+            text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            margin-bottom: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.2s; 
+        }
         .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
         #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 
-        /* --- 3D EARTH (earth.png) & MINING VISUALIZER --- */
+        /* --- 3D EARTH (PURE GLOBE - NO BLACK CIRCLE) --- */
         .mining-visualizer {
             position: relative;
             width: 280px;
@@ -60,7 +90,7 @@
             justify-content: center;
         }
 
-        /* Earth Wrapper with 3D Sphere Glow */
+        /* Pure Floating Earth Container without any black background */
         .earth-container {
             position: relative;
             width: 220px;
@@ -69,20 +99,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 35px rgba(0, 162, 255, 0.5), inset -25px -20px 40px rgba(0,0,0,0.85);
-            overflow: hidden;
-            transition: box-shadow 0.4s ease;
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            overflow: visible;
         }
 
-        /* Rotating Earth using earth.png */
+        /* 3D Planet Image */
         .earth-img {
-            width: 100%;
-            height: 100%;
+            width: 220px;
+            height: 220px;
             object-fit: cover;
             border-radius: 50%;
             animation: rotateEarth 22s linear infinite;
             pointer-events: none;
             user-select: none;
+            filter: drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3));
+            transition: filter 0.4s ease;
         }
 
         @keyframes rotateEarth {
@@ -90,16 +123,16 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Spherical Shade Overlay for Real 3D Planet Feel */
+        /* Soft Curved Sphere Shadow for Real 3D Planet Curve */
         .earth-3d-shadow {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.85) 100%);
-            box-shadow: inset -20px -20px 35px rgba(0, 0, 0, 0.9);
+            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.7) 100%);
+            box-shadow: inset -18px -18px 30px rgba(0, 0, 0, 0.85);
             pointer-events: none;
             z-index: 6;
         }
@@ -207,6 +240,8 @@
         .ad-task-card {
             display: flex; align-items: center; padding: 15px; border-radius: 18px;
             margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
         }
         .ad-task-img { width: 50px; height: 50px; border-radius: 10px; background: #fff; padding: 5px; object-fit: contain; }
         .ad-task-info { flex: 1; }
@@ -236,7 +271,7 @@
 
         /* Promotion */
         .promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .submission-form { background: #161616; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+        .submission-form { background: rgba(22, 22, 22, 0.85); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; border: 1px solid #333; }
         .submission-form input, .submission-form select { width: 100%; padding: 12px; margin: 10px 0 20px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
 
         /* Method Tabs */
@@ -259,7 +294,7 @@
         .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
         .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
 
-        .navbar{display:flex;justify-content:space-around;background:rgba(0,0,0,0.95);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
+        .navbar{display:flex;justify-content:space-around;background:rgba(4, 7, 18, 0.95);backdrop-filter:blur(10px);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
         .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
         .nav-btn.active{opacity: 1; color: #32cd32;}
 
@@ -309,7 +344,7 @@
                 <div id="totalCoins">0</div>
             </div>
 
-            <!-- 3D Earth Display (Rotates earth.png) -->
+            <!-- Pure 3D Earth Display (No outer black ring, realistic planet float) -->
             <div class="mining-visualizer" id="mineCircle">
                 <div class="earth-container" id="earthBox">
                     <img src="earth.png" alt="Earth" class="earth-img" id="earthImg" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80'">
@@ -760,16 +795,16 @@
         let asteroidInterval;
 
         function updateMiningUI(isActive) {
-            const earthBox = document.getElementById('earthBox');
+            const earthImg = document.getElementById('earthImg');
             const mineBtn = document.getElementById('mineBtn');
             
             mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
 
             if (isActive) {
-                earthBox.style.boxShadow = "0 0 50px rgba(50, 205, 50, 0.7), inset -25px -20px 40px rgba(0,0,0,0.85)";
+                earthImg.style.filter = "drop-shadow(0 0 35px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 70px rgba(0, 255, 128, 0.4))";
                 startAsteroidShower();
             } else {
-                earthBox.style.boxShadow = "0 0 35px rgba(0, 162, 255, 0.5), inset -25px -20px 40px rgba(0,0,0,0.85)";
+                earthImg.style.filter = "drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3))";
                 stopAsteroidShower();
             }
             updateCoinDisplays(window.coins);
@@ -834,7 +869,7 @@
             container.appendChild(impact);
             setTimeout(() => impact.remove(), 450);
 
-            // 2. Earth Vibration
+            // 2. Earth Vibration (Shake)
             earthBox.classList.remove('earth-vibrate');
             void earthBox.offsetWidth;
             earthBox.classList.add('earth-vibrate');
