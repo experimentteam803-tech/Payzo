@@ -1236,37 +1236,33 @@
             };
 
             // Safe Adexium handler (Crash proof fallback)
-            if(adType === 'adexium') {
-                if (window.adexiumAds && typeof window.adexiumAds.requestAd === 'function') {
-                    btn.innerText = "Loading...";
-                    btn.disabled = true;
+            if (adType === 'adexium') {
+    btn.innerText = "Loading Ad...";
+    btn.disabled = true;
 
-                    const onAdReceived = (ad) => { window.adexiumAds.displayAd(ad); };
-                    const onAdClosed = () => { cleanup(); claim(); };
-                    const onNoAd = () => { 
-                        cleanup();
-                        runDynamicMonetag(window.adminConfig.monetagZone, () => {
-                            btn.innerText = "Watch";
-                            btn.disabled = false;
-                            claim(); 
-                        });
-                    };
-
-                    const cleanup = () => {
-                        window.adexiumAds.off('adReceived', onAdReceived);
-                        window.adexiumAds.off('adClosed', onAdClosed);
-                        window.adexiumAds.off('noAdFound', onNoAd);
-                    };
-
-                    window.adexiumAds.on('adReceived', onAdReceived);
-                    window.adexiumAds.on('adClosed', onAdClosed);
-                    window.adexiumAds.on('noAdFound', onNoAd);
-                    window.adexiumAds.requestAd('interstitial');
-                } else {
-                    // Safe direct fallback if Adexium SDK isn't found
-                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
-                }
-            }
+    // Check karein ki Adexium load hua hai ya nahi
+    if (window.myAdexium) {
+        try {
+            // Adexium ad show karega
+            window.myAdexium.show().then(() => {
+                claim(); // Ad dekhne ke baad reward credit hoga
+            }).catch((err) => {
+                console.warn("Adexium fill error, fallback to Monetag:", err);
+                // Agar Adexium me ad nahi mila toh Monetag fallback chalega
+                runDynamicMonetag("10361814", claim);
+            }).finally(() => {
+                btn.disabled = false;
+                btn.innerText = "Watch";
+            });
+        } catch (e) {
+            // Direct fallback
+            runDynamicMonetag("10361814", claim);
+        }
+    } else {
+        // Agar script block ho toh Monetag backup
+        runDynamicMonetag("10361814", claim);
+    }
+}
             else if(adType === 'adsgram') {
                 try {
                     const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
