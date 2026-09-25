@@ -90,7 +90,6 @@
             justify-content: center;
         }
 
-        /* Pure Floating Earth Container without any black background */
         .earth-container {
             position: relative;
             width: 220px;
@@ -105,7 +104,6 @@
             overflow: visible;
         }
 
-        /* 3D Planet Image */
         .earth-img {
             width: 220px;
             height: 220px;
@@ -123,7 +121,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Soft Curved Sphere Shadow for Real 3D Planet Curve */
         .earth-3d-shadow {
             position: absolute;
             top: 0;
@@ -137,7 +134,6 @@
             z-index: 6;
         }
 
-        /* Earth Vibration on Impact */
         .earth-vibrate {
             animation: earthShakeAnim 0.3s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -149,7 +145,6 @@
             40%, 60% { transform: translate3d(4px, -3px, 0); }
         }
 
-        /* Realistic Stone Asteroid */
         .realistic-asteroid {
             position: absolute;
             width: 24px;
@@ -174,7 +169,6 @@
             filter: blur(1.5px);
         }
 
-        /* Impact Shockwave */
         .realistic-impact {
             position: absolute;
             width: 60px;
@@ -193,7 +187,6 @@
             100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: blur(3px); }
         }
 
-        /* Flying Coins Debris toward Balance */
         .flying-coin-debris {
             position: fixed;
             width: 18px;
@@ -344,7 +337,7 @@
                 <div id="totalCoins">0</div>
             </div>
 
-            <!-- Pure 3D Earth Display (No outer black ring, realistic planet float) -->
+            <!-- Pure 3D Earth Display -->
             <div class="mining-visualizer" id="mineCircle">
                 <div class="earth-container" id="earthBox">
                     <img src="earth.png" alt="Earth" class="earth-img" id="earthImg" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80'">
@@ -373,7 +366,7 @@
         <section id="promotion" class="section">
             <div style="text-align:center; margin-bottom:20px;">
                 <h2 style="font-family:'Orbitron'; color:#32cd32;">Creator Rewards</h2>
-                <p style="color:#aaa; font-size:12px;">Make a video & get up to 300,000 Coins!</p>
+                <p style="color:#aaa; font-size:12px;" id="promoSubtitle">Make a video & get up to 300,000 Coins!</p>
             </div>
             
             <div style="background: rgba(50, 205, 50, 0.1); border: 1px dashed #32cd32; padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 11px; color: #90ee90; text-align: center; line-height: 1.6;">
@@ -386,11 +379,11 @@
             <div class="promo-card">
                 <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;">
                     <span>YouTube Long (100+ views)</span>
-                    <b>200k Max</b>
+                    <b id="promoYtReward">200k Max</b>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:13px;">
                     <span>Shorts/Reels (1k+ views)</span>
-                    <b>100k Max</b>
+                    <b id="promoShortsReward">100k Max</b>
                 </div>
             </div>
 
@@ -423,7 +416,7 @@
                     <button class="method-btn" onclick="setMethod('crypto', this)">Crypto (USDT)</button>
                 </div>
                 <input type="number" id="withdrawAmount" placeholder="Enter Coins (Min 1,000)">
-                <input type="text" id="withdrawAddress" placeholder="UPI ID / Email / Wallet Address">
+                <input type="text" id="withdrawAddress" placeholder="UPI ID">
                 <button class="action-btn mine-btn" onclick="handleWithdrawal()">Request Withdrawal</button>
                 <div class="history-container">
                     <div class="history-title" id="historyTitle">📜 UPI History</div>
@@ -438,8 +431,8 @@
             <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
             <div class="ref-info-card">
                 <div class="ref-step"><div class="step-num">1</div><div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div></div>
-                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;">700 Coins:</b> Get instantly when they signup.</div></div>
-                <div class="ref-step"><div class="step-num">3</div><div><b style="color:#ffd700;">5% Commission:</b> Get lifetime reward from their mining!</div></div>
+                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;" id="refStep2Reward">700 Coins:</b> Get instantly when they signup.</div></div>
+                <div class="ref-step"><div class="step-num">3</div><div><b style="color:#ffd700;" id="refStep3Reward">5% Commission:</b> Get lifetime reward from their mining!</div></div>
             </div>
             <div class="submission-form" style="text-align:center;">
                 <p id="refLink" style="font-size:11px; color:#ffd700; margin-bottom:15px; word-break:break-all;">Loading...</p>
@@ -474,13 +467,35 @@
         </div>
     </div>
 
+    <!-- Task System Modals -->
+    <div id="taskListModal" class="modal-overlay">
+        <div class="task-modal-content">
+            <h3 style="color:#ffd700; margin-bottom:20px; text-align:center; font-family:'Orbitron';">Available Tasks</h3>
+            <div id="taskItemsContainer"></div>
+            <button class="action-btn" style="background:#333; margin-top:15px; color:#fff;" onclick="closeTaskList()">Close</button>
+        </div>
+    </div>
+    <div id="taskDetailModal" class="modal-overlay">
+        <div class="task-modal-content" id="taskDetailContent"></div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, push, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-        const tg = window.Telegram.WebApp;
-        const TELEGRAM_USER_ID = tg.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
-        const TELEGRAM_USER_NAME = tg.initDataUnsafe?.user?.first_name || "Miner";
+        // --- Telegram Native Initialization ---
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            try {
+                tg.ready();
+                tg.expand();
+            } catch (e) {
+                console.log("Telegram expand error:", e);
+            }
+        }
+
+        const TELEGRAM_USER_ID = tg?.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
+        const TELEGRAM_USER_NAME = tg?.initDataUnsafe?.user?.first_name || "Miner";
         document.getElementById('username').innerText = TELEGRAM_USER_NAME;
 
         const firebaseConfig = {
@@ -497,28 +512,111 @@
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
         
-        const AdController = window.Adsgram.init({ blockId: "19761" });
-        window.miningAdsReq = 10;
-        window.withdrawAdsReq = 10;
-        window.activeTimers = {}; 
+        // --- Dynamic Default Admin Configuration ---
+        window.adminConfig = {
+            miningAdsReq: 10,
+            withdrawAdsReq: 10,
+            miningRatePerHour: 250,
+            minWithdrawUPI: 1000,
+            minWithdrawPayPal: 5000,
+            minWithdrawCrypto: 5000,
+            coinToInrRatio: 100,
+            supportLink: "https://t.me/PayZoHelp",
+            botUsername: "PayZos_Bot",
+            refReward: 700,
+            refPercent: 5,
+            promoMax: "300,000",
+            promoYt: "200k Max",
+            promoShorts: "100k Max",
+            monetagZone: "10361814",
+            adsgramBlock: "19761",
+            videoGuideBot: "taskVideoGuide_bot"
+        };
 
-        // Admin Sync
-        onValue(ref(database, 'admin_settings'), (snap) => {
-            const s = snap.val();
-            if (s) {
-                window.miningAdsReq = Number(s.mining_req || 10);
-                window.withdrawAdsReq = Number(s.withdraw_req || 10);
-                const statusEl = document.getElementById('adStatus');
-                if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.miningAdsReq}`;
-                if(typeof updateMiningUI === 'function') updateMiningUI(window.isMiningActive);
+        let AdController = null;
+        try {
+            if (window.Adsgram) {
+                AdController = window.Adsgram.init({ blockId: window.adminConfig.adsgramBlock });
             }
-        });
-        
+        } catch (e) { console.error("Adsgram init err:", e); }
+
+        window.activeTimers = {}; 
         window.coins = 0;
         window.adsWatched = 0;
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
+        let liveCounterInterval = null;
+
+        // --- FULL A-to-Z Admin Panel Realtime Listener ---
+        onValue(ref(database, 'admin_settings'), (snap) => {
+            const s = snap.val();
+            if (s) {
+                if (s.mining_req !== undefined) window.adminConfig.miningAdsReq = Number(s.mining_req);
+                if (s.withdraw_req !== undefined) window.adminConfig.withdrawAdsReq = Number(s.withdraw_req);
+                if (s.mining_rate_per_hour !== undefined) window.adminConfig.miningRatePerHour = Number(s.mining_rate_per_hour);
+                
+                if (s.min_withdraw_upi !== undefined) window.adminConfig.minWithdrawUPI = Number(s.min_withdraw_upi);
+                if (s.min_withdraw_paypal !== undefined) window.adminConfig.minWithdrawPayPal = Number(s.min_withdraw_paypal);
+                if (s.min_withdraw_crypto !== undefined) window.adminConfig.minWithdrawCrypto = Number(s.min_withdraw_crypto);
+                if (s.coin_to_inr_ratio !== undefined) window.adminConfig.coinToInrRatio = Number(s.coin_to_inr_ratio);
+
+                if (s.support_link) window.adminConfig.supportLink = s.support_link;
+                if (s.bot_username) window.adminConfig.botUsername = s.bot_username;
+                if (s.referral_reward !== undefined) window.adminConfig.refReward = Number(s.referral_reward);
+                if (s.referral_percent !== undefined) window.adminConfig.refPercent = Number(s.referral_percent);
+                
+                if (s.promo_max) window.adminConfig.promoMax = s.promo_max;
+                if (s.promo_yt) window.adminConfig.promoYt = s.promo_yt;
+                if (s.promo_shorts) window.adminConfig.promoShorts = s.promo_shorts;
+                if (s.video_guide_bot) window.adminConfig.videoGuideBot = s.video_guide_bot;
+
+                if (s.monetag_zone) window.adminConfig.monetagZone = s.monetag_zone;
+                if (s.adsgram_block && s.adsgram_block !== window.adminConfig.adsgramBlock) {
+                    window.adminConfig.adsgramBlock = s.adsgram_block;
+                    if (window.Adsgram) AdController = window.Adsgram.init({ blockId: s.adsgram_block });
+                }
+
+                // Update UI elements dynamically based on Admin configuration
+                const statusEl = document.getElementById('adStatus');
+                if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.adminConfig.miningAdsReq}`;
+                
+                const promoSub = document.getElementById('promoSubtitle');
+                if(promoSub) promoSub.innerText = `Make a video & get up to ${window.adminConfig.promoMax} Coins!`;
+                const pYt = document.getElementById('promoYtReward');
+                if(pYt) pYt.innerText = window.adminConfig.promoYt;
+                const pShorts = document.getElementById('promoShortsReward');
+                if(pShorts) pShorts.innerText = window.adminConfig.promoShorts;
+
+                const ref2 = document.getElementById('refStep2Reward');
+                if(ref2) ref2.innerText = `${window.adminConfig.refReward.toLocaleString()} Coins:`;
+                const ref3 = document.getElementById('refStep3Reward');
+                if(ref3) ref3.innerText = `${window.adminConfig.refPercent}% Commission:`;
+
+                const refLinkEl = document.getElementById('refLink');
+                if(refLinkEl) refLinkEl.innerText = `https://t.me/${window.adminConfig.botUsername}?start=${TELEGRAM_USER_ID}`;
+                
+                const joinBtn = document.getElementById('joinChannelBtn');
+                if(joinBtn && !joinBtn.dataset.hasCustomLink) {
+                    joinBtn.dataset.link = `https://t.me/${window.adminConfig.botUsername}`;
+                }
+
+                refreshWithdrawPlaceholder();
+                updateMiningUI(window.isMiningActive);
+                renderWithdrawalHistory();
+            }
+        });
+
+        function getActiveMinLimit() {
+            if (window.currentMethod === 'paypal') return window.adminConfig.minWithdrawPayPal;
+            if (window.currentMethod === 'crypto') return window.adminConfig.minWithdrawCrypto;
+            return window.adminConfig.minWithdrawUPI;
+        }
+
+        function refreshWithdrawPlaceholder() {
+            const amtInput = document.getElementById('withdrawAmount');
+            if (amtInput) amtInput.placeholder = `Enter Coins (Min ${getActiveMinLimit().toLocaleString()})`;
+        }
 
         function loadUserData() {
             onValue(dbRef, (snap) => {
@@ -529,7 +627,7 @@
                     window.miningStartTime = data.miningStartTime || 0;
                     window.miningEndTime = data.miningEndTime || 0;
                     window.lastClaimTime = data.lastClaimTime || 0;
-                    document.getElementById('refLink').innerText = `https://t.me/PayZos_Bot?start=${TELEGRAM_USER_ID}`;
+                    document.getElementById('refLink').innerText = `https://t.me/${window.adminConfig.botUsername}?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
                 } else {
                     set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
@@ -547,8 +645,13 @@
 
             startWithdrawHistoryListener();
             startPromoHistoryListener();
+            
             get(ref(database, 'claim_settings/common')).then(s => {
-                if(s.exists() && s.val().channel_link) document.getElementById('joinChannelBtn').dataset.link = s.val().channel_link;
+                if(s.exists() && s.val().channel_link) {
+                    const btn = document.getElementById('joinChannelBtn');
+                    btn.dataset.link = s.val().channel_link;
+                    btn.dataset.hasCustomLink = "true";
+                }
             });
         }
 
@@ -559,14 +662,16 @@
         
         window.contactSupport = () => {
             const userId = TELEGRAM_USER_ID; 
-            const supportLink = "https://t.me/PayZoHelp";
+            const supportLink = window.adminConfig.supportLink || "https://t.me/PayZoHelp";
 
-            navigator.clipboard.writeText(userId).then(() => {
-                alert(`📋 ID Copied: ${userId}\n\nUser ID copy ho gayi hai! Telegram par paste karke hume message karein.`);
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(userId).then(() => {
+                    alert(`📋 ID Copied: ${userId}\n\nUser ID copy ho gayi hai! Telegram par paste karke hume message karein.`);
+                    window.open(supportLink, '_blank');
+                }).catch(() => window.open(supportLink, '_blank'));
+            } else {
                 window.open(supportLink, '_blank');
-            }).catch(err => {
-                window.open(supportLink, '_blank');
-            });
+            }
         };
 
         function startWithdrawHistoryListener() {
@@ -581,12 +686,14 @@
             const data = window.allWithdrawalData;
             if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
             let html = ""; let found = false;
+            const ratio = window.adminConfig.coinToInrRatio || 100;
+
             Object.keys(data).reverse().forEach(key => {
                 const item = data[key];
                 if(item.method === window.currentMethod) {
                     found = true;
                     const statusClass = `status-${item.status.toLowerCase()}`;
-                    const rupeesValue = (item.amount / 100).toFixed(2);
+                    const rupeesValue = (item.amount / ratio).toFixed(2);
                     html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins <b style="color:#90ee90;">(₹${rupeesValue})</b></span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
                 }
             });
@@ -613,14 +720,27 @@
         }
 
         window.redeemGift = async () => {
-            const code = document.getElementById('giftCode').value.toUpperCase();
+            const code = document.getElementById('giftCode').value.trim().toUpperCase();
             if(!code) return alert("Enter code");
+            
             const claimCheck = await get(ref(database, `${userPath}/claimed_codes/${code}`));
             if(claimCheck.exists()) return alert("Already redeemed!");
-            const adminSnap = await get(ref(database, 'claim_settings/common'));
-            const adminData = adminSnap.val();
-            if(adminData && adminData.code === code) {
-                const reward = adminData.coins;
+            
+            // Check in claim_settings/common or admin_settings/gift_codes/CODE
+            let reward = 0;
+            const singleCodeSnap = await get(ref(database, `admin_settings/gift_codes/${code}`));
+            
+            if (singleCodeSnap.exists()) {
+                reward = Number(singleCodeSnap.val());
+            } else {
+                const adminSnap = await get(ref(database, 'claim_settings/common'));
+                const adminData = adminSnap.val();
+                if(adminData && adminData.code === code) {
+                    reward = Number(adminData.coins);
+                }
+            }
+
+            if(reward > 0) {
                 const historyRef = push(ref(database, userPath + '/coin_history'));
                 const up = {};
                 up[`claimed_codes/${code}`] = true;
@@ -629,27 +749,33 @@
                 await update(dbRef, up);
                 alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
                 closeGiftModal();
-            } else alert("Invalid Code!");
+            } else {
+                alert("Invalid Code!");
+            }
         };
 
         window.watchAd = () => {
             const btn = document.getElementById('adWatchBtn');
-            if(window.adsWatched >= window.miningAdsReq) return alert("Ads requirement met!");
+            if(window.adsWatched >= window.adminConfig.miningAdsReq) return alert("Ads requirement met!");
             if(btn.disabled) return;
 
-            AdController.show().then((result) => { 
-                if (result.done) handleAdSuccess(); 
-            }).catch(() => {
-                runDynamicMonetag("10361814", handleAdSuccess);
-            });
+            if (AdController) {
+                AdController.show().then((result) => { 
+                    if (result.done) handleAdSuccess(); 
+                }).catch(() => {
+                    runDynamicMonetag(window.adminConfig.monetagZone, handleAdSuccess);
+                });
+            } else {
+                runDynamicMonetag(window.adminConfig.monetagZone, handleAdSuccess);
+            }
         };
 
         function handleAdSuccess() {
             window.adsWatched++;
             update(dbRef, { adsWatched: window.adsWatched });
             const statusEl = document.getElementById('adStatus');
-            if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.miningAdsReq}`;
-            if(window.adsWatched < window.miningAdsReq) startAdTimer();
+            if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.adminConfig.miningAdsReq}`;
+            if(window.adsWatched < window.adminConfig.miningAdsReq) startAdTimer();
             else { alert("🎉 All ads completed! Start mining now."); updateMiningUI(false); }
         }
 
@@ -674,28 +800,31 @@
 
         window.handleWithdrawal = async () => {
             const a = Number(document.getElementById('withdrawAmount').value);
-            const d = document.getElementById('withdrawAddress').value;
+            const d = document.getElementById('withdrawAddress').value.trim();
+            const minLimit = getActiveMinLimit();
             
-            let minLimit = 1000;
-            if (window.currentMethod === 'paypal') minLimit = 5000;
-            else if (window.currentMethod === 'crypto') minLimit = 5000;
-            
-            if (a < minLimit) return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
+            if (!a || a < minLimit) return alert(`Minimum withdrawal for ${window.currentMethod.toUpperCase()} is ${minLimit.toLocaleString()} Coins.`);
             if (a > window.coins) return alert("Insufficient Balance!");
             if (!d) return alert("Please enter payment address/ID");
 
-            if(window.withdrawAdsCounter < window.withdrawAdsReq) {
-                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.withdrawAdsReq}. Watch an ad to proceed?`)) {
-                    AdController.show().then((result) => {
-                        if (result.done) { 
-                            window.withdrawAdsCounter++; 
-                            alert(`Ad watched! (${window.withdrawAdsCounter}/${window.withdrawAdsReq})`);
-                        }
-                    }).catch(() => {
-                        runDynamicMonetag("10361814", () => { 
+            if(window.withdrawAdsCounter < window.adminConfig.withdrawAdsReq) {
+                if(confirm(`Progress: ${window.withdrawAdsCounter}/${window.adminConfig.withdrawAdsReq}. Watch an ad to proceed?`)) {
+                    if (AdController) {
+                        AdController.show().then((result) => {
+                            if (result.done) { 
+                                window.withdrawAdsCounter++; 
+                                alert(`Ad watched! (${window.withdrawAdsCounter}/${window.adminConfig.withdrawAdsReq})`);
+                            }
+                        }).catch(() => {
+                            runDynamicMonetag(window.adminConfig.monetagZone, () => { 
+                                window.withdrawAdsCounter++; 
+                            });
+                        });
+                    } else {
+                        runDynamicMonetag(window.adminConfig.monetagZone, () => { 
                             window.withdrawAdsCounter++; 
                         });
-                    });
+                    }
                 }
                 return;
             }
@@ -749,31 +878,30 @@
             document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
             b.classList.add('active');
             const addrInput = document.getElementById('withdrawAddress');
-            const amtInput = document.getElementById('withdrawAmount');
             addrInput.placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'PayPal Email' : 'USDT Address');
-            amtInput.placeholder = m === 'upi' ? 'Min 10,000' : (m === 'paypal' ? 'Min 100,000' : 'Min 100,000');
+            refreshWithdrawPlaceholder();
             document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
             renderWithdrawalHistory();
         };
 
         async function checkMiningStatus() {
             const now = Date.now();
+            const rate = window.adminConfig.miningRatePerHour || 250;
+
             if (window.miningEndTime && window.miningEndTime > 0) {
                 const calculationTime = Math.min(now, window.miningEndTime);
                 const lastClaim = window.lastClaimTime || window.miningStartTime;
                 if (calculationTime > lastClaim) {
                     const secondsPassed = (calculationTime - lastClaim) / 1000;
-                    let earnedAmount = Math.floor((secondsPassed / 3600) * 250);
+                    let earnedAmount = Math.floor((secondsPassed / 3600) * rate);
 
-                    if (earnedAmount > 450) earnedAmount = 250; 
+                    if (earnedAmount > (rate * 1.5)) earnedAmount = rate; 
 
                     if (earnedAmount > 0) {
                         const userSnap = await get(dbRef);
                         const currentCoins = userSnap.val().coins || 0;
                         const historyRef = push(ref(database, userPath + '/coin_history'));
                         
-                        if(earnedAmount > 500) return;
-
                         await update(dbRef, {
                             coins: currentCoins + earnedAmount,
                             lastClaimTime: calculationTime,
@@ -786,19 +914,27 @@
                 if (now >= window.miningEndTime) {
                     await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
                     alert("🎉 Mining Session Finished!");
+                    stopLiveCounter();
                     updateMiningUI(false);
-                } else { window.isMiningActive = true; updateMiningUI(true); startLiveCounter(); }
-            } else updateMiningUI(false);
+                } else { 
+                    window.isMiningActive = true; 
+                    updateMiningUI(true); 
+                    startLiveCounter(); 
+                }
+            } else {
+                stopLiveCounter();
+                updateMiningUI(false);
+            }
         }
 
         /* --- ASTEROID, EARTH VIBRATION & COIN ANIMATION --- */
-        let asteroidInterval;
+        let asteroidInterval = null;
 
         function updateMiningUI(isActive) {
             const earthImg = document.getElementById('earthImg');
             const mineBtn = document.getElementById('mineBtn');
             
-            mineBtn.disabled = isActive || window.adsWatched < window.miningAdsReq;
+            mineBtn.disabled = isActive || window.adsWatched < window.adminConfig.miningAdsReq;
 
             if (isActive) {
                 earthImg.style.filter = "drop-shadow(0 0 35px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 70px rgba(0, 255, 128, 0.4))";
@@ -831,7 +967,7 @@
             const angles = [ -45, 30, 135, 210, 0, 80, 190 ];
             const randomAngle = angles[Math.floor(Math.random() * angles.length)];
             const dist = 170;
-            const center = 140; // Mining Visualizer Half (280/2)
+            const center = 140;
 
             const startX = center + Math.cos(randomAngle * Math.PI / 180) * dist;
             const startY = center + Math.sin(randomAngle * Math.PI / 180) * dist;
@@ -869,7 +1005,7 @@
             container.appendChild(impact);
             setTimeout(() => impact.remove(), 450);
 
-            // 2. Earth Vibration (Shake)
+            // 2. Earth Vibration & Telegram Haptic Feedback
             earthBox.classList.remove('earth-vibrate');
             void earthBox.offsetWidth;
             earthBox.classList.add('earth-vibrate');
@@ -878,7 +1014,12 @@
             document.body.classList.add('screen-shake');
             setTimeout(() => document.body.classList.remove('screen-shake'), 220);
 
-            if (navigator.vibrate) navigator.vibrate([35, 20, 25]);
+            // Telegram Native Haptic with vibration fallback
+            if (tg && tg.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('medium'); } catch(e){}
+            } else if (navigator.vibrate) {
+                navigator.vibrate([35, 20, 25]);
+            }
 
             // 3. Scatter Earth Fragments
             for(let i = 0; i < 5; i++) {
@@ -941,14 +1082,26 @@
         }
 
         function startLiveCounter() {
-            setInterval(() => {
+            if (liveCounterInterval) clearInterval(liveCounterInterval);
+            liveCounterInterval = setInterval(() => {
                 const now = Date.now();
+                const rate = window.adminConfig.miningRatePerHour || 250;
                 if (now < window.miningEndTime) {
-                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * 250));
+                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * rate));
                     const rem = Math.round((window.miningEndTime - now)/1000);
                     document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
+                } else {
+                    stopLiveCounter();
+                    checkMiningStatus();
                 }
             }, 1000);
+        }
+
+        function stopLiveCounter() {
+            if (liveCounterInterval) {
+                clearInterval(liveCounterInterval);
+                liveCounterInterval = null;
+            }
         }
 
         function updateCoinDisplays(v) {
@@ -1030,15 +1183,23 @@
         }
 
         function runDynamicMonetag(zoneId, callback) {
-            const functionName = "show_" + zoneId;
+            const zId = zoneId || window.adminConfig.monetagZone || "10361814";
+            const functionName = "show_" + zId;
             if (typeof window[functionName] === 'function') {
-                window[functionName]().then(callback).catch(() => alert("Ad error"));
+                window[functionName]().then(callback).catch(() => {
+                    if (callback) callback(); 
+                });
             } else {
                 const script = document.createElement('script');
                 script.src = 'https://whephiwums.com/vignette.min.js';
-                script.dataset.zone = zoneId;
+                script.dataset.zone = zId;
                 script.dataset.sdk = functionName;
-                script.onload = () => { if (typeof window[functionName] === 'function') window[functionName]().then(callback); };
+                script.onload = () => { 
+                    if (typeof window[functionName] === 'function') {
+                        window[functionName]().then(callback).catch(() => { if (callback) callback(); });
+                    } else if (callback) callback();
+                };
+                script.onerror = () => { if (callback) callback(); };
                 document.head.appendChild(script);
             }
         }
@@ -1064,47 +1225,48 @@
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
             };
 
+            // Safe Adexium handler (Crash proof fallback)
             if(adType === 'adexium') {
-                btn.innerText = "Loading...";
-                btn.disabled = true;
+                if (window.adexiumAds && typeof window.adexiumAds.requestAd === 'function') {
+                    btn.innerText = "Loading...";
+                    btn.disabled = true;
 
-                const onAdReceived = (ad) => { 
-                    window.adexiumAds.displayAd(ad); 
-                };
+                    const onAdReceived = (ad) => { window.adexiumAds.displayAd(ad); };
+                    const onAdClosed = () => { cleanup(); claim(); };
+                    const onNoAd = () => { 
+                        cleanup();
+                        runDynamicMonetag(window.adminConfig.monetagZone, () => {
+                            btn.innerText = "Watch";
+                            btn.disabled = false;
+                            claim(); 
+                        });
+                    };
 
-                const onAdClosed = () => { 
-                    cleanup(); 
-                    claim(); 
-                };
+                    const cleanup = () => {
+                        window.adexiumAds.off('adReceived', onAdReceived);
+                        window.adexiumAds.off('adClosed', onAdClosed);
+                        window.adexiumAds.off('noAdFound', onNoAd);
+                    };
 
-                const onNoAd = () => { 
-                    cleanup();
-                    console.log("Adexium failed, switching to fallback...");
-                    runDynamicMonetag("10361814", () => {
-                        btn.innerText = "Watch";
-                        btn.disabled = false;
-                        claim(); 
-                    });
-                };
-
-                const cleanup = () => {
-                    window.adexiumAds.off('adReceived', onAdReceived);
-                    window.adexiumAds.off('adClosed', onAdClosed);
-                    window.adexiumAds.off('noAdFound', onNoAd);
-                };
-
-                window.adexiumAds.on('adReceived', onAdReceived);
-                window.adexiumAds.on('adClosed', onAdClosed);
-                window.adexiumAds.on('noAdFound', onNoAd);
-
-                window.adexiumAds.requestAd('interstitial');
+                    window.adexiumAds.on('adReceived', onAdReceived);
+                    window.adexiumAds.on('adClosed', onAdClosed);
+                    window.adexiumAds.on('noAdFound', onNoAd);
+                    window.adexiumAds.requestAd('interstitial');
+                } else {
+                    // Safe direct fallback if Adexium SDK isn't found
+                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
+                }
             }
             else if(adType === 'adsgram') {
-                const TaskAd = window.Adsgram.init({ blockId: adId });
-                TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag("10361814", claim); });
+                try {
+                    const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
+                    TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag(window.adminConfig.monetagZone, claim); });
+                } catch(e) {
+                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
+                }
             }
             else {
-                runDynamicMonetag(adId || "10361814", claim);
+                runDynamicMonetag(adId || window.adminConfig.monetagZone, claim);
             }
         };
 
@@ -1195,6 +1357,8 @@
                 const userTasks = userTasksSnap.val() || {};
                 let hasVisibleTask = false;
                 const container = document.getElementById('taskItemsContainer');
+                const ratio = window.adminConfig.coinToInrRatio || 100;
+
                 if(container) {
                     container.innerHTML = "";
                     Object.keys(tasks).forEach(taskId => {
@@ -1205,7 +1369,7 @@
                             div.className = "ad-task-card";
                             div.style.cursor = "pointer";
                             div.onclick = () => openTaskDetails(taskId, task);
-                            const rupeeValue = (task.reward / 100).toFixed(2);
+                            const rupeeValue = (task.reward / ratio).toFixed(2);
                             div.innerHTML = `<img src="${task.logo}" class="ad-task-img"><div class="ad-task-info"><h3 style="color:#fff;">${task.name}</h3><p style="color:#32cd32; font-weight:bold;">Reward: ₹${rupeeValue}</p></div><i class="fas fa-chevron-right" style="color:#32cd32;"></i>`;
                             container.appendChild(div);
                         }
@@ -1218,15 +1382,15 @@
         window.openTaskDetails = (id, task) => {
             currentSelectedTask = { id, ...task };
             const detailContent = document.getElementById('taskDetailContent');
-            const stepsHtml = task.desc.split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
-            
-            const botUsername = "taskVideoGuide_bot";
+            const stepsHtml = (task.desc || "").split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
+            const ratio = window.adminConfig.coinToInrRatio || 100;
+            const botUsername = window.adminConfig.videoGuideBot || "taskVideoGuide_bot";
 
             detailContent.innerHTML = `
                 <div style="text-align:center; margin-bottom:20px;">
                     <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
                     <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
-                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / 100).toFixed(2)}</p>
+                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / ratio).toFixed(2)}</p>
                 </div>
                 <div style="margin-bottom:20px;">${stepsHtml}</div>
                 
@@ -1269,6 +1433,7 @@
         window.openTaskList = () => document.getElementById('taskListModal').style.display = 'flex';
         window.closeTaskList = () => document.getElementById('taskListModal').style.display = 'none';
         window.closeTaskDetails = () => document.getElementById('taskDetailModal').style.display = 'none';
+        
         loadUserData();
         listenForTasks();
         
@@ -1326,17 +1491,5 @@
         document.addEventListener('mousemove', doDrag);
         document.addEventListener('mouseup', endDrag);
     </script>
-    
-    <!-- Task System Modals -->
-    <div id="taskListModal" class="modal-overlay">
-        <div class="task-modal-content">
-            <h3 style="color:#ffd700; margin-bottom:20px; text-align:center; font-family:'Orbitron';">Available Tasks</h3>
-            <div id="taskItemsContainer"></div>
-            <button class="action-btn" style="background:#333; margin-top:15px; color:#fff;" onclick="closeTaskList()">Close</button>
-        </div>
-    </div>
-    <div id="taskDetailModal" class="modal-overlay">
-        <div class="task-modal-content" id="taskDetailContent"></div>
-    </div>
 </body>
 </html>
