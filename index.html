@@ -20,18 +20,18 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->    
     <script src='//libtl.com/sdk.js' data-zone='10361814' data-sdk='show_10361814'></script>
-    
     <!-- Adexium SDK -->
-<script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
-<script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', () => {
-    window.myAdexium = new AdexiumWidget({
-      wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634',
-      adFormat: 'interstitial',
-      debug: false // Testing ke liye true rakhein taaki Adexium ka ad turant aaye
-    });
-  });
-</script>
+    <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', () => {
+        window.myAdexium = new AdexiumWidget({
+          wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634',
+          adFormat: 'interstitial',
+          debug: false
+        });
+      });
+    </script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
         
@@ -494,6 +494,153 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, push, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+        // ==========================================
+        // 🎵 ADVANCED SOUND EFFECTS ENGINE (Web Audio API)
+        // ==========================================
+        const AudioFX = {
+            ctx: null,
+            miningDrone: null,
+            miningGain: null,
+
+            // AudioContext Unlock on user touch/click
+            init() {
+                if (!this.ctx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) this.ctx = new AudioContextClass();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
+
+            // 1. 🔘 Universal Tap/Click Sound (Soft modern UI click)
+            playClick() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(140, this.ctx.currentTime + 0.04);
+
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.04);
+                } catch(e) {}
+            },
+
+            // 2. 🪙 Golden Coin Collect Sound (Double-tone classic ding)
+            playCoin() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+                    
+                    // Tone 1 (987.77 Hz - B5)
+                    const osc1 = this.ctx.createOscillator();
+                    const gain1 = this.ctx.createGain();
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(987.77, now);
+                    gain1.gain.setValueAtTime(0.18, now);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    osc1.connect(gain1);
+                    gain1.connect(this.ctx.destination);
+                    osc1.start(now);
+                    osc1.stop(now + 0.12);
+
+                    // Tone 2 (1318.51 Hz - E6)
+                    const osc2 = this.ctx.createOscillator();
+                    const gain2 = this.ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(1318.51, now + 0.08);
+                    gain2.gain.setValueAtTime(0.22, now + 0.08);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+                    osc2.connect(gain2);
+                    gain2.connect(this.ctx.destination);
+                    osc2.start(now + 0.08);
+                    osc2.stop(now + 0.38);
+                } catch(e) {}
+            },
+
+            // 3. 💥 Asteroid Impact & Shockwave Sound
+            playImpact() {
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+                    const now = this.ctx.currentTime;
+
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
+
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } catch(e) {}
+            },
+
+            // 4. 🛸 Mining Ambient Drone Loop (Futuristic space pulse hum)
+            startMiningAmbient() {
+                try {
+                    this.init();
+                    if (!this.ctx || this.miningDrone) return;
+
+                    this.miningDrone = this.ctx.createOscillator();
+                    this.miningGain = this.ctx.createGain();
+
+                    this.miningDrone.type = 'sine';
+                    this.miningDrone.frequency.setValueAtTime(65, this.ctx.currentTime);
+
+                    this.miningGain.gain.setValueAtTime(0.035, this.ctx.currentTime);
+
+                    const lfo = this.ctx.createOscillator();
+                    const lfoGain = this.ctx.createGain();
+                    lfo.frequency.setValueAtTime(1.5, this.ctx.currentTime);
+                    lfoGain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+                    lfo.connect(this.miningGain.gain);
+                    lfo.start();
+
+                    this.miningDrone.connect(this.miningGain);
+                    this.miningGain.connect(this.ctx.destination);
+
+                    this.miningDrone.start();
+                } catch(e) {}
+            },
+
+            stopMiningAmbient() {
+                try {
+                    if (this.miningDrone) {
+                        this.miningDrone.stop();
+                        this.miningDrone.disconnect();
+                        this.miningDrone = null;
+                    }
+                } catch(e) {}
+            }
+        };
+
+        // Universal tap sound listener for interactive elements
+        document.addEventListener('pointerdown', (e) => {
+            AudioFX.init();
+            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close')) {
+                AudioFX.playClick();
+            }
+        }, { passive: true });
+
         // --- Telegram Native Initialization ---
         const tg = window.Telegram?.WebApp;
         if (tg) {
@@ -722,6 +869,7 @@
                     const statusClass = `status-${item.status.toLowerCase()}`;
                     html += `<div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}${item.adminMsg ? `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">💬 <b>Admin Note:</b> ${item.adminMsg}</div>` : ''}</div>`;
                     if(item.status === 'Success' && !item.notified) {
+                        AudioFX.playCoin();
                         alert(`🎉 Congratulations!\n\nYour promotion video has been approved.`);
                         update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
                     }
@@ -737,7 +885,6 @@
             const claimCheck = await get(ref(database, `${userPath}/claimed_codes/${code}`));
             if(claimCheck.exists()) return alert("Already redeemed!");
             
-            // Check in claim_settings/common or admin_settings/gift_codes/CODE
             let reward = 0;
             const singleCodeSnap = await get(ref(database, `admin_settings/gift_codes/${code}`));
             
@@ -758,6 +905,7 @@
                 up[`coins`] = window.coins + reward;
                 up[`coin_history/${historyRef.key}`] = { reason: `Gift Code: ${code} 🎁`, amount: reward, timestamp: Date.now() };
                 await update(dbRef, up);
+                AudioFX.playCoin(); // 🪙 Coin ding sound
                 alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
                 closeGiftModal();
             } else {
@@ -782,6 +930,7 @@
         };
 
         function handleAdSuccess() {
+            AudioFX.playCoin();
             window.adsWatched++;
             update(dbRef, { adsWatched: window.adsWatched });
             const statusEl = document.getElementById('adStatus');
@@ -957,9 +1106,11 @@
             if (isActive) {
                 earthImg.style.filter = "drop-shadow(0 0 35px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 70px rgba(0, 255, 128, 0.4))";
                 startAsteroidShower();
+                AudioFX.startMiningAmbient(); // 🛸 Space drone hum chalu
             } else {
                 earthImg.style.filter = "drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3))";
                 stopAsteroidShower();
+                AudioFX.stopMiningAmbient(); // 🛑 Space drone band
             }
             updateCoinDisplays(window.coins);
         }
@@ -1015,13 +1166,15 @@
             const container = document.getElementById('asteroid-container');
             const earthBox = document.getElementById('earthBox');
 
-            // 1. Shockwave Spark
+            // 1. Shockwave Spark & Bass Impact Sound
             const impact = document.createElement('div');
             impact.className = 'realistic-impact';
             impact.style.left = x + 'px';
             impact.style.top = y + 'px';
             container.appendChild(impact);
             setTimeout(() => impact.remove(), 450);
+
+            AudioFX.playImpact(); // 💥 Asteroid impact bass rumble sound
 
             // 2. Earth Vibration & Telegram Haptic Feedback
             earthBox.classList.remove('earth-vibrate');
@@ -1032,7 +1185,6 @@
             document.body.classList.add('screen-shake');
             setTimeout(() => document.body.classList.remove('screen-shake'), 220);
 
-            // Telegram Native Haptic with vibration fallback
             if (tg && tg.HapticFeedback) {
                 try { tg.HapticFeedback.impactOccurred('medium'); } catch(e){}
             } else if (navigator.vibrate) {
@@ -1091,6 +1243,7 @@
 
             setTimeout(() => {
                 coin.remove();
+                AudioFX.playCoin(); // 🪙 Coin collected ding chime sound
                 const balanceCard = document.getElementById('balanceCard');
                 if (balanceCard) {
                     balanceCard.style.transform = 'scale(1.03)';
@@ -1104,10 +1257,15 @@
             liveCounterInterval = setInterval(() => {
                 const now = Date.now();
                 const rate = window.adminConfig.miningRatePerHour || 250;
+                
                 if (now < window.miningEndTime) {
-                    updateCoinDisplays(window.coins + Math.floor(((now - window.miningStartTime) / 3600000) * rate));
-                    const rem = Math.round((window.miningEndTime - now)/1000);
-                    document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem/60)}m ${rem%60}s`;
+                    const secondsPassed = (now - window.miningStartTime) / 1000;
+                    const liveEarned = (secondsPassed / 3600) * rate;
+                    
+                    updateCoinDisplays(window.coins + liveEarned);
+
+                    const rem = Math.round((window.miningEndTime - now) / 1000);
+                    document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem / 60)}m ${rem % 60}s`;
                 } else {
                     stopLiveCounter();
                     checkMiningStatus();
@@ -1123,10 +1281,16 @@
         }
 
         function updateCoinDisplays(v) {
-            const f = Math.floor(v).toLocaleString();
-            document.getElementById('totalCoins').innerText = f;
-            document.getElementById('walletCoins').innerText = f;
-            document.getElementById('coinInsideCircle').innerText = f;
+            const isLive = window.isMiningActive;
+            const displayVal = isLive ? Number(v).toFixed(2) : Math.floor(v).toLocaleString();
+            
+            document.getElementById('totalCoins').innerText = displayVal;
+            document.getElementById('walletCoins').innerText = Math.floor(v).toLocaleString();
+            
+            const circleEl = document.getElementById('coinInsideCircle');
+            if (circleEl) {
+                circleEl.innerText = isLive ? "+" + Math.max(0, (v - window.coins)).toFixed(2) : Math.floor(v).toLocaleString();
+            }
         }
 
         window.showSection = (id, btn) => {
@@ -1232,6 +1396,7 @@
             if (btn.disabled) return; 
 
             const claim = () => {
+                AudioFX.playCoin(); // 🪙 Reward coin sound
                 startWatchTaskTimer(id);
                 const newCount = userData.count + 1;
                 const historyRef = push(ref(database, userPath + '/coin_history'));
@@ -1243,57 +1408,55 @@
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
             };
 
-            if (adType === 'adexium') {
-    btn.innerText = "Loading Ad...";
-    btn.disabled = true;
+            // Safe Adexium handler
+            if(adType === 'adexium') {
+                btn.innerText = "Loading Ad...";
+                btn.disabled = true;
 
-    if (window.myAdexium) {
-        let adClaimed = false;
+                if (window.myAdexium) {
+                    let adClaimed = false;
 
-        const onAdReceived = (ad) => {
-            // Ad milte hi screen par display karein
-            window.myAdexium.displayAd(ad);
-        };
+                    const onAdReceived = (ad) => {
+                        window.myAdexium.displayAd(ad);
+                    };
 
-        const onAdClosed = () => {
-            cleanup();
-            if (!adClaimed) {
-                adClaimed = true;
-                btn.disabled = false;
-                btn.innerText = "Watch";
-                claim(); // Ad band hone par coins reward credit hoga
+                    const onAdClosed = () => {
+                        cleanup();
+                        if (!adClaimed) {
+                            adClaimed = true;
+                            btn.disabled = false;
+                            btn.innerText = "Watch";
+                            claim();
+                        }
+                    };
+
+                    const onNoAd = () => {
+                        cleanup();
+                        console.log("No Adexium ad found, fallback to Monetag...");
+                        runDynamicMonetag(window.adminConfig.monetagZone, () => {
+                            btn.disabled = false;
+                            btn.innerText = "Watch";
+                            claim();
+                        });
+                    };
+
+                    const cleanup = () => {
+                        try {
+                            window.myAdexium.off('adReceived', onAdReceived);
+                            window.myAdexium.off('adClosed', onAdClosed);
+                            window.myAdexium.off('noAdFound', onNoAd);
+                        } catch(e) {}
+                    };
+
+                    window.myAdexium.on('adReceived', onAdReceived);
+                    window.myAdexium.on('adClosed', onAdClosed);
+                    window.myAdexium.on('noAdFound', onNoAd);
+
+                    window.myAdexium.requestAd('interstitial');
+                } else {
+                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
+                }
             }
-        };
-
-        const onNoAd = () => {
-            cleanup();
-            console.log("Adexium me ad nahi mila, Monetag fallback chal raha hai...");
-            runDynamicMonetag("10361814", () => {
-                btn.disabled = false;
-                btn.innerText = "Watch";
-                claim();
-            });
-        };
-
-        const cleanup = () => {
-            try {
-                window.myAdexium.off('adReceived', onAdReceived);
-                window.myAdexium.off('adClosed', onAdClosed);
-                window.myAdexium.off('noAdFound', onNoAd);
-            } catch(e) {}
-        };
-
-        // Adexium Events register karein
-        window.myAdexium.on('adReceived', onAdReceived);
-        window.myAdexium.on('adClosed', onAdClosed);
-        window.myAdexium.on('noAdFound', onNoAd);
-
-        // Adexium Official Request Trigger
-        window.myAdexium.requestAd('interstitial');
-    } else {
-        runDynamicMonetag("10361814", claim);
-    }
-}
             else if(adType === 'adsgram') {
                 try {
                     const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
@@ -1334,7 +1497,21 @@
         
         window.startDailyMining = () => {
             const now = Date.now();
-            update(dbRef, { miningStartTime: now, miningEndTime: now + 3600000, lastClaimTime: now, adsWatched: 0 });
+            window.miningStartTime = now;
+            window.miningEndTime = now + 3600000;
+            window.lastClaimTime = now;
+            window.adsWatched = 0;
+            window.isMiningActive = true;
+            
+            updateMiningUI(true);
+            startLiveCounter();
+            
+            update(dbRef, { 
+                miningStartTime: now, 
+                miningEndTime: now + 3600000, 
+                lastClaimTime: now, 
+                adsWatched: 0 
+            });
         };
 
         window.submitPromotion = () => {
