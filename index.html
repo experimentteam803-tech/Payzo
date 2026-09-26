@@ -25,10 +25,10 @@
 <script type="text/javascript" src="https://cdn.tgads.space/assets/js/adexium-widget.min.js"></script>
 <script type="text/javascript">
   document.addEventListener('DOMContentLoaded', () => {
-    // Sirf initialize karein (autoMode() call nahi karna hai)
     window.myAdexium = new AdexiumWidget({
       wid: 'ffbefbcb-a427-4d1d-8237-c12b1fb74634',
-      adFormat: 'interstitial'
+      adFormat: 'interstitial',
+      debug: true // Testing ke liye true rakhein taaki Adexium ka ad turant aaye
     });
   });
 </script>
@@ -1236,31 +1236,54 @@
                 update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
             };
 
-            // Safe Adexium handler (Crash proof fallback)
             if (adType === 'adexium') {
     btn.innerText = "Loading Ad...";
     btn.disabled = true;
 
-    // Check karein ki Adexium load hua hai ya nahi
     if (window.myAdexium) {
-        try {
-            // Adexium ad show karega
-            window.myAdexium.show().then(() => {
-                claim(); // Ad dekhne ke baad reward credit hoga
-            }).catch((err) => {
-                console.warn("Adexium fill error, fallback to Monetag:", err);
-                // Agar Adexium me ad nahi mila toh Monetag fallback chalega
-                runDynamicMonetag("10361814", claim);
-            }).finally(() => {
+        let adClaimed = false;
+
+        const onAdReceived = (ad) => {
+            // Ad milte hi screen par display karein
+            window.myAdexium.displayAd(ad);
+        };
+
+        const onAdClosed = () => {
+            cleanup();
+            if (!adClaimed) {
+                adClaimed = true;
                 btn.disabled = false;
                 btn.innerText = "Watch";
+                claim(); // Ad band hone par coins reward credit hoga
+            }
+        };
+
+        const onNoAd = () => {
+            cleanup();
+            console.log("Adexium me ad nahi mila, Monetag fallback chal raha hai...");
+            runDynamicMonetag("10361814", () => {
+                btn.disabled = false;
+                btn.innerText = "Watch";
+                claim();
             });
-        } catch (e) {
-            // Direct fallback
-            runDynamicMonetag("10361814", claim);
-        }
+        };
+
+        const cleanup = () => {
+            try {
+                window.myAdexium.off('adReceived', onAdReceived);
+                window.myAdexium.off('adClosed', onAdClosed);
+                window.myAdexium.off('noAdFound', onNoAd);
+            } catch(e) {}
+        };
+
+        // Adexium Events register karein
+        window.myAdexium.on('adReceived', onAdReceived);
+        window.myAdexium.on('adClosed', onAdClosed);
+        window.myAdexium.on('noAdFound', onNoAd);
+
+        // Adexium Official Request Trigger
+        window.myAdexium.requestAd('interstitial');
     } else {
-        // Agar script block ho toh Monetag backup
         runDynamicMonetag("10361814", claim);
     }
 }
