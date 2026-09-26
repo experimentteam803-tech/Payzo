@@ -842,16 +842,23 @@
 
             try {
                 const taskSnap = await get(ref(database, `${userPath}/completed_tasks`));
-                let hasValidTask = false;
+                let hasApprovedTask = false;
+                let hasPendingTask = false;
 
                 if (taskSnap.exists()) {
                     const tasks = taskSnap.val();
-                    hasValidTask = Object.values(tasks).some(t => t.status !== 'Rejected');
+                    hasApprovedTask = Object.values(tasks).some(t => t.status === 'Success');
+                    hasPendingTask = Object.values(tasks).some(t => t.status === 'Pending');
                 }
 
-                if (!hasValidTask) {
-                    document.getElementById('popupTitle').innerText = "⚠️ Task Required";
-                    document.getElementById('popupMessage').innerText = "Withdrawal karne ke liye aapko kam se kam 1 Task pura karna zaroori hai. Kripya Home screen par 🎯 icon par click karke koi bhi ek task complete karein.";
+                if (!hasApprovedTask) {
+                    if (hasPendingTask) {
+                        document.getElementById('popupTitle').innerText = "⏳ Verification Pending";
+                        document.getElementById('popupMessage').innerText = "Your task is currently under review. Lifetime free withdrawals will unlock automatically once approved.";
+                    } else {
+                        document.getElementById('popupTitle').innerText = "🎯 1 Task Required";
+                        document.getElementById('popupMessage').innerText = "Complete at least 1 task to unlock lifetime free withdrawals. Tap the 🎯 icon to get started.";
+                    }
                     document.getElementById('globalPopup').style.display = 'flex';
                     return;
                 }
