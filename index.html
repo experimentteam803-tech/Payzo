@@ -1627,7 +1627,7 @@
 };
 
 window.openVideoGuide = (url) => {
-    if (!url) return alert("Video guide link nahi mila!");
+    if (!url) return alert("⚠️ The guide video is currently unavailable. Please check back later. 🙏");
     if (window.Telegram?.WebApp?.openTelegramLink && url.includes("t.me")) {
         window.Telegram.WebApp.openTelegramLink(url);
     } else {
