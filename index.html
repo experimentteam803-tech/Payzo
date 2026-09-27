@@ -156,18 +156,17 @@
         .balance-fiat-badge {
             position: relative;
             z-index: 2;
-            margin-top: 6px;
+            margin-top: 8px;
             font-size: 12px;
             color: #94a3b8;
             font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
         }
-        .balance-fiat-badge b { color: #32cd32; font-weight: 700; }
+        .balance-fiat-badge b { font-weight: 700; }
 
-        /* Card Pulse on Coin Absorption */
         .balance-card-pulse {
             transform: scale(1.04) !important;
             box-shadow: 0 20px 45px rgba(255, 215, 0, 0.4), 0 0 35px rgba(50, 205, 50, 0.6) !important;
@@ -282,9 +281,7 @@
             100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: blur(3px); }
         }
 
-        /* ==========================================
-           🪙 PROFESSIONAL ARC FLYING COINS ANIMATION
-           ========================================== */
+        /* 🪙 PROFESSIONAL ARC FLYING COINS */
         .flying-coin-debris {
             position: fixed;
             width: 20px;
@@ -371,6 +368,126 @@
         .status-success { background: #32cd32; color: #000; }
         .status-rejected { background: #ff4d4d; color: #fff; }
 
+        /* ==========================================
+           💱 WALLET MULTI-CURRENCY & EXCHANGE SYSTEM
+           ========================================== */
+        .wallet-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .exchange-trigger-btn {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(0, 198, 255, 0.18));
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            color: #ffd700;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        .exchange-trigger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            border-color: #fff;
+        }
+
+        .wallets-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .wallet-sub-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        .wallet-sub-card.card-coins { border-color: rgba(255, 215, 0, 0.3); }
+        .wallet-sub-card.card-inr { border-color: rgba(50, 205, 50, 0.3); }
+        .wallet-sub-card.card-usd { border-color: rgba(0, 198, 255, 0.3); }
+
+        .w-card-header {
+            font-size: 10px;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .w-card-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .w-card-sub {
+            font-size: 9px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        /* Exchange Converter Modal */
+        .exchange-calc-card {
+            background: rgba(22, 22, 22, 0.95);
+            border: 1px solid #ffd700;
+            border-radius: 20px;
+            padding: 22px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.25);
+        }
+
+        .exchange-input-box {
+            position: relative;
+            margin: 15px 0 12px;
+        }
+        .exchange-input-box input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: #000;
+            border: 1.5px solid #ffd700;
+            color: #fff;
+            font-family: 'Orbitron';
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+
+        .exchange-results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0 20px;
+        }
+        .exchange-res-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 6px;
+        }
+        .exchange-res-box span { font-size: 11px; color: #888; display: block; margin-bottom: 2px; }
+        .exchange-res-box b { font-family: 'Orbitron'; font-size: 15px; }
+
         /* Promotion */
         .promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
         .submission-form { background: rgba(22, 22, 22, 0.85); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; border: 1px solid #333; }
@@ -412,9 +529,7 @@
         }
         .task-modal-content { background:#161616; padding:20px; border-radius:20px; width:95%; max-width:400px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; }
 
-        /* ==========================================
-           🌟 ULTRA-PROFESSIONAL REWARD CLAIM MODAL
-           ========================================== */
+        /* 🌟 ULTRA-PROFESSIONAL REWARD CLAIM MODAL */
         .reward-modal-overlay {
             display: none;
             position: fixed;
@@ -569,8 +684,11 @@
                     <span class="balance-coin-badge">🪙</span>
                     <div id="totalCoins">0</div>
                 </div>
+                <!-- Dual Currency Estimation (INR & USD) -->
                 <div class="balance-fiat-badge">
-                    Estimated Value: <b id="balanceInrEqv">₹0.00 INR</b>
+                    ≈ <b id="balanceInrEqv" style="color:#32cd32;">₹0.00 INR</b>
+                    <span style="opacity:0.4; margin:0 4px;">•</span>
+                    <b id="balanceUsdEqv" style="color:#00c6ff;">$0.00 USD</b>
                 </div>
             </div>
 
@@ -640,13 +758,36 @@
             </div>
         </section>
 
+        <!-- 🌟 WALLET & MULTI-CURRENCY WITHDRAWAL PAGE -->
         <section id="wallet" class="section">
-            <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:25px;">Wallet</h2>
-            <div class="balance-card">
-                <div style="font-size:32px; color:#ffd700; font-family:'Orbitron';" id="walletCoins">0</div>
+            <div class="wallet-header-row">
+                <h2 style="font-family:'Orbitron'; font-size:20px; margin:0;">Withdrawal Hub</h2>
+                <button class="exchange-trigger-btn" onclick="openExchangeModal()">
+                    <i class="fas fa-arrow-right-arrow-left"></i> Exchange 💱
+                </button>
             </div>
+
+            <!-- 3 Mini Wallets (Coins, INR, USD) -->
+            <div class="wallets-overview-grid">
+                <div class="wallet-sub-card card-coins">
+                    <div class="w-card-header">COINS</div>
+                    <div class="w-card-amount" id="walletCoins" style="color:#ffd700;">0</div>
+                    <div class="w-card-sub">Total Assets</div>
+                </div>
+                <div class="wallet-sub-card card-inr">
+                    <div class="w-card-header">INR WALLET</div>
+                    <div class="w-card-amount" id="walletInr" style="color:#32cd32;">₹0.00</div>
+                    <div class="w-card-sub">UPI Payout</div>
+                </div>
+                <div class="wallet-sub-card card-usd">
+                    <div class="w-card-header">USD WALLET</div>
+                    <div class="w-card-amount" id="walletUsd" style="color:#00c6ff;">$0.00</div>
+                    <div class="w-card-sub">PayPal / USDT</div>
+                </div>
+            </div>
+
             <div class="submission-form">
-                <h4 style="margin-bottom:15px; font-size:14px;">Withdraw Funds</h4>
+                <h4 style="margin-bottom:15px; font-size:14px;">Select Withdrawal Method</h4>
                 <div class="method-tabs">
                     <button class="method-btn active" onclick="setMethod('upi', this)">UPI (India)</button>
                     <button class="method-btn" onclick="setMethod('paypal', this)">PayPal</button>
@@ -685,6 +826,42 @@
         <button class="nav-btn" onclick="showSection('wallet', this)"><i class="fas fa-wallet"></i></button>
         <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-link"></i></button>
     </nav>
+
+    <!-- 💱 LIVE CURRENCY EXCHANGE CALCULATOR MODAL -->
+    <div id="exchangeModal" class="modal-overlay">
+        <div class="exchange-calc-card">
+            <h3 style="color:#ffd700; font-family:'Orbitron'; font-size:17px; margin-bottom:4px;">
+                <i class="fas fa-arrow-right-arrow-left"></i> Live Exchange 💱
+            </h3>
+            <p style="font-size:11px; color:#aaa; margin-bottom:15px;">Convert your mining coins into INR & USD live</p>
+            
+            <div class="exchange-input-box">
+                <input type="number" id="calcCoinInput" placeholder="Enter Coins to Convert" oninput="calculateExchangeValues()">
+            </div>
+
+            <div class="exchange-results-grid">
+                <div class="exchange-res-box">
+                    <span>Indian Rupee</span>
+                    <b id="calcInrVal" style="color:#32cd32;">₹0.00</b>
+                </div>
+                <div class="exchange-res-box">
+                    <span>US Dollar</span>
+                    <b id="calcUsdVal" style="color:#00c6ff;">$0.00</b>
+                </div>
+            </div>
+
+            <div style="font-size:10px; color:#777; margin-bottom:15px; line-height:1.4;">
+                Rate Peg: <b>100 Coins = ₹1.00 INR</b> • <b>1 USD ≈ ₹85.00 INR</b>
+            </div>
+
+            <button class="action-btn mine-btn" style="padding:12px; margin-bottom:10px;" onclick="applyExchangeToWithdrawal()">
+                Use In Withdrawal
+            </button>
+            <button style="background:none; border:none; color:#555; font-size:12px; cursor:pointer;" onclick="closeExchangeModal()">
+                Close
+            </button>
+        </div>
+    </div>
 
     <div id="giftModal" class="modal-overlay">
         <div class="modal-content" style="text-align:center;">
@@ -870,7 +1047,7 @@
         // Universal tap sound listener
         document.addEventListener('pointerdown', (e) => {
             AudioFX.init();
-            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close, .reward-btn')) {
+            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close, .reward-btn, .exchange-trigger-btn')) {
                 AudioFX.playClick();
             }
         }, { passive: true });
@@ -913,6 +1090,7 @@
             minWithdrawPayPal: 5000,
             minWithdrawCrypto: 5000,
             coinToInrRatio: 100,
+            usdToInrRate: 85, // 1 USD ≈ 85 INR
             supportLink: "https://t.me/PayZoHelp",
             botUsername: "PayZos_Bot",
             refReward: 700,
@@ -952,6 +1130,7 @@
                 if (s.min_withdraw_paypal !== undefined) window.adminConfig.minWithdrawPayPal = Number(s.min_withdraw_paypal);
                 if (s.min_withdraw_crypto !== undefined) window.adminConfig.minWithdrawCrypto = Number(s.min_withdraw_crypto);
                 if (s.coin_to_inr_ratio !== undefined) window.adminConfig.coinToInrRatio = Number(s.coin_to_inr_ratio);
+                if (s.usd_to_inr_rate !== undefined) window.adminConfig.usdToInrRate = Number(s.usd_to_inr_rate);
 
                 if (s.support_link) window.adminConfig.supportLink = s.support_link;
                 if (s.bot_username) window.adminConfig.botUsername = s.bot_username;
@@ -1078,14 +1257,18 @@
             if(!data) { container.innerHTML = `<p style="font-size:10px; color:#555; text-align:center;">No history yet</p>`; return; }
             let html = ""; let found = false;
             const ratio = window.adminConfig.coinToInrRatio || 100;
+            const usdRate = window.adminConfig.usdToInrRate || 85;
 
             Object.keys(data).reverse().forEach(key => {
                 const item = data[key];
                 if(item.method === window.currentMethod) {
                     found = true;
                     const statusClass = `status-${item.status.toLowerCase()}`;
-                    const rupeesValue = (item.amount / ratio).toFixed(2);
-                    html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins <b style="color:#90ee90;">(₹${rupeesValue})</b></span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
+                    const inrVal = (item.amount / ratio).toFixed(2);
+                    const usdVal = (item.amount / (ratio * usdRate)).toFixed(2);
+                    const fiatText = item.method === 'upi' ? `₹${inrVal}` : `$${usdVal}`;
+
+                    html += `<div class="history-item"><div class="h-top"><span>${item.amount.toLocaleString()} Coins <b style="color:#90ee90;">(${fiatText})</b></span><span class="h-status ${statusClass}">${item.status}</span></div><div style="color:#666; font-size:10px;">${new Date(item.timestamp).toLocaleDateString()} • ${item.address}</div></div>`;
                 }
             });
             container.innerHTML = found ? html : `<p style="font-size:10px; color:#555; text-align:center;">No history for ${window.currentMethod.toUpperCase()}</p>`;
@@ -1432,7 +1615,7 @@
             container.appendChild(impact);
             setTimeout(() => impact.remove(), 450);
 
-            AudioFX.playImpact(); // 💥 Heavy asteroid crash sound
+            AudioFX.playImpact();
 
             // 2. Earth Vibration & Telegram Haptic Feedback
             earthBox.classList.remove('earth-vibrate');
@@ -1465,7 +1648,7 @@
             }
 
             // 4. 🪙 Multi-coin burst: Fly directly in the air up into Net Balance card
-            const coinCount = Math.floor(Math.random() * 2) + 3; // 3 to 4 coins
+            const coinCount = Math.floor(Math.random() * 2) + 3;
             for(let c = 0; c < coinCount; c++) {
                 setTimeout(() => {
                     spawnFlyingCoinToBalance(x, y, c);
@@ -1486,41 +1669,34 @@
             const startScreenY = cRect.top + relY;
 
             const tRect = target.getBoundingClientRect();
-            // Target the center top of Net Balance Card
             const destX = tRect.left + tRect.width / 2 + (Math.random() * 40 - 20);
             const destY = tRect.top + tRect.height / 2;
 
-            // Spawn floating coin
             const coin = document.createElement('div');
             coin.className = 'flying-coin-debris';
             coin.innerHTML = "🪙";
             coin.style.left = startScreenX + 'px';
             coin.style.top = startScreenY + 'px';
             
-            // Random scatter angle on burst
             const burstX = (Math.random() - 0.5) * 60;
             const burstY = (Math.random() - 0.5) * 40 - 20;
 
             coin.style.transform = `translate(${burstX}px, ${burstY}px) scale(0.6)`;
             document.body.appendChild(coin);
 
-            // Animate arc motion into Net Balance card
             requestAnimationFrame(() => {
                 coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.15) rotate(${Math.random() * 540}deg)`;
                 coin.style.opacity = '0.95';
             });
 
-            // Absorption burst at Net Balance Card
             setTimeout(() => {
                 coin.remove();
-                AudioFX.playCoin(); // 🪙 Coin ding chime sound
+                AudioFX.playCoin();
 
-                // Telegram soft haptic tap
                 if (tg && tg.HapticFeedback) {
                     try { tg.HapticFeedback.impactOccurred('light'); } catch(e){}
                 }
 
-                // Balance card scaling bounce + pulse
                 const balanceCard = document.getElementById('balanceCard');
                 if (balanceCard) {
                     balanceCard.classList.remove('balance-card-pulse');
@@ -1563,20 +1739,76 @@
             const isLive = window.isMiningActive;
             const displayVal = isLive ? Number(v).toFixed(2) : Math.floor(v).toLocaleString();
             const ratio = window.adminConfig.coinToInrRatio || 100;
+            const usdRate = window.adminConfig.usdToInrRate || 85;
             
+            // Home Balance Card Displays
             document.getElementById('totalCoins').innerText = displayVal;
-            document.getElementById('walletCoins').innerText = Math.floor(v).toLocaleString();
             
-            // Live INR Equivalent Calculation
+            // Dual Currency Home Display
             const inrVal = ((v) / ratio).toFixed(2);
+            const usdVal = ((v) / (ratio * usdRate)).toFixed(2);
+            
             const inrEl = document.getElementById('balanceInrEqv');
-            if (inrEl) inrEl.innerText = `≈ ₹${inrVal} INR`;
+            if (inrEl) inrEl.innerText = `₹${inrVal} INR`;
 
+            const usdEl = document.getElementById('balanceUsdEqv');
+            if (usdEl) usdEl.innerText = `$${usdVal} USD`;
+
+            // Wallet Section 3 Wallets Display
+            const walletCoinsEl = document.getElementById('walletCoins');
+            if (walletCoinsEl) walletCoinsEl.innerText = Math.floor(v).toLocaleString();
+
+            const walletInrEl = document.getElementById('walletInr');
+            if (walletInrEl) walletInrEl.innerText = `₹${inrVal}`;
+
+            const walletUsdEl = document.getElementById('walletUsd');
+            if (walletUsdEl) walletUsdEl.innerText = `$${usdVal}`;
+
+            // Inside Earth circle
             const circleEl = document.getElementById('coinInsideCircle');
             if (circleEl) {
                 circleEl.innerText = isLive ? "+" + Math.max(0, (v - window.coins)).toFixed(2) : Math.floor(v).toLocaleString();
             }
         }
+
+        // ==========================================
+        // 💱 LIVE EXCHANGE CALCULATOR LOGIC
+        // ==========================================
+        window.openExchangeModal = () => {
+            const modal = document.getElementById('exchangeModal');
+            modal.style.display = 'flex';
+            const input = document.getElementById('calcCoinInput');
+            input.value = Math.floor(window.coins) || '';
+            calculateExchangeValues();
+            AudioFX.playClick();
+        };
+
+        window.closeExchangeModal = () => {
+            document.getElementById('exchangeModal').style.display = 'none';
+            AudioFX.playClick();
+        };
+
+        window.calculateExchangeValues = () => {
+            const inputVal = Number(document.getElementById('calcCoinInput').value) || 0;
+            const ratio = window.adminConfig.coinToInrRatio || 100;
+            const usdRate = window.adminConfig.usdToInrRate || 85;
+
+            const inr = (inputVal / ratio).toFixed(2);
+            const usd = (inputVal / (ratio * usdRate)).toFixed(2);
+
+            document.getElementById('calcInrVal').innerText = `₹${inr}`;
+            document.getElementById('calcUsdVal').innerText = `$${usd}`;
+        };
+
+        window.applyExchangeToWithdrawal = () => {
+            const inputVal = Number(document.getElementById('calcCoinInput').value) || 0;
+            if (inputVal <= 0) return alert("Please enter coins to exchange!");
+            
+            document.getElementById('withdrawAmount').value = inputVal;
+            closeExchangeModal();
+            AudioFX.playCoin();
+            showRewardPopup(inputVal, "EXCHANGE APPLIED!", "Coin amount filled into withdrawal input. Enter your payment details to withdraw!");
+        };
 
         window.showSection = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -1694,7 +1926,6 @@
                 });
             };
 
-            // Safe Adexium handler
             if(adType === 'adexium') {
                 btn.innerText = "Loading Ad...";
                 btn.disabled = true;
@@ -1885,7 +2116,6 @@
             const stepsHtml = (task.desc || "").split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
             const ratio = window.adminConfig?.coinToInrRatio || 100;
 
-            // Direct Telegram channel post link handler
             let videoUrl = task.videoId || "";
             if (videoUrl && !videoUrl.startsWith("http")) {
                 videoUrl = "https://t.me/" + videoUrl;
