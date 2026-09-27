@@ -74,21 +74,105 @@
         .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
         #home{display:block;}
 
-        /* Home Balance */
+        /* ==========================================
+           🌟 ULTRA-PROFESSIONAL FINTECH BALANCE CARD
+           ========================================== */
         .balance-card { 
             position: relative; 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(10px);
-            border-radius: 20px; 
-            padding: 25px 20px; 
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(15, 22, 43, 0.8) 50%, rgba(6, 10, 24, 0.95) 100%);
+            backdrop-filter: blur(14px);
+            border-radius: 24px; 
+            padding: 24px 20px 20px; 
             text-align: center; 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border: 1px solid rgba(255, 215, 0, 0.3); 
             margin-bottom: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.2s; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2), 0 0 25px rgba(255, 215, 0, 0.12);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s;
+            overflow: hidden;
         }
-        .balance-card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-bottom: 8px; }
-        #totalCoins { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #ffd700; font-weight: 700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+            animation: rotateAura 15s linear infinite;
+        }
+        @keyframes rotateAura {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .balance-header-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-amount-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-coin-badge {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+            animation: pulseCoinIcon 2s ease-in-out infinite;
+        }
+        @keyframes pulseCoinIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        #totalCoins { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 40px; 
+            font-weight: 900; 
+            background: linear-gradient(90deg, #ffffff 0%, #fff176 40%, #ffd700 80%, #ff9800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.4); 
+            letter-spacing: 0.5px;
+        }
+
+        .balance-fiat-badge {
+            position: relative;
+            z-index: 2;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .balance-fiat-badge b { color: #32cd32; font-weight: 700; }
+
+        /* Card Pulse on Coin Absorption */
+        .balance-card-pulse {
+            transform: scale(1.04) !important;
+            box-shadow: 0 20px 45px rgba(255, 215, 0, 0.4), 0 0 35px rgba(50, 205, 50, 0.6) !important;
+            border-color: #ffd700 !important;
+        }
 
         /* --- 3D EARTH (PURE GLOBE - NO BLACK CIRCLE) --- */
         .mining-visualizer {
@@ -198,21 +282,35 @@
             100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: blur(3px); }
         }
 
+        /* ==========================================
+           🪙 PROFESSIONAL ARC FLYING COINS ANIMATION
+           ========================================== */
         .flying-coin-debris {
             position: fixed;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%);
             border-radius: 50%;
-            border: 1px solid #ffffff;
-            box-shadow: 0 0 12px #ffd700, 0 0 20px #ff9900;
-            z-index: 9999;
+            border: 1.5px solid #ffffff;
+            box-shadow: 0 0 15px #ffd700, 0 0 25px #ff9900;
+            z-index: 99999;
             pointer-events: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            transition: all 0.85s cubic-bezier(0.12, 0.8, 0.32, 1);
+            font-size: 11px;
+            will-change: transform, opacity;
+            transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .flying-coin-debris::after {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.4);
+            filter: blur(4px);
+            z-index: -1;
         }
 
         .rock-fragment {
@@ -313,9 +411,130 @@
             margin-bottom: 8px; border-left: 3px solid #32cd32; font-size: 13px; line-height: 1.4;
         }
         .task-modal-content { background:#161616; padding:20px; border-radius:20px; width:95%; max-width:400px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; }
+
+        /* ==========================================
+           🌟 ULTRA-PROFESSIONAL REWARD CLAIM MODAL
+           ========================================== */
+        .reward-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(3, 6, 17, 0.88);
+            backdrop-filter: blur(14px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .reward-card {
+            background: linear-gradient(180deg, #161c30 0%, #0d1222 100%);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 28px;
+            width: 90%;
+            max-width: 350px;
+            padding: 30px 24px 25px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(255, 215, 0, 0.25);
+            animation: rewardBouncyIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            overflow: hidden;
+        }
+
+        @keyframes rewardBouncyIn {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .reward-rays {
+            position: absolute;
+            top: -60px; left: 50%;
+            transform: translateX(-50%);
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.08) 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulseGlow 2.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: translateX(-50%) scale(0.85); opacity: 0.6; }
+            100% { transform: translateX(-50%) scale(1.15); opacity: 1; }
+        }
+
+        .reward-badge {
+            width: 85px; height: 85px;
+            margin: 0 auto 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%);
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 25px #ffd700, 0 0 40px rgba(255, 140, 0, 0.6);
+            font-size: 42px;
+            animation: coinFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes coinFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(4deg); }
+        }
+
+        .reward-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .reward-amount-box {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(90deg, #fff275, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin: 8px 0 12px;
+        }
+
+        .reward-subtext {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 22px;
+        }
+
+        .reward-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #10b981, #059669);
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+        }
+
+        .reward-btn:active {
+            transform: scale(0.97);
+            filter: brightness(1.1);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -343,9 +562,16 @@
 
     <main>
         <section id="home" class="section">
+            <!-- 🌟 Ultra-Professional Fintech Balance Display -->
             <div class="balance-card" id="balanceCard">
-                <h2>Net Balance</h2>
-                <div id="totalCoins">0</div>
+                <div class="balance-header-tag">⚡ MINING WALLET</div>
+                <div class="balance-amount-row">
+                    <span class="balance-coin-badge">🪙</span>
+                    <div id="totalCoins">0</div>
+                </div>
+                <div class="balance-fiat-badge">
+                    Estimated Value: <b id="balanceInrEqv">₹0.00 INR</b>
+                </div>
             </div>
 
             <!-- Pure 3D Earth Display -->
@@ -490,6 +716,18 @@
         <div class="task-modal-content" id="taskDetailContent"></div>
     </div>
 
+    <!-- 🌟 Professional Reward Claim Modal -->
+    <div id="rewardModal" class="reward-modal-overlay">
+        <div class="reward-card">
+            <div class="reward-rays"></div>
+            <div class="reward-badge">🪙</div>
+            <h3 class="reward-title" id="rewardTitle">CONGRATULATIONS!</h3>
+            <div class="reward-amount-box" id="rewardAmount">+10 COINS</div>
+            <p class="reward-subtext" id="rewardSub">Coins have been successfully added to your net balance.</p>
+            <button class="reward-btn" onclick="closeRewardModal()">COLLECT NOW</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getDatabase, ref, set, onValue, update, push, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
@@ -502,7 +740,6 @@
             miningDrone: null,
             miningGain: null,
 
-            // AudioContext Unlock on user touch/click
             init() {
                 if (!this.ctx) {
                     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -513,7 +750,7 @@
                 }
             },
 
-            // 1. 🔘 Universal Tap/Click Sound (Soft modern UI click)
+            // 1. 🔘 Universal Tap/Click Sound
             playClick() {
                 try {
                     this.init();
@@ -543,7 +780,6 @@
                     if (!this.ctx) return;
                     const now = this.ctx.currentTime;
                     
-                    // Tone 1 (987.77 Hz - B5)
                     const osc1 = this.ctx.createOscillator();
                     const gain1 = this.ctx.createGain();
                     osc1.type = 'sine';
@@ -555,7 +791,6 @@
                     osc1.start(now);
                     osc1.stop(now + 0.12);
 
-                    // Tone 2 (1318.51 Hz - E6)
                     const osc2 = this.ctx.createOscillator();
                     const gain2 = this.ctx.createGain();
                     osc2.type = 'sine';
@@ -594,7 +829,7 @@
                 } catch(e) {}
             },
 
-            // 4. 🛸 Mining Ambient Drone Loop (Futuristic space pulse hum)
+            // 4. 🛸 Mining Ambient Drone Loop
             startMiningAmbient() {
                 try {
                     this.init();
@@ -605,7 +840,6 @@
 
                     this.miningDrone.type = 'sine';
                     this.miningDrone.frequency.setValueAtTime(65, this.ctx.currentTime);
-
                     this.miningGain.gain.setValueAtTime(0.035, this.ctx.currentTime);
 
                     const lfo = this.ctx.createOscillator();
@@ -633,10 +867,10 @@
             }
         };
 
-        // Universal tap sound listener for interactive elements
+        // Universal tap sound listener
         document.addEventListener('pointerdown', (e) => {
             AudioFX.init();
-            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close')) {
+            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close, .reward-btn')) {
                 AudioFX.playClick();
             }
         }, { passive: true });
@@ -735,7 +969,6 @@
                     if (window.Adsgram) AdController = window.Adsgram.init({ blockId: s.adsgram_block });
                 }
 
-                // Update UI elements dynamically based on Admin configuration
                 const statusEl = document.getElementById('adStatus');
                 if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.adminConfig.miningAdsReq}`;
                 
@@ -870,13 +1103,36 @@
                     html += `<div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}${item.adminMsg ? `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">💬 <b>Admin Note:</b> ${item.adminMsg}</div>` : ''}</div>`;
                     if(item.status === 'Success' && !item.notified) {
                         AudioFX.playCoin();
-                        alert(`🎉 Congratulations!\n\nYour promotion video has been approved.`);
+                        showRewardPopup(item.amount || 0, "PROMOTION APPROVED!", "Your video promotion has been approved and coins credited!");
                         update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
                     }
                 });
                 container.innerHTML = html;
             });
         }
+
+        // 🌟 Ultra-Professional Reward Popup Trigger
+        window.showRewardPopup = (coins, title = "CONGRATULATIONS!", sub = "Coins have been credited to your net balance.") => {
+            document.getElementById('rewardTitle').innerText = title;
+            document.getElementById('rewardAmount').innerText = typeof coins === 'number' ? `+${coins.toLocaleString()} COINS` : coins;
+            document.getElementById('rewardSub').innerText = sub;
+            
+            const modal = document.getElementById('rewardModal');
+            modal.style.display = 'flex';
+
+            AudioFX.playCoin();
+
+            if (window.Telegram?.WebApp?.HapticFeedback) {
+                try {
+                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                } catch(e) {}
+            }
+        };
+
+        window.closeRewardModal = () => {
+            document.getElementById('rewardModal').style.display = 'none';
+            AudioFX.playClick();
+        };
 
         window.redeemGift = async () => {
             const code = document.getElementById('giftCode').value.trim().toUpperCase();
@@ -905,9 +1161,8 @@
                 up[`coins`] = window.coins + reward;
                 up[`coin_history/${historyRef.key}`] = { reason: `Gift Code: ${code} 🎁`, amount: reward, timestamp: Date.now() };
                 await update(dbRef, up);
-                AudioFX.playCoin(); // 🪙 Coin ding sound
-                alert(`🎉 Successfully Redeemed ${reward.toLocaleString()} Coins!`);
                 closeGiftModal();
+                showRewardPopup(reward, "GIFT CODE REDEEMED!", `Promo gift code ${code} claimed successfully!`);
             } else {
                 alert("Invalid Code!");
             }
@@ -936,7 +1191,10 @@
             const statusEl = document.getElementById('adStatus');
             if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.adminConfig.miningAdsReq}`;
             if(window.adsWatched < window.adminConfig.miningAdsReq) startAdTimer();
-            else { alert("🎉 All ads completed! Start mining now."); updateMiningUI(false); }
+            else { 
+                showRewardPopup(0, "ADS COMPLETED!", "All required ads watched! You can now start Earth Mining.");
+                updateMiningUI(false); 
+            }
         }
 
         function startAdTimer() {
@@ -1033,7 +1291,7 @@
             updates[`${userPath}/coins`] = window.coins - a;
             
             update(ref(database), updates).then(() => {
-                alert("Withdrawal Requested Successfully!");
+                showRewardPopup(a, "REQUEST SUBMITTED!", "Withdrawal requested successfully! Admin will process your payout shortly.");
                 window.withdrawAdsCounter = 0;
                 document.getElementById('withdrawAmount').value = "";
                 document.getElementById('withdrawAddress').value = "";
@@ -1080,7 +1338,7 @@
                 }
                 if (now >= window.miningEndTime) {
                     await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
-                    alert("🎉 Mining Session Finished!");
+                    showRewardPopup(rate, "MINING FINISHED!", "Mining session completed! Coins collected into your wallet.");
                     stopLiveCounter();
                     updateMiningUI(false);
                 } else { 
@@ -1094,7 +1352,7 @@
             }
         }
 
-        /* --- ASTEROID, EARTH VIBRATION & COIN ANIMATION --- */
+        /* --- ASTEROID, EARTH VIBRATION & ARC FLYING COINS ANIMATION --- */
         let asteroidInterval = null;
 
         function updateMiningUI(isActive) {
@@ -1106,11 +1364,11 @@
             if (isActive) {
                 earthImg.style.filter = "drop-shadow(0 0 35px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 70px rgba(0, 255, 128, 0.4))";
                 startAsteroidShower();
-                AudioFX.startMiningAmbient(); // 🛸 Space drone hum chalu
+                AudioFX.startMiningAmbient();
             } else {
                 earthImg.style.filter = "drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3))";
                 stopAsteroidShower();
-                AudioFX.stopMiningAmbient(); // 🛑 Space drone band
+                AudioFX.stopMiningAmbient();
             }
             updateCoinDisplays(window.coins);
         }
@@ -1118,7 +1376,7 @@
         function startAsteroidShower() {
             if (asteroidInterval) return;
             spawnAsteroid();
-            asteroidInterval = setInterval(() => spawnAsteroid(), 2600);
+            asteroidInterval = setInterval(() => spawnAsteroid(), 2400);
         }
 
         function stopAsteroidShower() {
@@ -1174,7 +1432,7 @@
             container.appendChild(impact);
             setTimeout(() => impact.remove(), 450);
 
-            AudioFX.playImpact(); // 💥 Asteroid impact bass rumble sound
+            AudioFX.playImpact(); // 💥 Heavy asteroid crash sound
 
             // 2. Earth Vibration & Telegram Haptic Feedback
             earthBox.classList.remove('earth-vibrate');
@@ -1206,18 +1464,21 @@
                 setTimeout(() => rock.remove(), 600);
             }
 
-            // 4. Flying Gold Coins into Net Balance
-            const coinCount = Math.floor(Math.random() * 2) + 2;
+            // 4. 🪙 Multi-coin burst: Fly directly in the air up into Net Balance card
+            const coinCount = Math.floor(Math.random() * 2) + 3; // 3 to 4 coins
             for(let c = 0; c < coinCount; c++) {
                 setTimeout(() => {
-                    spawnFlyingCoinToBalance(x, y);
-                }, c * 80);
+                    spawnFlyingCoinToBalance(x, y, c);
+                }, c * 90);
             }
         }
 
-        function spawnFlyingCoinToBalance(relX, relY) {
+        // ==========================================
+        // 🚀 HAWA ME EARTH SE COINS BALANCE TAK UD KE JANE WALI SCRIPT
+        // ==========================================
+        function spawnFlyingCoinToBalance(relX, relY, index) {
             const container = document.getElementById('asteroid-container');
-            const target = document.getElementById('totalCoins');
+            const target = document.getElementById('balanceCard');
             if (!container || !target) return;
 
             const cRect = container.getBoundingClientRect();
@@ -1225,31 +1486,49 @@
             const startScreenY = cRect.top + relY;
 
             const tRect = target.getBoundingClientRect();
-            const destX = tRect.left + tRect.width / 2;
+            // Target the center top of Net Balance Card
+            const destX = tRect.left + tRect.width / 2 + (Math.random() * 40 - 20);
             const destY = tRect.top + tRect.height / 2;
 
+            // Spawn floating coin
             const coin = document.createElement('div');
             coin.className = 'flying-coin-debris';
             coin.innerHTML = "🪙";
             coin.style.left = startScreenX + 'px';
             coin.style.top = startScreenY + 'px';
-            coin.style.transform = `translate(-50%, -50%) scale(0.6)`;
+            
+            // Random scatter angle on burst
+            const burstX = (Math.random() - 0.5) * 60;
+            const burstY = (Math.random() - 0.5) * 40 - 20;
+
+            coin.style.transform = `translate(${burstX}px, ${burstY}px) scale(0.6)`;
             document.body.appendChild(coin);
 
+            // Animate arc motion into Net Balance card
             requestAnimationFrame(() => {
-                coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.1) rotate(${Math.random() * 360}deg)`;
-                coin.style.opacity = '0.9';
+                coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.15) rotate(${Math.random() * 540}deg)`;
+                coin.style.opacity = '0.95';
             });
 
+            // Absorption burst at Net Balance Card
             setTimeout(() => {
                 coin.remove();
-                AudioFX.playCoin(); // 🪙 Coin collected ding chime sound
+                AudioFX.playCoin(); // 🪙 Coin ding chime sound
+
+                // Telegram soft haptic tap
+                if (tg && tg.HapticFeedback) {
+                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e){}
+                }
+
+                // Balance card scaling bounce + pulse
                 const balanceCard = document.getElementById('balanceCard');
                 if (balanceCard) {
-                    balanceCard.style.transform = 'scale(1.03)';
-                    setTimeout(() => balanceCard.style.transform = 'scale(1)', 150);
+                    balanceCard.classList.remove('balance-card-pulse');
+                    void balanceCard.offsetWidth;
+                    balanceCard.classList.add('balance-card-pulse');
+                    setTimeout(() => balanceCard.classList.remove('balance-card-pulse'), 180);
                 }
-            }, 850);
+            }, 880);
         }
 
         function startLiveCounter() {
@@ -1283,10 +1562,16 @@
         function updateCoinDisplays(v) {
             const isLive = window.isMiningActive;
             const displayVal = isLive ? Number(v).toFixed(2) : Math.floor(v).toLocaleString();
+            const ratio = window.adminConfig.coinToInrRatio || 100;
             
             document.getElementById('totalCoins').innerText = displayVal;
             document.getElementById('walletCoins').innerText = Math.floor(v).toLocaleString();
             
+            // Live INR Equivalent Calculation
+            const inrVal = ((v) / ratio).toFixed(2);
+            const inrEl = document.getElementById('balanceInrEqv');
+            if (inrEl) inrEl.innerText = `≈ ₹${inrVal} INR`;
+
             const circleEl = document.getElementById('coinInsideCircle');
             if (circleEl) {
                 circleEl.innerText = isLive ? "+" + Math.max(0, (v - window.coins)).toFixed(2) : Math.floor(v).toLocaleString();
@@ -1396,7 +1681,6 @@
             if (btn.disabled) return; 
 
             const claim = () => {
-                AudioFX.playCoin(); // 🪙 Reward coin sound
                 startWatchTaskTimer(id);
                 const newCount = userData.count + 1;
                 const historyRef = push(ref(database, userPath + '/coin_history'));
@@ -1405,7 +1689,9 @@
                 updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
                 if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
                 else updates[`ad_stats/${id}/count`] = newCount;
-                update(dbRef, updates).then(() => { setTimeout(() => alert(`🎉 Success! +${reward} Coins.`), 20); });
+                update(dbRef, updates).then(() => { 
+                    showRewardPopup(reward, "CLAIM SUCCESSFUL!", "Watch Ad task completed. Coins added to your wallet!");
+                });
             };
 
             // Safe Adexium handler
@@ -1520,7 +1806,7 @@
             if (!urlPattern.test(linkInput)) return alert("Error: Invalid Link.");
             push(ref(database, `${userPath}/promotions`), { link: linkInput, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() });
             document.getElementById('promoLink').value = "";
-            alert("Submitted!");
+            showRewardPopup(0, "SUBMITTED!", "Your promotion link has been submitted for manual admin review.");
         };
 
         window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
@@ -1594,46 +1880,46 @@
         }
 
         window.openTaskDetails = (id, task) => {
-    currentSelectedTask = { id, ...task };
-    const detailContent = document.getElementById('taskDetailContent');
-    const stepsHtml = (task.desc || "").split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
-    const ratio = window.adminConfig?.coinToInrRatio || 100;
+            currentSelectedTask = { id, ...task };
+            const detailContent = document.getElementById('taskDetailContent');
+            const stepsHtml = (task.desc || "").split('\n').map(step => `<div class="task-step">🔹 ${step}</div>`).join('');
+            const ratio = window.adminConfig?.coinToInrRatio || 100;
 
-    // Channel video link handler
-    let videoUrl = task.videoId || "";
-    if (videoUrl && !videoUrl.startsWith("http")) {
-        videoUrl = "https://t.me/" + videoUrl;
-    }
+            // Direct Telegram channel post link handler
+            let videoUrl = task.videoId || "";
+            if (videoUrl && !videoUrl.startsWith("http")) {
+                videoUrl = "https://t.me/" + videoUrl;
+            }
 
-    detailContent.innerHTML = `
-        <div style="text-align:center; margin-bottom:20px;">
-            <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
-            <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
-            <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / ratio).toFixed(2)}</p>
-        </div>
-        <div style="margin-bottom:20px;">${stepsHtml}</div>
-        
-        <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" 
-            onclick="openVideoGuide('${videoUrl}')">
-            🎬 Watch Video Guide
-        </button>
+            detailContent.innerHTML = `
+                <div style="text-align:center; margin-bottom:20px;">
+                    <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
+                    <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
+                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / ratio).toFixed(2)}</p>
+                </div>
+                <div style="margin-bottom:20px;">${stepsHtml}</div>
+                
+                <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" 
+                    onclick="openVideoGuide('${videoUrl}')">
+                    🎬 Watch Video Guide
+                </button>
 
-        <button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button>
-        <button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button>
-        <button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>
-    `;
-    document.getElementById('taskListModal').style.display = 'none';
-    document.getElementById('taskDetailModal').style.display = 'flex';
-};
+                <button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button>
+                <button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button>
+                <button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>
+            `;
+            document.getElementById('taskListModal').style.display = 'none';
+            document.getElementById('taskDetailModal').style.display = 'flex';
+        };
 
-window.openVideoGuide = (url) => {
-    if (!url) return alert("⚠️ The guide video is currently unavailable. Please check back later. 🙏");
-    if (window.Telegram?.WebApp?.openTelegramLink && url.includes("t.me")) {
-        window.Telegram.WebApp.openTelegramLink(url);
-    } else {
-        window.open(url, '_blank');
-    }
-};
+        window.openVideoGuide = (url) => {
+            if (!url) return alert("Video guide jald hi upload kiya jayega!");
+            if (window.Telegram?.WebApp?.openTelegramLink && url.includes("t.me")) {
+                window.Telegram.WebApp.openTelegramLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        };
 
         window.handleTaskDownload = (link) => {
             window.open(link, '_blank');
@@ -1654,8 +1940,8 @@ window.openVideoGuide = (url) => {
             updates[`${userPath}/completed_tasks/${currentSelectedTask.id}`] = taskData;
             updates[`admin_review_tasks/${currentSelectedTask.id}_${TELEGRAM_USER_ID}`] = { ...taskData, userId: TELEGRAM_USER_ID, userName: TELEGRAM_USER_NAME };
             await update(ref(database), updates);
-            alert("Verification Sent! Please wait for Admin approval.");
             closeTaskDetails();
+            showRewardPopup(0, "VERIFICATION SUBMITTED!", "Your task is sent for review! Once approved by admin, lifetime free withdrawals will unlock.");
         };
 
         window.openTaskList = () => document.getElementById('taskListModal').style.display = 'flex';
