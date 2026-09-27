@@ -791,10 +791,15 @@
                 <div class="method-tabs">
                     <button class="method-btn active" onclick="setMethod('upi', this)">UPI (India)</button>
                     <button class="method-btn" onclick="setMethod('paypal', this)">PayPal</button>
-                    <button class="method-btn" onclick="setMethod('crypto', this)">Crypto (USDT)</button>
+                    <button class="method-btn" onclick="setMethod('crypto', this)">Crypto (USDT - TON)</button>
                 </div>
                 <input type="number" id="withdrawAmount" placeholder="Enter Coins (Min 1,000)">
                 <input type="text" id="withdrawAddress" placeholder="UPI ID">
+
+                <!-- 💎 TON Network Notice (Ye input aur button ke theek beech me aayega) -->
+                <p id="cryptoNetworkNotice" style="display:none; font-size:11px; color:#00c6ff; margin:-10px 0 15px; text-align:left; background:rgba(0,198,255,0.08); padding:8px 12px; border-radius:8px; border:1px solid rgba(0,198,255,0.25);">
+                    💎 <b>Network:</b> Please provide deposit address on <b>TON Network</b> only.
+                </p>
                 <button class="action-btn mine-btn" onclick="handleWithdrawal()">Request Withdrawal</button>
                 <div class="history-container">
                     <div class="history-title" id="historyTitle">📜 UPI History</div>
@@ -1540,8 +1545,19 @@
             window.currentMethod = m;
             document.querySelectorAll('.method-btn').forEach(x => x.classList.remove('active'));
             b.classList.add('active');
+            
             const addrInput = document.getElementById('withdrawAddress');
-            addrInput.placeholder = m === 'upi' ? 'UPI ID' : (m === 'paypal' ? 'PayPal Email' : 'USDT Address');
+            const notice = document.getElementById('cryptoNetworkNotice');
+
+            // Agar Crypto select ho toh TON Network ka placeholder aur notice dikhaye
+            if (m === 'crypto') {
+                addrInput.placeholder = 'Enter TON Network Deposit Address (USDT-TON)';
+                if (notice) notice.style.display = 'block';
+            } else {
+                addrInput.placeholder = m === 'upi' ? 'UPI ID' : 'PayPal Email';
+                if (notice) notice.style.display = 'none';
+            }
+
             refreshWithdrawPlaceholder();
             document.getElementById('historyTitle').innerText = `📜 ${m.toUpperCase()} History`;
             renderWithdrawalHistory();
