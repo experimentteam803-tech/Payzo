@@ -1188,6 +1188,8 @@
             if (amtInput) amtInput.placeholder = `Enter Coins (Min ${getActiveMinLimit().toLocaleString()})`;
         }
 
+        let welcomeBonusAwarded = false;
+
         function loadUserData() {
             onValue(dbRef, (snap) => {
                 const data = snap.val();
@@ -1199,8 +1201,61 @@
                     window.lastClaimTime = data.lastClaimTime || 0;
                     document.getElementById('refLink').innerText = `https://t.me/${window.adminConfig.botUsername}?start=${TELEGRAM_USER_ID}`;
                     checkMiningStatus();
+
+                    // 🎁 Naye User ko Welcome Bonus 100 Coins (Name ke sath Pop-up)
+                    if (!data.welcomeBonusClaimed && !welcomeBonusAwarded) {
+                        welcomeBonusAwarded = true;
+                        const bonusAmount = 100;
+                        const hRef = push(ref(database, userPath + '/coin_history'));
+                        const currentCoins = data.coins || 0;
+                        
+                        const updates = {};
+                        updates['coins'] = currentCoins + bonusAmount;
+                        updates['welcomeBonusClaimed'] = true;
+                        updates[`coin_history/${hRef.key}`] = {
+                            reason: "Welcome Bonus 🎁",
+                            amount: bonusAmount,
+                            timestamp: Date.now()
+                        };
+
+                        update(dbRef, updates).then(() => {
+                            showRewardPopup(
+                                bonusAmount, 
+                                `WELCOME, ${TELEGRAM_USER_NAME.toUpperCase()}! 🎉`, 
+                                `Congratulations! You have received 100 free coins as a signup welcome bonus.`
+                            );
+                        });
+                    }
                 } else {
-                    set(dbRef, { coins: 0, userName: TELEGRAM_USER_NAME, adsWatched: 0, miningStartTime: 0, miningEndTime: 0 });
+                    // Jab koi user bilkul pehli baar app open karta hai
+                    welcomeBonusAwarded = true;
+                    const bonusAmount = 100;
+                    const hRefKey = push(ref(database, userPath + '/coin_history')).key;
+                    
+                    const newUserData = {
+                        coins: bonusAmount,
+                        userName: TELEGRAM_USER_NAME,
+                        adsWatched: 0,
+                        miningStartTime: 0,
+                        miningEndTime: 0,
+                        welcomeBonusClaimed: true,
+                        createdAt: Date.now(),
+                        coin_history: {
+                            [hRefKey]: {
+                                reason: "Welcome Bonus 🎁",
+                                amount: bonusAmount,
+                                timestamp: Date.now()
+                            }
+                        }
+                    };
+
+                    set(dbRef, newUserData).then(() => {
+                        showRewardPopup(
+                            bonusAmount, 
+                            `WELCOME, ${TELEGRAM_USER_NAME.toUpperCase()}! 🎉`, 
+                            `Congratulations! You have received 100 free coins as a signup welcome bonus.`
+                        );
+                    });
                 }
             });
 
