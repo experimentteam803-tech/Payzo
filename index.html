@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CoinMine - Professional Mining Hub</title>
     <!-- 1. Telegram Script (Top Priority) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -32,9 +32,8 @@
     </script>
     
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins', sans-serif;-webkit-tap-highlight-color:transparent;}
         
-        /* Deep Cosmic Space & Starfield Background */
         body { 
             background-color: #030611;
             background-image: 
@@ -48,76 +47,74 @@
             background-size: 550px 550px, 450px 450px, 350px 350px, 280px 280px, 600px 600px, 100% 100%;
             color: white; 
             min-height: 100vh; 
+            height: 100vh;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            overflow-x: hidden; 
+            overflow: hidden; 
         }
 
         /* Header */
         header{
-            display:flex; justify-content:space-between; align-items:center; width:100%; padding:15px 20px;
+            display:flex; justify-content:space-between; align-items:center; width:100%; height: 60px; padding:0 18px;
             background: rgba(4, 7, 18, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(50, 205, 50, 0.2);
             position:fixed; top:0; z-index:100;
         }
-        .header-right { display: flex; gap: 15px; align-items: center; }
+        .header-right { display: flex; gap: 12px; align-items: center; }
         .gift-trigger { cursor: pointer; font-size: 20px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         header .profile{display:flex;align-items:center;gap:10px}
-        header .profile img{width:38px;height:38px;border-radius:50%;border:2px solid #32cd32;}
+        header .profile img{width:36px;height:36px;border-radius:50%;border:2px solid #32cd32;}
         header .profile span{font-weight:600;color:#90ee90;font-size: 13px;}
 
-        /* Main */
-        main{flex:1; width:100%; max-width: 500px; padding-top:80px; padding-bottom: 90px;}
-        .section{display:none; width:100%; padding:20px; animation:fadeIn 0.4s ease;}
-        #home{display:block;}
+        /* Main Container */
+        main{flex:1; width:100%; max-width: 500px; margin-top:60px; height: calc(100vh - 125px); overflow: hidden; position: relative;}
+        .section{display:none; width:100%; height:100%; padding:15px 18px; animation:fadeIn 0.35s ease; overflow-y: auto;}
+        
+        /* 🌟 HOME SECTION NO-SCROLL FIT */
+        #home {
+            display:flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden !important; 
+            padding: 10px 18px 8px;
+            height: 100%;
+        }
 
         /* ==========================================
-           🌟 ULTRA-PROFESSIONAL FINTECH BALANCE CARD
+           🌟 COMPACT FINTECH BALANCE CARD
            ========================================== */
         .balance-card { 
             position: relative; 
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(15, 22, 43, 0.8) 50%, rgba(6, 10, 24, 0.95) 100%);
+            width: 100%;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(15, 22, 43, 0.82) 50%, rgba(6, 10, 24, 0.95) 100%);
             backdrop-filter: blur(14px);
-            border-radius: 24px; 
-            padding: 24px 20px 20px; 
+            border-radius: 20px; 
+            padding: 12px 16px 10px; 
             text-align: center; 
             border: 1px solid rgba(255, 215, 0, 0.3); 
-            margin-bottom: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2), 0 0 25px rgba(255, 215, 0, 0.12);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2), 0 0 20px rgba(255, 215, 0, 0.1);
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s;
             overflow: hidden;
-        }
-
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
-            pointer-events: none;
-            animation: rotateAura 15s linear infinite;
-        }
-        @keyframes rotateAura {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            flex-shrink: 0;
         }
 
         .balance-header-tag {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: rgba(255, 215, 0, 0.12);
             border: 1px solid rgba(255, 215, 0, 0.3);
             color: #ffd700;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            padding: 4px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             position: relative;
             z-index: 2;
         }
@@ -126,37 +123,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             position: relative;
             z-index: 2;
         }
 
         .balance-coin-badge {
-            font-size: 32px;
+            font-size: 26px;
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
-            animation: pulseCoinIcon 2s ease-in-out infinite;
-        }
-        @keyframes pulseCoinIcon {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
         }
 
         #totalCoins { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: 40px; 
+            font-size: 32px; 
             font-weight: 900; 
             background: linear-gradient(90deg, #ffffff 0%, #fff176 40%, #ffd700 80%, #ff9800 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(255, 215, 0, 0.4); 
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.35); 
             letter-spacing: 0.5px;
+            line-height: 1.1;
         }
 
         .balance-fiat-badge {
             position: relative;
             z-index: 2;
-            margin-top: 8px;
-            font-size: 12px;
+            margin-top: 4px;
+            font-size: 11px;
             color: #94a3b8;
             font-weight: 500;
             display: flex;
@@ -167,26 +160,27 @@
         .balance-fiat-badge b { font-weight: 700; }
 
         .balance-card-pulse {
-            transform: scale(1.04) !important;
-            box-shadow: 0 20px 45px rgba(255, 215, 0, 0.4), 0 0 35px rgba(50, 205, 50, 0.6) !important;
+            transform: scale(1.025) !important;
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.4), 0 0 25px rgba(50, 205, 50, 0.5) !important;
             border-color: #ffd700 !important;
         }
 
-        /* --- 3D EARTH (PURE GLOBE - NO BLACK CIRCLE) --- */
+        /* --- 3D EARTH (COMPACT PERFECT FIT) --- */
         .mining-visualizer {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 15px auto 25px;
+            width: 190px;
+            height: 190px;
+            margin: auto 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .earth-container {
             position: relative;
-            width: 220px;
-            height: 220px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -198,14 +192,14 @@
         }
 
         .earth-img {
-            width: 220px;
-            height: 220px;
+            width: 160px;
+            height: 160px;
             object-fit: cover;
             border-radius: 50%;
             animation: rotateEarth 22s linear infinite;
             pointer-events: none;
             user-select: none;
-            filter: drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3));
+            filter: drop-shadow(0 0 25px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 50px rgba(0, 110, 255, 0.3));
             transition: filter 0.4s ease;
         }
 
@@ -216,13 +210,11 @@
 
         .earth-3d-shadow {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 220px;
-            height: 220px;
+            top: 0; left: 0;
+            width: 160px; height: 160px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.7) 100%);
-            box-shadow: inset -18px -18px 30px rgba(0, 0, 0, 0.85);
+            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.75) 100%);
+            box-shadow: inset -15px -15px 25px rgba(0, 0, 0, 0.85);
             pointer-events: none;
             z-index: 6;
         }
@@ -240,11 +232,11 @@
 
         .realistic-asteroid {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 18px;
+            height: 18px;
             background: radial-gradient(circle at 35% 30%, #b8aea2 0%, #4f4942 50%, #171513 100%);
             border-radius: 42% 58% 65% 35% / 40% 45% 55% 60%;
-            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.9), inset 2px 2px 4px rgba(255,255,255,0.35), 0 0 12px rgba(255, 69, 0, 0.9);
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.9), inset 2px 2px 3px rgba(255,255,255,0.35), 0 0 10px rgba(255, 69, 0, 0.9);
             z-index: 12;
             pointer-events: none;
         }
@@ -252,11 +244,11 @@
         .realistic-asteroid::before {
             content: '';
             position: absolute;
-            top: -22px;
+            top: -18px;
             left: 50%;
             transform: translateX(-50%);
-            width: 6px;
-            height: 35px;
+            width: 5px;
+            height: 28px;
             background: linear-gradient(to top, #ff2200, #ff8800, #ffea00, transparent);
             border-radius: 50%;
             filter: blur(1.5px);
@@ -264,8 +256,8 @@
 
         .realistic-impact {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: radial-gradient(circle, #ffffff 0%, #ffcc00 30%, #ff3b00 65%, transparent 75%);
             border-radius: 50%;
             transform: translate(-50%, -50%) scale(0.1);
@@ -276,37 +268,27 @@
 
         @keyframes impactBurst {
             0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; filter: brightness(2); }
-            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.9; }
-            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: blur(3px); }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; filter: blur(3px); }
         }
 
-        /* 🪙 PROFESSIONAL ARC FLYING COINS */
+        /* Arc Flying Coins */
         .flying-coin-debris {
             position: fixed;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%);
             border-radius: 50%;
-            border: 1.5px solid #ffffff;
-            box-shadow: 0 0 15px #ffd700, 0 0 25px #ff9900;
+            border: 1.2px solid #ffffff;
+            box-shadow: 0 0 12px #ffd700, 0 0 20px #ff9900;
             z-index: 99999;
             pointer-events: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             will-change: transform, opacity;
-            transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .flying-coin-debris::after {
-            content: '';
-            position: absolute;
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            background: rgba(255, 215, 0, 0.4);
-            filter: blur(4px);
-            z-index: -1;
+            transition: all 0.85s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .rock-fragment {
@@ -334,318 +316,284 @@
             75% { transform: translate(-2px, -3px); }
         }
 
+        /* ==========================================
+           🌟 ULTRA-MODERN MINING & AD BUTTONS
+           ========================================== */
+        .home-controls-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+        }
+
+        /* 🎬 Advanced Watch Ad Button */
+        .ad-btn-pro {
+            position: relative;
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(255, 179, 0, 0.15) 0%, rgba(255, 111, 0, 0.25) 100%);
+            border: 1.5px solid rgba(255, 193, 7, 0.5);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 18px rgba(255, 152, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all 0.25s ease;
+            overflow: hidden;
+        }
+
+        .ad-btn-pro:active { transform: scale(0.98); }
+        .ad-btn-pro:disabled { opacity: 0.65; cursor: not-allowed; filter: grayscale(0.5); }
+
+        .ad-btn-progress-bar {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), rgba(255, 140, 0, 0.45));
+            z-index: 1;
+            transition: width 0.35s ease;
+            pointer-events: none;
+        }
+
+        .ad-btn-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .ad-btn-badge {
+            position: relative;
+            z-index: 2;
+            background: #ffd700;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 9px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        /* 🪙 Ultra-Sleek Start Mining Button */
+        .mine-btn-pro {
+            position: relative;
+            width: 100%;
+            height: 52px;
+            background: linear-gradient(90deg, #00b04f 0%, #10b981 50%, #00e676 100%);
+            border: none;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #041008;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+        }
+
+        .mine-btn-pro:not(:disabled) {
+            animation: pulseMineBtn 2s infinite alternate;
+        }
+        @keyframes pulseMineBtn {
+            0% { box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); transform: scale(1); }
+            100% { box-shadow: 0 8px 30px rgba(16, 185, 129, 0.7), 0 0 15px #32cd32; transform: scale(1.015); }
+        }
+
+        .mine-btn-pro:disabled {
+            background: #181d28;
+            color: #64748b;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: none;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        #miningCountdown {
+            text-align: center;
+            font-size: 11px;
+            color: #90ee90;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            margin-top: -2px;
+        }
+
         /* Watch Page Cards */
         .ad-task-card {
-            display: flex; align-items: center; padding: 15px; border-radius: 18px;
-            margin-bottom: 12px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; padding: 13px 15px; border-radius: 16px;
+            margin-bottom: 11px; gap: 12px; border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(10px);
         }
-        .ad-task-img { width: 50px; height: 50px; border-radius: 10px; background: #fff; padding: 5px; object-fit: contain; }
+        .ad-task-img { width: 44px; height: 44px; border-radius: 10px; background: #fff; padding: 4px; object-fit: contain; }
         .ad-task-info { flex: 1; }
-        .ad-task-info h3 { font-size: 14px; margin-bottom: 2px; }
+        .ad-task-info h3 { font-size: 13px; margin-bottom: 2px; }
         .ad-task-info p { font-size: 11px; opacity: 0.7; }
-        .watch-task-btn { background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 100px; }
+        .watch-task-btn { background: #fff; color: #000; border: none; padding: 7px 14px; border-radius: 10px; font-weight: bold; cursor: pointer; min-width: 90px; font-size: 12px; }
 
         /* History Section */
-        .history-container { margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-        .history-title { font-size: 14px; color: #ffd700; font-family: 'Orbitron'; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .history-container { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; }
+        .history-title { font-size: 13px; color: #ffd700; font-family: 'Orbitron'; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 250px;
+            gap: 9px;
+            max-height: 220px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 4px;
         }
         .history-list::-webkit-scrollbar { width: 4px; }
         .history-list::-webkit-scrollbar-thumb { background: rgba(50, 205, 50, 0.3); border-radius: 10px; }
-        .history-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
-        .h-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .h-status { font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+        .history-item { background: rgba(255,255,255,0.05); padding: 11px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
+        .h-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .h-status { font-weight: bold; text-transform: uppercase; font-size: 9px; padding: 2px 6px; border-radius: 4px; }
         .status-pending { background: #555; color: #fff; }
         .status-success { background: #32cd32; color: #000; }
         .status-rejected { background: #ff4d4d; color: #fff; }
 
         /* ==========================================
-           💱 WALLET MULTI-CURRENCY & EXCHANGE SYSTEM
+           🌟 COMPACT & SLEEK REFERRAL DASHBOARD
            ========================================== */
-        .wallet-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .exchange-trigger-btn {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(0, 198, 255, 0.18));
-            border: 1px solid rgba(255, 215, 0, 0.6);
-            color: #ffd700;
-            border-radius: 20px;
-            padding: 8px 16px;
-            font-size: 12px;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-            transition: all 0.2s ease;
-        }
-        .exchange-trigger-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
-            border-color: #fff;
-        }
-
-        .wallets-overview-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 22px;
-        }
-
-        .wallet-sub-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 14px 8px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-        .wallet-sub-card.card-coins { border-color: rgba(255, 215, 0, 0.3); }
-        .wallet-sub-card.card-inr { border-color: rgba(50, 205, 50, 0.3); }
-        .wallet-sub-card.card-usd { border-color: rgba(0, 198, 255, 0.3); }
-
-        .w-card-header {
-            font-size: 10px;
-            font-weight: 700;
-            color: #888;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-        .w-card-amount {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .w-card-sub {
-            font-size: 9px;
-            color: #666;
-            margin-top: 3px;
-        }
-
-        /* Exchange Converter Modal */
-        .exchange-calc-card {
-            background: rgba(22, 22, 22, 0.95);
-            border: 1px solid #ffd700;
-            border-radius: 20px;
-            padding: 22px;
-            width: 90%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(255, 215, 0, 0.25);
-        }
-
-        .exchange-input-box {
-            position: relative;
-            margin: 15px 0 12px;
-        }
-        .exchange-input-box input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            background: #000;
-            border: 1.5px solid #ffd700;
-            color: #fff;
-            font-family: 'Orbitron';
-            font-size: 16px;
-            text-align: center;
-            outline: none;
-        }
-
-        .exchange-results-grid {
+        .ref-stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 15px 0 20px;
+            margin-bottom: 14px;
         }
-        .exchange-res-box {
+        .ref-stat-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(20, 26, 45, 0.7) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: 16px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+        .ref-stat-title { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ref-stat-num { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 800; color: #ffd700; margin-top: 4px; }
+
+        .ref-list-card {
+            background: rgba(22, 26, 40, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+        .ref-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #90ee90;
+            margin-bottom: 10px;
+        }
+        .ref-users-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .ref-users-box::-webkit-scrollbar { width: 3px; }
+        .ref-users-box::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+        .ref-user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px 6px;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 11px;
+            border-left: 2.5px solid #ffd700;
         }
-        .exchange-res-box span { font-size: 11px; color: #888; display: block; margin-bottom: 2px; }
-        .exchange-res-box b { font-family: 'Orbitron'; font-size: 15px; }
 
-        /* Promotion */
-        .promo-card { background: rgba(50, 205, 50, 0.05); border: 1px solid #32cd3244; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .submission-form { background: rgba(22, 22, 22, 0.85); backdrop-filter: blur(10px); padding: 20px; border-radius: 15px; border: 1px solid #333; }
-        .submission-form input, .submission-form select { width: 100%; padding: 12px; margin: 10px 0 20px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
+        /* Wallets Overview */
+        .wallets-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .wallet-sub-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 12px 6px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .w-card-header { font-size: 9px; font-weight: 700; color: #888; letter-spacing: 1px; margin-bottom: 3px; text-transform: uppercase; }
+        .w-card-amount { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .w-card-sub { font-size: 8px; color: #666; margin-top: 2px; }
 
-        /* Method Tabs */
-        .method-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .method-btn { background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .method-btn.active { background: #32cd32; color: #000; border-color: #32cd32; }
-
-        /* Referral */
-        .ref-info-card { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
-        .ref-step { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start; }
-        .step-num { background: #ffd700; color: #000; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 12px; }
+        /* Form Controls */
+        .submission-form { background: rgba(22, 22, 22, 0.85); backdrop-filter: blur(10px); padding: 18px; border-radius: 15px; border: 1px solid #333; }
+        .submission-form input, .submission-form select { width: 100%; padding: 11px; margin: 8px 0 16px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 13px; }
+        .method-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+        .method-btn { background: #222; border: 1px solid #444; color: #fff; padding: 7px 13px; border-radius: 20px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+        .method-btn.active { background: #32cd32; color: #000; border-color: #32cd32; font-weight: bold; }
 
         /* Modal Styles */
         .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:200; align-items:center; justify-content:center; }
-        .modal-content { background:#161616; padding:25px; border-radius:20px; width:90%; max-width:400px; border: 1px solid #333; }
+        .modal-content { background:#161616; padding:22px; border-radius:20px; width:90%; max-width:390px; border: 1px solid #333; }
 
-        /* Buttons & Nav */
-        .action-btn { width: 100%; padding:15px; border-radius:12px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; }
+        .action-btn { width: 100%; padding:13px; border-radius:12px; font-weight:700; cursor:pointer; border: none; font-family: 'Orbitron', sans-serif; text-transform: uppercase; transition: 0.3s; font-size: 13px; }
         .mine-btn { background: #32cd32; color: #000; box-shadow: 0 4px 15px rgba(50, 205, 50, 0.2); }
-        .mine-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-        .ad-btn { background: #ffd700; color: #000; margin-bottom: 15px; }
+        .ad-btn { background: #ffd700; color: #000; margin-bottom: 12px; }
 
-        .navbar{display:flex;justify-content:space-around;background:rgba(4, 7, 18, 0.95);backdrop-filter:blur(10px);padding:15px 0;border-top:1px solid #32cd32;position:fixed;bottom:0;width:100%;z-index:100;}
-        .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.5;}
-        .nav-btn.active{opacity: 1; color: #32cd32;}
+        /* Navigation */
+        .navbar{display:flex;justify-content:space-around;background:rgba(4, 7, 18, 0.95);backdrop-filter:blur(10px);height: 65px;align-items: center;border-top:1px solid #32cd3244;position:fixed;bottom:0;width:100%;z-index:100;}
+        .nav-btn{background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity: 0.45;transition: 0.2s;}
+        .nav-btn.active{opacity: 1; color: #32cd32; transform: scale(1.15);}
 
-        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulseCore { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Task System Animations */
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .task-step {
-            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
-            margin-bottom: 8px; border-left: 3px solid #32cd32; font-size: 13px; line-height: 1.4;
-        }
-        .task-modal-content { background:#161616; padding:20px; border-radius:20px; width:95%; max-width:400px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; }
-
-        /* 🌟 ULTRA-PROFESSIONAL REWARD CLAIM MODAL */
+        /* Reward Claim Modal */
         .reward-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(3, 6, 17, 0.88);
-            backdrop-filter: blur(14px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 6, 17, 0.88); backdrop-filter: blur(14px); z-index: 10000;
+            align-items: center; justify-content: center; padding: 20px;
         }
-
         .reward-card {
             background: linear-gradient(180deg, #161c30 0%, #0d1222 100%);
-            border: 2px solid rgba(255, 215, 0, 0.4);
-            border-radius: 28px;
-            width: 90%;
-            max-width: 350px;
-            padding: 30px 24px 25px;
-            text-align: center;
-            position: relative;
+            border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 26px; width: 90%; max-width: 340px;
+            padding: 26px 20px 22px; text-align: center; position: relative;
             box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(255, 215, 0, 0.25);
-            animation: rewardBouncyIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            overflow: hidden;
+            animation: rewardBouncyIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+        @keyframes rewardBouncyIn { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .reward-badge { width: 75px; height: 75px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%); border-radius: 50%; border: 3px solid #ffffff; font-size: 38px; }
+        .reward-title { font-family: 'Orbitron'; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+        .reward-amount-box { font-family: 'Orbitron'; font-size: 28px; font-weight: 900; background: linear-gradient(90deg, #fff275, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 6px 0 10px; }
+        .reward-subtext { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-bottom: 18px; }
+        .reward-btn { width: 100%; padding: 13px; background: linear-gradient(90deg, #10b981, #059669); color: #000; font-family: 'Orbitron'; font-size: 13px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; }
 
-        @keyframes rewardBouncyIn {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .task-step { background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #32cd32; font-size: 12px; }
+        .task-modal-content { background:#161616; padding:18px; border-radius:20px; width:95%; max-width:390px; border: 1px solid #333; max-height: 85vh; overflow-y: auto; }
 
-        .reward-rays {
-            position: absolute;
-            top: -60px; left: 50%;
-            transform: translateX(-50%);
-            width: 280px; height: 280px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(255, 140, 0, 0.08) 50%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: pulseGlow 2.5s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: translateX(-50%) scale(0.85); opacity: 0.6; }
-            100% { transform: translateX(-50%) scale(1.15); opacity: 1; }
-        }
-
-        .reward-badge {
-            width: 85px; height: 85px;
-            margin: 0 auto 15px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(circle at 35% 30%, #fff799, #ffd700 60%, #b8860b 100%);
-            border-radius: 50%;
-            border: 3px solid #ffffff;
-            box-shadow: 0 0 25px #ffd700, 0 0 40px rgba(255, 140, 0, 0.6);
-            font-size: 42px;
-            animation: coinFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes coinFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(4deg); }
-        }
-
-        .reward-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-        }
-
-        .reward-amount-box {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            background: linear-gradient(90deg, #fff275, #ffd700, #ff8c00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            margin: 8px 0 12px;
-        }
-
-        .reward-subtext {
-            font-size: 12px;
-            color: #94a3b8;
-            line-height: 1.5;
-            margin-bottom: 22px;
-        }
-
-        .reward-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(90deg, #10b981, #059669);
-            color: #000;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease;
-        }
-
-        .reward-btn:active {
-            transform: scale(0.97);
-            filter: brightness(1.1);
-        }
+        /* Exchange Card */
+        .exchange-calc-card { background: rgba(22, 22, 22, 0.95); border: 1px solid #ffd700; border-radius: 20px; padding: 20px; width: 90%; max-width: 360px; text-align: center; }
+        .exchange-input-box input { width: 100%; padding: 12px; border-radius: 12px; background: #000; border: 1.5px solid #ffd700; color: #fff; font-family: 'Orbitron'; font-size: 15px; text-align: center; outline: none; }
+        .exchange-results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 16px; }
+        .exchange-res-box { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 10px 5px; }
+        .exchange-res-box span { font-size: 10px; color: #888; display: block; margin-bottom: 2px; }
+        .exchange-res-box b { font-family: 'Orbitron'; font-size: 14px; }
+        .exchange-trigger-btn { background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(0, 198, 255, 0.18)); border: 1px solid rgba(255, 215, 0, 0.6); color: #ffd700; border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; font-family: 'Orbitron'; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .wallet-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -655,99 +603,96 @@
     <header>
         <div class="profile">
             <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Profile">
-            <span id="username">Loading...</span>
+            <span id="username">Miner</span>
         </div>
         <div class="header-right">
-            <div style="cursor: pointer; font-size: 18px; background: rgba(0, 198, 255, 0.1); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 198, 255, 0.3); margin-right: 8px;" onclick="contactSupport()">
+            <div style="cursor: pointer; font-size: 16px; background: rgba(0, 198, 255, 0.1); width: 33px; height: 33px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0, 198, 255, 0.3);" onclick="contactSupport()">
                 <i class="fas fa-headset" style="color: #00c6ff;"></i>
             </div>
-            
             <div class="gift-trigger" onclick="openGiftModal()">🎁</div>
         </div>        
     </header>    
 
-    <!-- Draggable Task Emoji -->
-    <div id="activeTaskIcon" style="display:none; position:fixed; right:15px; top:45%; z-index:1000; cursor:grab; touch-action:none;">
-        <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff; animation: pulse 1.5s infinite;">
-            <span style="font-size: 25px;">🎯</span>
-            <span style="position:absolute; top:-5px; right:-2px; background:red; color:white; font-size:9px; padding:2px 5px; border-radius:10px; font-weight:bold; border:1px solid white;">NEW</span>
+    <!-- Floating Task Icon -->
+    <div id="activeTaskIcon" style="display:none; position:fixed; right:12px; top:42%; z-index:1000; cursor:grab; touch-action:none;">
+        <div style="background: linear-gradient(45deg, #ffd700, #ff8c00); width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); border: 2px solid #fff;">
+            <span style="font-size: 22px;">🎯</span>
+            <span style="position:absolute; top:-5px; right:-2px; background:red; color:white; font-size:8px; padding:2px 4px; border-radius:8px; font-weight:bold;">NEW</span>
         </div>
     </div>
 
     <main>
+        <!-- 🌟 HOME SECTION (NO VERTICAL SCROLL, 100% FIT) -->
         <section id="home" class="section">
-            <!-- 🌟 Ultra-Professional Fintech Balance Display -->
+            <!-- Compact FinTech Balance Card -->
             <div class="balance-card" id="balanceCard">
                 <div class="balance-header-tag">⚡ MINING WALLET</div>
                 <div class="balance-amount-row">
                     <span class="balance-coin-badge">🪙</span>
                     <div id="totalCoins">0</div>
                 </div>
-                <!-- Dual Currency Estimation (INR & USD) -->
                 <div class="balance-fiat-badge">
                     ≈ <b id="balanceInrEqv" style="color:#32cd32;">₹0.00 INR</b>
-                    <span style="opacity:0.4; margin:0 4px;">•</span>
+                    <span style="opacity:0.4; margin:0 3px;">•</span>
                     <b id="balanceUsdEqv" style="color:#00c6ff;">$0.00 USD</b>
                 </div>
             </div>
 
-            <!-- Pure 3D Earth Display -->
+            <!-- Compact 3D Earth Visualizer -->
             <div class="mining-visualizer" id="mineCircle">
                 <div class="earth-container" id="earthBox">
                     <img src="earth.png" alt="Earth" class="earth-img" id="earthImg" onerror="this.src='https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=600&q=80'">
                     <div class="earth-3d-shadow"></div>
                 </div>
                 <div id="asteroid-container" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; z-index:15;"></div>
-                <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:18px; color:#fff; text-shadow:0 0 10px #000; pointer-events:none;" id="coinInsideCircle">0</div>
+                <div style="position:absolute; z-index:20; font-family:'Orbitron'; font-size:16px; color:#fff; text-shadow:0 0 10px #000; pointer-events:none;" id="coinInsideCircle">0</div>
             </div>
 
-            <div style="text-align:center; margin-bottom:20px;">
-                <button id="adWatchBtn" class="action-btn ad-btn" onclick="watchAd()">🎬 Watch Ad (+Progress)</button>
-                <p id="adStatus" style="font-size:12px; color:#aaa; margin-top:5px;">Ads Required to Mine: 0/10</p>
-            </div>
+            <!-- 🌟 Ultra-Modern Button Controls -->
+            <div class="home-controls-wrapper">
+                <!-- 🎬 Sleek Watch Ad Button with Progress Fill -->
+                <button id="adWatchBtn" class="ad-btn-pro" onclick="watchAd()">
+                    <div class="ad-btn-progress-bar" id="adProgressBar" style="width: 0%;"></div>
+                    <div class="ad-btn-content">
+                        <span>🎬</span>
+                        <span id="adBtnLabel">Watch Required Ad</span>
+                    </div>
+                    <div class="ad-btn-badge" id="adStatusBadge">0/10</div>
+                </button>
 
-            <button id="mineBtn" class="action-btn mine-btn" onclick="startDailyMining()" disabled>
-                🪙 Start Mining
-            </button>
-            <p id="miningCountdown" style="text-align:center; margin-top:10px; font-size:12px; color:#90ee90;">Ready</p>         
+                <!-- 🪙 Sleek Start Mining Button -->
+                <button id="mineBtn" class="mine-btn-pro" onclick="startDailyMining()" disabled>
+                    <span>⛏️</span> Start Earth Mining
+                </button>
+                <p id="miningCountdown">Ready</p>
+            </div>         
         </section>
 
         <section id="watch" class="section">
-            <h2 style="text-align:center; font-family:'Orbitron'; color:#00f2ff; margin-bottom:20px;">Watch Ads & Earn</h2>
+            <h2 style="text-align:center; font-family:'Orbitron'; font-size:18px; color:#00f2ff; margin-bottom:15px;">Watch Ads & Earn</h2>
             <div id="adTasksContainer"></div>
         </section>
 
         <section id="promotion" class="section">
-            <div style="text-align:center; margin-bottom:20px;">
-                <h2 style="font-family:'Orbitron'; color:#32cd32;">Creator Rewards</h2>
-                <p style="color:#aaa; font-size:12px;" id="promoSubtitle">Make a video & get up to 300,000 Coins!</p>
+            <div style="text-align:center; margin-bottom:16px;">
+                <h2 style="font-family:'Orbitron'; font-size:18px; color:#32cd32;">Creator Rewards</h2>
+                <p style="color:#aaa; font-size:11px;" id="promoSubtitle">Make a video & get up to 300,000 Coins!</p>
             </div>
             
-            <div style="background: rgba(50, 205, 50, 0.1); border: 1px dashed #32cd32; padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 11px; color: #90ee90; text-align: center; line-height: 1.6;">
+            <div style="background: rgba(50, 205, 50, 0.1); border: 1px dashed #32cd32; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 11px; color: #90ee90; text-align: center; line-height: 1.5;">
                 📢 <b>How to Earn?</b><br>
-                Create a professional video about our app and upload it to social media. 
-                <br><span style="color:#ffd700;">⚠️ It is compulsory to include our app link in the description or bio.</span>
-                <br>Submit your video link below; rewards will be issued after a manual review!
-            </div>
-
-            <div class="promo-card">
-                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;">
-                    <span>YouTube Long (100+ views)</span>
-                    <b id="promoYtReward">200k Max</b>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:13px;">
-                    <span>Shorts/Reels (1k+ views)</span>
-                    <b id="promoShortsReward">100k Max</b>
-                </div>
+                Create a video about our app and upload to YouTube/Reels.
+                <br><span style="color:#ffd700;">⚠️ App referral link must be in the video description/bio.</span>
             </div>
 
             <div class="submission-form">
-                <label style="font-size:12px; color:#aaa;">Platform</label>
+                <label style="font-size:11px; color:#aaa;">Platform</label>
                 <select id="promoPlatform"><option>YouTube</option><option>Instagram</option><option>Facebook</option></select>
-                <label style="font-size:12px; color:#aaa;">Content Type</label>
+                <label style="font-size:11px; color:#aaa;">Content Type</label>
                 <select id="promoType"><option>Long Video</option><option>Shorts/Reels</option></select>
-                <input type="url" id="promoLink" placeholder="Paste your video link here">
+                <input type="url" id="promoLink" placeholder="Paste video link here">
                 <button class="action-btn mine-btn" onclick="submitPromotion()">Submit for Review</button>
+                
                 <div class="history-container">
                     <div class="history-title">📜 Submission History</div>
                     <div id="promoHistory" class="history-list">
@@ -757,36 +702,35 @@
             </div>
         </section>
 
-        <!-- 🌟 WALLET & MULTI-CURRENCY WITHDRAWAL PAGE -->
+        <!-- 🌟 WALLET & WITHDRAWAL -->
         <section id="wallet" class="section">
             <div class="wallet-header-row">
-                <h2 style="font-family:'Orbitron'; font-size:20px; margin:0;">Withdrawal Hub</h2>
+                <h2 style="font-family:'Orbitron'; font-size:18px; margin:0;">Withdrawal Hub</h2>
                 <button class="exchange-trigger-btn" onclick="openExchangeModal()">
                     <i class="fas fa-arrow-right-arrow-left"></i> Exchange 💱
                 </button>
             </div>
 
-            <!-- 3 Mini Wallets (Coins, INR, USD) -->
             <div class="wallets-overview-grid">
-                <div class="wallet-sub-card card-coins">
+                <div class="wallet-sub-card">
                     <div class="w-card-header">COINS</div>
                     <div class="w-card-amount" id="walletCoins" style="color:#ffd700;">0</div>
-                    <div class="w-card-sub">Total Assets</div>
+                    <div class="w-card-sub">Net Balance</div>
                 </div>
-                <div class="wallet-sub-card card-inr">
+                <div class="wallet-sub-card">
                     <div class="w-card-header">INR WALLET</div>
                     <div class="w-card-amount" id="walletInr" style="color:#32cd32;">₹0.00</div>
                     <div class="w-card-sub">UPI Payout</div>
                 </div>
-                <div class="wallet-sub-card card-usd">
+                <div class="wallet-sub-card">
                     <div class="w-card-header">USD WALLET</div>
                     <div class="w-card-amount" id="walletUsd" style="color:#00c6ff;">$0.00</div>
-                    <div class="w-card-sub">PayPal / USDT</div>
+                    <div class="w-card-sub">USDT / PayPal</div>
                 </div>
             </div>
 
             <div class="submission-form">
-                <h4 style="margin-bottom:15px; font-size:14px;">Select Withdrawal Method</h4>
+                <h4 style="margin-bottom:12px; font-size:13px;">Select Payout Method</h4>
                 <div class="method-tabs">
                     <button class="method-btn active" onclick="setMethod('upi', this)">UPI (India)</button>
                     <button class="method-btn" onclick="setMethod('paypal', this)">PayPal</button>
@@ -795,11 +739,11 @@
                 <input type="number" id="withdrawAmount" placeholder="Enter Coins (Min 1,000)">
                 <input type="text" id="withdrawAddress" placeholder="UPI ID">
 
-                <!-- 💎 TON Network Notice (Ye input aur button ke theek beech me aayega) -->
-                <p id="cryptoNetworkNotice" style="display:none; font-size:11px; color:#00c6ff; margin:-10px 0 15px; text-align:left; background:rgba(0,198,255,0.08); padding:8px 12px; border-radius:8px; border:1px solid rgba(0,198,255,0.25);">
+                <p id="cryptoNetworkNotice" style="display:none; font-size:10px; color:#00c6ff; margin:-8px 0 12px; background:rgba(0,198,255,0.08); padding:7px 10px; border-radius:8px; border:1px solid rgba(0,198,255,0.25);">
                     💎 <b>Network:</b> Please provide deposit address on <b>TON Network</b> only.
                 </p>
                 <button class="action-btn mine-btn" onclick="handleWithdrawal()">Request Withdrawal</button>
+                
                 <div class="history-container">
                     <div class="history-title" id="historyTitle">📜 UPI History</div>
                     <div id="withdrawHistory" class="history-list">
@@ -809,16 +753,38 @@
             </div>
         </section>
 
+        <!-- 🌟 ULTRA-CLEAN REFERRAL SYSTEM (NO OUTSIDE SCROLL) -->
         <section id="referral" class="section">
-            <h2 style="text-align:center; font-family:'Orbitron'; margin-bottom:20px;">Refer & Earn</h2>
-            <div class="ref-info-card">
-                <div class="ref-step"><div class="step-num">1</div><div><b style="color:#ffd700;">Share:</b> Send your unique link to friends.</div></div>
-                <div class="ref-step"><div class="step-num">2</div><div><b style="color:#ffd700;" id="refStep2Reward">700 Coins:</b> Get instantly when they signup.</div></div>
-                <div class="ref-step"><div class="step-num">3</div><div><b style="color:#ffd700;" id="refStep3Reward">5% Commission:</b> Get lifetime reward from their mining!</div></div>
+            <h2 style="text-align:center; font-family:'Orbitron'; font-size:18px; margin-bottom:12px;">Referral Hub</h2>
+            
+            <!-- Live Referral Summary Stats -->
+            <div class="ref-stats-grid">
+                <div class="ref-stat-card">
+                    <div class="ref-stat-title">Friends Invited</div>
+                    <div class="ref-stat-num" id="refCountVal">0</div>
+                </div>
+                <div class="ref-stat-card">
+                    <div class="ref-stat-title">Total Earned</div>
+                    <div class="ref-stat-num" id="refTotalEarnedVal">0 🪙</div>
+                </div>
             </div>
-            <div class="submission-form" style="text-align:center;">
-                <p id="refLink" style="font-size:11px; color:#ffd700; margin-bottom:15px; word-break:break-all;">Loading...</p>
-                <button class="action-btn ad-btn" onclick="shareReferralLink()">📢 Invite Friends Now</button>
+
+            <!-- Sleek Invited Users List (Compact Box) -->
+            <div class="ref-list-card">
+                <div class="ref-list-header">
+                    <span>👥 My Invited Miners</span>
+                    <span id="refCommissionRateBadge" style="font-size:10px; color:#ffd700;">+5% Lifetime Active</span>
+                </div>
+                <div class="ref-users-box" id="referralsListBox">
+                    <p style="font-size:11px; color:#666; text-align:center; padding:10px 0;">No miners referred yet. Share link to earn!</p>
+                </div>
+            </div>
+
+            <!-- Referral Link Sharing Card -->
+            <div class="submission-form" style="text-align:center; padding:14px;">
+                <p style="font-size:11px; color:#aaa; margin-bottom:6px;">Your Personal Invite Link:</p>
+                <p id="refLink" style="font-size:10px; color:#ffd700; margin-bottom:12px; word-break:break-all; background:rgba(0,0,0,0.5); padding:8px; border-radius:8px; border:1px dashed #ffd70055;">Loading link...</p>
+                <button class="action-btn ad-btn" style="margin-bottom:0;" onclick="shareReferralLink()">📢 Invite Friends Now (+700 Coins)</button>
             </div>
         </section>
     </main>
@@ -828,19 +794,19 @@
         <button class="nav-btn" onclick="showSection('watch', this)"><i class="fas fa-tv"></i></button>
         <button class="nav-btn" onclick="showSection('promotion', this)"><i class="fas fa-rocket"></i></button>
         <button class="nav-btn" onclick="showSection('wallet', this)"><i class="fas fa-wallet"></i></button>
-        <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-link"></i></button>
+        <button class="nav-btn" onclick="showSection('referral', this)"><i class="fas fa-users"></i></button>
     </nav>
 
-    <!-- 💱 LIVE CURRENCY EXCHANGE CALCULATOR MODAL -->
+    <!-- EXCHANGE MODAL -->
     <div id="exchangeModal" class="modal-overlay">
         <div class="exchange-calc-card">
-            <h3 style="color:#ffd700; font-family:'Orbitron'; font-size:17px; margin-bottom:4px;">
+            <h3 style="color:#ffd700; font-family:'Orbitron'; font-size:16px; margin-bottom:4px;">
                 <i class="fas fa-arrow-right-arrow-left"></i> Live Exchange 💱
             </h3>
-            <p style="font-size:11px; color:#aaa; margin-bottom:15px;">Convert your mining coins into INR & USD live</p>
+            <p style="font-size:11px; color:#aaa; margin-bottom:12px;">Convert mining coins into INR & USD live</p>
             
             <div class="exchange-input-box">
-                <input type="number" id="calcCoinInput" placeholder="Enter Coins to Convert" oninput="calculateExchangeValues()">
+                <input type="number" id="calcCoinInput" placeholder="Enter Coins" oninput="calculateExchangeValues()">
             </div>
 
             <div class="exchange-results-grid">
@@ -854,57 +820,54 @@
                 </div>
             </div>
 
-            <div style="font-size:10px; color:#777; margin-bottom:15px; line-height:1.4;">
-                Rate Peg: <b>100 Coins = ₹1.00 INR</b> • <b>1 USD ≈ ₹85.00 INR</b>
-            </div>
-
-            <button class="action-btn mine-btn" style="padding:12px; margin-bottom:10px;" onclick="applyExchangeToWithdrawal()">
+            <button class="action-btn mine-btn" style="padding:11px; margin-bottom:10px;" onclick="applyExchangeToWithdrawal()">
                 Use In Withdrawal
             </button>
-            <button style="background:none; border:none; color:#555; font-size:12px; cursor:pointer;" onclick="closeExchangeModal()">
+            <button style="background:none; border:none; color:#777; font-size:12px; cursor:pointer;" onclick="closeExchangeModal()">
                 Close
             </button>
         </div>
     </div>
 
+    <!-- GIFT CODE MODAL -->
     <div id="giftModal" class="modal-overlay">
         <div class="modal-content" style="text-align:center;">
-            <h3 style="color:#ffd700; margin-bottom:15px;">🎁 Redeem Gift</h3>
-            <input type="text" id="giftCode" placeholder="Enter Code" style="width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#000; color:#fff; margin-bottom:15px;">
+            <h3 style="color:#ffd700; margin-bottom:14px; font-family:'Orbitron';">🎁 Redeem Gift</h3>
+            <input type="text" id="giftCode" placeholder="Enter Code" style="width:100%; padding:10px; border-radius:8px; border:1px solid #444; background:#000; color:#fff; margin-bottom:12px;">
             <button class="action-btn mine-btn" id="joinChannelBtn" data-link="https://t.me/PayZos_Bot" onclick="window.open(this.dataset.link)">📢 JOIN TELEGRAM</button>
-            <button class="action-btn ad-btn" style="margin-top:10px;" onclick="redeemGift()">Redeem Now</button>
-            <button style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;" onclick="closeGiftModal()">Close</button>
+            <button class="action-btn ad-btn" style="margin-top:10px;" onclick="redeemGift()">Redeem Code</button>
+            <button style="background:none; border:none; color:#666; margin-top:12px; cursor:pointer;" onclick="closeGiftModal()">Close</button>
         </div>
     </div>
 
+    <!-- GLOBAL NOTICE POPUP -->
     <div id="globalPopup" class="modal-overlay">
         <div class="modal-content" style="text-align:center; border: 1px solid #ffd700;">
-            <h3 id="popupTitle" style="color:#ffd700; margin-bottom:15px; font-family:'Orbitron';"></h3>
-            <p id="popupMessage" style="font-size:13px; color:#ccc; line-height:1.6; margin-bottom:20px;"></p>
+            <h3 id="popupTitle" style="color:#ffd700; margin-bottom:12px; font-family:'Orbitron'; font-size:16px;"></h3>
+            <p id="popupMessage" style="font-size:12px; color:#ccc; line-height:1.5; margin-bottom:16px;"></p>
             <button class="action-btn mine-btn" onclick="closeGlobalPopup()">Understood</button>
         </div>
     </div>
 
-    <!-- Task System Modals -->
+    <!-- TASK MODALS -->
     <div id="taskListModal" class="modal-overlay">
         <div class="task-modal-content">
-            <h3 style="color:#ffd700; margin-bottom:20px; text-align:center; font-family:'Orbitron';">Available Tasks</h3>
+            <h3 style="color:#ffd700; margin-bottom:16px; text-align:center; font-family:'Orbitron';">Available Tasks</h3>
             <div id="taskItemsContainer"></div>
-            <button class="action-btn" style="background:#333; margin-top:15px; color:#fff;" onclick="closeTaskList()">Close</button>
+            <button class="action-btn" style="background:#333; margin-top:14px; color:#fff;" onclick="closeTaskList()">Close</button>
         </div>
     </div>
     <div id="taskDetailModal" class="modal-overlay">
         <div class="task-modal-content" id="taskDetailContent"></div>
     </div>
 
-    <!-- 🌟 Professional Reward Claim Modal -->
+    <!-- REWARD MODAL -->
     <div id="rewardModal" class="reward-modal-overlay">
         <div class="reward-card">
-            <div class="reward-rays"></div>
             <div class="reward-badge">🪙</div>
             <h3 class="reward-title" id="rewardTitle">CONGRATULATIONS!</h3>
             <div class="reward-amount-box" id="rewardAmount">+10 COINS</div>
-            <p class="reward-subtext" id="rewardSub">Coins have been successfully added to your net balance.</p>
+            <p class="reward-subtext" id="rewardSub">Coins credited into your net balance.</p>
             <button class="reward-btn" onclick="closeRewardModal()">COLLECT NOW</button>
         </div>
     </div>
@@ -914,144 +877,85 @@
         import { getDatabase, ref, set, onValue, update, push, get, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
         // ==========================================
-        // 🎵 ADVANCED SOUND EFFECTS ENGINE (Web Audio API)
+        // 🎵 ADVANCED WEB AUDIO FX ENGINE
         // ==========================================
         const AudioFX = {
             ctx: null,
-            miningDrone: null,
-            miningGain: null,
-
             init() {
                 if (!this.ctx) {
                     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                     if (AudioContextClass) this.ctx = new AudioContextClass();
                 }
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume();
-                }
+                if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
             },
-
-            // 1. 🔘 Universal Tap/Click Sound
             playClick() {
                 try {
                     this.init();
                     if (!this.ctx) return;
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(420, this.ctx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(140, this.ctx.currentTime + 0.04);
-
-                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
                     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
-
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-
                     osc.start();
                     osc.stop(this.ctx.currentTime + 0.04);
                 } catch(e) {}
             },
-
-            // 2. 🪙 Golden Coin Collect Sound (Double-tone classic ding)
             playCoin() {
                 try {
                     this.init();
                     if (!this.ctx) return;
                     const now = this.ctx.currentTime;
-                    
                     const osc1 = this.ctx.createOscillator();
                     const gain1 = this.ctx.createGain();
                     osc1.type = 'sine';
                     osc1.frequency.setValueAtTime(987.77, now);
-                    gain1.gain.setValueAtTime(0.18, now);
-                    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                    gain1.gain.setValueAtTime(0.15, now);
+                    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
                     osc1.connect(gain1);
                     gain1.connect(this.ctx.destination);
                     osc1.start(now);
-                    osc1.stop(now + 0.12);
+                    osc1.stop(now + 0.1);
 
                     const osc2 = this.ctx.createOscillator();
                     const gain2 = this.ctx.createGain();
                     osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(1318.51, now + 0.08);
-                    gain2.gain.setValueAtTime(0.22, now + 0.08);
-                    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+                    osc2.frequency.setValueAtTime(1318.51, now + 0.07);
+                    gain2.gain.setValueAtTime(0.18, now + 0.07);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
                     osc2.connect(gain2);
                     gain2.connect(this.ctx.destination);
-                    osc2.start(now + 0.08);
-                    osc2.stop(now + 0.38);
+                    osc2.start(now + 0.07);
+                    osc2.stop(now + 0.3);
                 } catch(e) {}
             },
-
-            // 3. 💥 Asteroid Impact & Shockwave Sound
             playImpact() {
                 try {
                     this.init();
                     if (!this.ctx) return;
                     const now = this.ctx.currentTime;
-
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(180, now);
-                    osc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
-
-                    gain.gain.setValueAtTime(0.25, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.exponentialRampToValueAtTime(35, now + 0.3);
+                    gain.gain.setValueAtTime(0.18, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-
                     osc.start(now);
-                    osc.stop(now + 0.35);
-                } catch(e) {}
-            },
-
-            // 4. 🛸 Mining Ambient Drone Loop
-            startMiningAmbient() {
-                try {
-                    this.init();
-                    if (!this.ctx || this.miningDrone) return;
-
-                    this.miningDrone = this.ctx.createOscillator();
-                    this.miningGain = this.ctx.createGain();
-
-                    this.miningDrone.type = 'sine';
-                    this.miningDrone.frequency.setValueAtTime(65, this.ctx.currentTime);
-                    this.miningGain.gain.setValueAtTime(0.035, this.ctx.currentTime);
-
-                    const lfo = this.ctx.createOscillator();
-                    const lfoGain = this.ctx.createGain();
-                    lfo.frequency.setValueAtTime(1.5, this.ctx.currentTime);
-                    lfoGain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-                    lfo.connect(this.miningGain.gain);
-                    lfo.start();
-
-                    this.miningDrone.connect(this.miningGain);
-                    this.miningGain.connect(this.ctx.destination);
-
-                    this.miningDrone.start();
-                } catch(e) {}
-            },
-
-            stopMiningAmbient() {
-                try {
-                    if (this.miningDrone) {
-                        this.miningDrone.stop();
-                        this.miningDrone.disconnect();
-                        this.miningDrone = null;
-                    }
+                    osc.stop(now + 0.3);
                 } catch(e) {}
             }
         };
 
-        // Universal tap sound listener
         document.addEventListener('pointerdown', (e) => {
             AudioFX.init();
-            if (e.target.closest('button, .nav-btn, .method-btn, .ad-task-card, .gift-trigger, input, select, #activeTaskIcon, .modal-close, .reward-btn, .exchange-trigger-btn')) {
+            if (e.target.closest('button, .nav-btn, .method-btn, .ad-btn-pro, .mine-btn-pro, .gift-trigger, input, select, #activeTaskIcon, .reward-btn, .exchange-trigger-btn')) {
                 AudioFX.playClick();
             }
         }, { passive: true });
@@ -1062,14 +966,16 @@
             try {
                 tg.ready();
                 tg.expand();
-            } catch (e) {
-                console.log("Telegram expand error:", e);
-            }
+            } catch (e) {}
         }
 
         const TELEGRAM_USER_ID = tg?.initDataUnsafe?.user?.id ? tg.initDataUnsafe.user.id.toString() : "GUEST_USER";
         const TELEGRAM_USER_NAME = tg?.initDataUnsafe?.user?.first_name || "Miner";
         document.getElementById('username').innerText = TELEGRAM_USER_NAME;
+
+        // Capture Referral ID from Telegram WebApp start_param or URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const incomingReferrerId = tg?.initDataUnsafe?.start_param || urlParams.get('tgWebAppStartParam') || urlParams.get('start') || null;
 
         const firebaseConfig = {
             apiKey: "AIzaSyC1I28Wki29kWzAgHh_SJ6GERzjoMIsrMI",
@@ -1085,7 +991,6 @@
         const userPath = 'users/' + TELEGRAM_USER_ID;
         const dbRef = ref(database, userPath);
         
-        // --- Dynamic Default Admin Configuration ---
         window.adminConfig = {
             miningAdsReq: 10,
             withdrawAdsReq: 10,
@@ -1094,17 +999,14 @@
             minWithdrawPayPal: 5000,
             minWithdrawCrypto: 5000,
             coinToInrRatio: 100,
-            usdToInrRate: 85, // 1 USD ≈ 85 INR
+            usdToInrRate: 85,
             supportLink: "https://t.me/PayZoHelp",
             botUsername: "PayZos_Bot",
             refReward: 700,
             refPercent: 5,
             promoMax: "300,000",
-            promoYt: "200k Max",
-            promoShorts: "100k Max",
             monetagZone: "10361814",
             adsgramBlock: "19761",
-            videoGuideBot: "taskVideoGuide_bot"
         };
 
         let AdController = null;
@@ -1112,7 +1014,7 @@
             if (window.Adsgram) {
                 AdController = window.Adsgram.init({ blockId: window.adminConfig.adsgramBlock });
             }
-        } catch (e) { console.error("Adsgram init err:", e); }
+        } catch (e) {}
 
         window.activeTimers = {}; 
         window.coins = 0;
@@ -1120,60 +1022,37 @@
         window.isMiningActive = false;
         window.withdrawAdsCounter = 0;
         window.currentMethod = "upi";
+        window.userReferredBy = null;
         let liveCounterInterval = null;
 
-        // --- FULL A-to-Z Admin Panel Realtime Listener ---
+        // --- Realtime Admin Settings Listener ---
         onValue(ref(database, 'admin_settings'), (snap) => {
             const s = snap.val();
             if (s) {
                 if (s.mining_req !== undefined) window.adminConfig.miningAdsReq = Number(s.mining_req);
                 if (s.withdraw_req !== undefined) window.adminConfig.withdrawAdsReq = Number(s.withdraw_req);
                 if (s.mining_rate_per_hour !== undefined) window.adminConfig.miningRatePerHour = Number(s.mining_rate_per_hour);
-                
                 if (s.min_withdraw_upi !== undefined) window.adminConfig.minWithdrawUPI = Number(s.min_withdraw_upi);
                 if (s.min_withdraw_paypal !== undefined) window.adminConfig.minWithdrawPayPal = Number(s.min_withdraw_paypal);
                 if (s.min_withdraw_crypto !== undefined) window.adminConfig.minWithdrawCrypto = Number(s.min_withdraw_crypto);
                 if (s.coin_to_inr_ratio !== undefined) window.adminConfig.coinToInrRatio = Number(s.coin_to_inr_ratio);
                 if (s.usd_to_inr_rate !== undefined) window.adminConfig.usdToInrRate = Number(s.usd_to_inr_rate);
-
                 if (s.support_link) window.adminConfig.supportLink = s.support_link;
                 if (s.bot_username) window.adminConfig.botUsername = s.bot_username;
                 if (s.referral_reward !== undefined) window.adminConfig.refReward = Number(s.referral_reward);
                 if (s.referral_percent !== undefined) window.adminConfig.refPercent = Number(s.referral_percent);
-                
-                if (s.promo_max) window.adminConfig.promoMax = s.promo_max;
-                if (s.promo_yt) window.adminConfig.promoYt = s.promo_yt;
-                if (s.promo_shorts) window.adminConfig.promoShorts = s.promo_shorts;
-                if (s.video_guide_bot) window.adminConfig.videoGuideBot = s.video_guide_bot;
-
                 if (s.monetag_zone) window.adminConfig.monetagZone = s.monetag_zone;
                 if (s.adsgram_block && s.adsgram_block !== window.adminConfig.adsgramBlock) {
                     window.adminConfig.adsgramBlock = s.adsgram_block;
                     if (window.Adsgram) AdController = window.Adsgram.init({ blockId: s.adsgram_block });
                 }
 
-                const statusEl = document.getElementById('adStatus');
-                if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched || 0}/${window.adminConfig.miningAdsReq}`;
-                
-                const promoSub = document.getElementById('promoSubtitle');
-                if(promoSub) promoSub.innerText = `Make a video & get up to ${window.adminConfig.promoMax} Coins!`;
-                const pYt = document.getElementById('promoYtReward');
-                if(pYt) pYt.innerText = window.adminConfig.promoYt;
-                const pShorts = document.getElementById('promoShortsReward');
-                if(pShorts) pShorts.innerText = window.adminConfig.promoShorts;
-
-                const ref2 = document.getElementById('refStep2Reward');
-                if(ref2) ref2.innerText = `${window.adminConfig.refReward.toLocaleString()} Coins:`;
-                const ref3 = document.getElementById('refStep3Reward');
-                if(ref3) ref3.innerText = `${window.adminConfig.refPercent}% Commission:`;
-
+                updateAdProgressUI();
                 const refLinkEl = document.getElementById('refLink');
                 if(refLinkEl) refLinkEl.innerText = `https://t.me/${window.adminConfig.botUsername}?start=${TELEGRAM_USER_ID}`;
                 
-                const joinBtn = document.getElementById('joinChannelBtn');
-                if(joinBtn && !joinBtn.dataset.hasCustomLink) {
-                    joinBtn.dataset.link = `https://t.me/${window.adminConfig.botUsername}`;
-                }
+                const commBadge = document.getElementById('refCommissionRateBadge');
+                if(commBadge) commBadge.innerText = `+${window.adminConfig.refPercent}% Lifetime Active`;
 
                 refreshWithdrawPlaceholder();
                 updateMiningUI(window.isMiningActive);
@@ -1192,10 +1071,27 @@
             if (amtInput) amtInput.placeholder = `Enter Coins (Min ${getActiveMinLimit().toLocaleString()})`;
         }
 
-        let welcomeBonusAwarded = false;
+        function updateAdProgressUI() {
+            const watched = window.adsWatched || 0;
+            const req = window.adminConfig.miningAdsReq || 10;
+            const pct = Math.min(100, Math.floor((watched / req) * 100));
+            
+            const pBar = document.getElementById('adProgressBar');
+            const badge = document.getElementById('adStatusBadge');
+            const label = document.getElementById('adBtnLabel');
+            
+            if (pBar) pBar.style.width = pct + '%';
+            if (badge) badge.innerText = `${watched}/${req}`;
+            if (label && !document.getElementById('adWatchBtn').disabled) {
+                label.innerText = watched >= req ? "Requirements Met! ✓" : "Watch Required Ad (+Progress)";
+            }
+        }
 
+        // ==========================================
+        // 👥 AUTOMATED REFERRAL & USER DATA SYSTEM
+        // ==========================================
         function loadUserData() {
-            onValue(dbRef, (snap) => {
+            onValue(dbRef, async (snap) => {
                 const data = snap.val();
                 if(data) {
                     window.coins = data.coins || 0;
@@ -1203,39 +1099,21 @@
                     window.miningStartTime = data.miningStartTime || 0;
                     window.miningEndTime = data.miningEndTime || 0;
                     window.lastClaimTime = data.lastClaimTime || 0;
+                    window.userReferredBy = data.referredBy || null;
+
                     document.getElementById('refLink').innerText = `https://t.me/${window.adminConfig.botUsername}?start=${TELEGRAM_USER_ID}`;
+                    updateAdProgressUI();
                     checkMiningStatus();
-
-                    // 🎁 Naye User ko Welcome Bonus 100 Coins (Name ke sath Pop-up)
-                    if (!data.welcomeBonusClaimed && !welcomeBonusAwarded) {
-                        welcomeBonusAwarded = true;
-                        const bonusAmount = 100;
-                        const hRef = push(ref(database, userPath + '/coin_history'));
-                        const currentCoins = data.coins || 0;
-                        
-                        const updates = {};
-                        updates['coins'] = currentCoins + bonusAmount;
-                        updates['welcomeBonusClaimed'] = true;
-                        updates[`coin_history/${hRef.key}`] = {
-                            reason: "Welcome Bonus 🎁",
-                            amount: bonusAmount,
-                            timestamp: Date.now()
-                        };
-
-                        update(dbRef, updates).then(() => {
-                            showRewardPopup(
-                                bonusAmount, 
-                                `WELCOME, ${TELEGRAM_USER_NAME.toUpperCase()}! 🎉`, 
-                                `Congratulations! You have received 100 free coins as a signup welcome bonus.`
-                            );
-                        });
-                    }
                 } else {
-                    // Jab koi user bilkul pehli baar app open karta hai
-                    welcomeBonusAwarded = true;
+                    // 🚀 BRAND NEW USER INITIALIZATION & REFERRAL PROCESSOR
                     const bonusAmount = 100;
                     const hRefKey = push(ref(database, userPath + '/coin_history')).key;
                     
+                    let validReferrer = null;
+                    if (incomingReferrerId && incomingReferrerId !== TELEGRAM_USER_ID && incomingReferrerId !== "GUEST_USER") {
+                        validReferrer = incomingReferrerId;
+                    }
+
                     const newUserData = {
                         coins: bonusAmount,
                         userName: TELEGRAM_USER_NAME,
@@ -1243,26 +1121,58 @@
                         miningStartTime: 0,
                         miningEndTime: 0,
                         welcomeBonusClaimed: true,
+                        referredBy: validReferrer,
                         createdAt: Date.now(),
                         coin_history: {
                             [hRefKey]: {
-                                reason: "Welcome Bonus 🎁",
+                                reason: "Welcome Signup Bonus 🎁",
                                 amount: bonusAmount,
                                 timestamp: Date.now()
                             }
                         }
                     };
 
-                    set(dbRef, newUserData).then(() => {
-                        showRewardPopup(
-                            bonusAmount, 
-                            `WELCOME, ${TELEGRAM_USER_NAME.toUpperCase()}! 🎉`, 
-                            `Congratulations! You have received 100 free coins as a signup welcome bonus.`
-                        );
-                    });
+                    await set(dbRef, newUserData);
+
+                    // 🎁 REFERRER KO AUTOMATIC +700 COINS & STATS RECORD KAREIN
+                    if (validReferrer) {
+                        try {
+                            const referrerRef = ref(database, `users/${validReferrer}`);
+                            const refSnap = await get(referrerRef);
+                            if (refSnap.exists()) {
+                                const refUser = refSnap.val();
+                                const rewardAmt = window.adminConfig.refReward || 700;
+                                const refHKey = push(ref(database, `users/${validReferrer}/coin_history`)).key;
+                                
+                                const refUpdates = {};
+                                refUpdates['coins'] = (refUser.coins || 0) + rewardAmt;
+                                refUpdates[`referrals/${TELEGRAM_USER_ID}`] = {
+                                    name: TELEGRAM_USER_NAME,
+                                    timestamp: Date.now(),
+                                    coinsEarned: rewardAmt,
+                                    commissionEarned: 0
+                                };
+                                refUpdates[`coin_history/${refHKey}`] = {
+                                    reason: `Referral Reward: ${TELEGRAM_USER_NAME} 👥`,
+                                    amount: rewardAmt,
+                                    timestamp: Date.now()
+                                };
+                                await update(referrerRef, refUpdates);
+                            }
+                        } catch(err) {
+                            console.error("Referral processing error:", err);
+                        }
+                    }
+
+                    showRewardPopup(
+                        bonusAmount, 
+                        `WELCOME, ${TELEGRAM_USER_NAME.toUpperCase()}! 🎉`, 
+                        `Congratulations! You received 100 free coins as a signup welcome bonus.`
+                    );
                 }
             });
 
+            // Listen for Admin Popups
             onValue(ref(database, userPath + '/popup'), (snap) => {
                 const data = snap.val();
                 if (data) {
@@ -1272,14 +1182,80 @@
                 }
             });
 
+            // Listen for Realtime Referrals Count & List
+            startReferralListener();
             startWithdrawHistoryListener();
             startPromoHistoryListener();
-            
-            get(ref(database, 'claim_settings/common')).then(s => {
-                if(s.exists() && s.val().channel_link) {
-                    const btn = document.getElementById('joinChannelBtn');
-                    btn.dataset.link = s.val().channel_link;
-                    btn.dataset.hasCustomLink = "true";
+            startTasksCreditListener();
+        }
+
+        function startReferralListener() {
+            onValue(ref(database, `${userPath}/referrals`), (snap) => {
+                const refs = snap.val();
+                const box = document.getElementById('referralsListBox');
+                const countVal = document.getElementById('refCountVal');
+                const totalEarnedVal = document.getElementById('refTotalEarnedVal');
+
+                if (!refs) {
+                    countVal.innerText = "0";
+                    totalEarnedVal.innerText = "0 🪙";
+                    box.innerHTML = `<p style="font-size:11px; color:#666; text-align:center; padding:10px 0;">No miners referred yet. Share link to earn!</p>`;
+                    return;
+                }
+
+                let totalCount = 0;
+                let totalEarned = 0;
+                let listHtml = "";
+
+                Object.keys(refs).reverse().forEach(uid => {
+                    totalCount++;
+                    const item = refs[uid];
+                    const friendEarned = (item.coinsEarned || 0) + (item.commissionEarned || 0);
+                    totalEarned += friendEarned;
+                    const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Active";
+
+                    listHtml += `
+                        <div class="ref-user-item">
+                            <div>
+                                <b style="color:#fff; font-size:12px;">${item.name || 'Miner'}</b>
+                                <div style="color:#666; font-size:9px;">Joined: ${dateStr}</div>
+                            </div>
+                            <span style="color:#ffd700; font-family:'Orbitron'; font-weight:bold; font-size:11px;">+${friendEarned.toLocaleString()} 🪙</span>
+                        </div>
+                    `;
+                });
+
+                countVal.innerText = totalCount;
+                totalEarnedVal.innerText = `${totalEarned.toLocaleString()} 🪙`;
+                box.innerHTML = listHtml;
+            });
+        }
+
+        // 🎯 Auto-credit approved tasks
+        function startTasksCreditListener() {
+            onValue(ref(database, `${userPath}/completed_tasks`), async (snap) => {
+                const tasks = snap.val();
+                if (!tasks) return;
+                
+                for (const taskId in tasks) {
+                    const task = tasks[taskId];
+                    if (task.status === 'Success' && !task.credited) {
+                        const historyRef = push(ref(database, userPath + '/coin_history'));
+                        const userSnap = await get(dbRef);
+                        const curCoins = userSnap.val().coins || 0;
+                        const reward = Number(task.reward) || 0;
+
+                        const up = {};
+                        up[`coins`] = curCoins + reward;
+                        up[`completed_tasks/${taskId}/credited`] = true;
+                        up[`coin_history/${historyRef.key}`] = {
+                            reason: `Task Verified: ${task.name || 'Sponsor Task'} 🎯`,
+                            amount: reward,
+                            timestamp: Date.now()
+                        };
+                        await update(dbRef, up);
+                        showRewardPopup(reward, "TASK APPROVED!", `Your task was approved! ${reward} Coins added to balance.`);
+                    }
                 }
             });
         }
@@ -1292,10 +1268,9 @@
         window.contactSupport = () => {
             const userId = TELEGRAM_USER_ID; 
             const supportLink = window.adminConfig.supportLink || "https://t.me/PayZoHelp";
-
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(userId).then(() => {
-                    alert(`📋 ID Copied: ${userId}\n\nUser ID copy ho gayi hai! Telegram par paste karke hume message karein.`);
+                    alert(`📋 ID Copied: ${userId}\nPaste it on Telegram support.`);
                     window.open(supportLink, '_blank');
                 }).catch(() => window.open(supportLink, '_blank'));
             } else {
@@ -1342,10 +1317,10 @@
                 Object.keys(data).reverse().forEach(key => {
                     const item = data[key];
                     const statusClass = `status-${item.status.toLowerCase()}`;
-                    html += `<div class="history-item" style="margin-bottom:10px; border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:12px; font-weight:bold; margin-top:5px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}${item.adminMsg ? `<div style="font-size:11px; color:#aaa; margin-top:5px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">💬 <b>Admin Note:</b> ${item.adminMsg}</div>` : ''}</div>`;
+                    html += `<div class="history-item" style="border-left: 3px solid ${item.status === 'Success' ? '#32cd32' : (item.status === 'Rejected' ? '#ff4d4d' : '#555')};"><div class="h-top"><span>${item.platform || 'Promotion Task'}</span><span class="h-status ${statusClass}">${item.status}</span></div>${item.status === 'Success' && item.amount ? `<div style="color:#ffd700; font-size:11px; font-weight:bold; margin-top:4px;">💰 +${item.amount.toLocaleString()} Coins Added</div>` : ''}</div>`;
                     if(item.status === 'Success' && !item.notified) {
                         AudioFX.playCoin();
-                        showRewardPopup(item.amount || 0, "PROMOTION APPROVED!", "Your video promotion has been approved and coins credited!");
+                        showRewardPopup(item.amount || 0, "PROMOTION APPROVED!", "Video promotion approved and coins credited!");
                         update(ref(database, `${userPath}/promotions/${key}`), { notified: true });
                     }
                 });
@@ -1353,21 +1328,15 @@
             });
         }
 
-        // 🌟 Ultra-Professional Reward Popup Trigger
         window.showRewardPopup = (coins, title = "CONGRATULATIONS!", sub = "Coins have been credited to your net balance.") => {
             document.getElementById('rewardTitle').innerText = title;
             document.getElementById('rewardAmount').innerText = typeof coins === 'number' ? `+${coins.toLocaleString()} COINS` : coins;
             document.getElementById('rewardSub').innerText = sub;
-            
-            const modal = document.getElementById('rewardModal');
-            modal.style.display = 'flex';
-
+            document.getElementById('rewardModal').style.display = 'flex';
             AudioFX.playCoin();
 
             if (window.Telegram?.WebApp?.HapticFeedback) {
-                try {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                } catch(e) {}
+                try { window.Telegram.WebApp.HapticFeedback.notificationOccurred('success'); } catch(e) {}
             }
         };
 
@@ -1385,15 +1354,12 @@
             
             let reward = 0;
             const singleCodeSnap = await get(ref(database, `admin_settings/gift_codes/${code}`));
-            
             if (singleCodeSnap.exists()) {
                 reward = Number(singleCodeSnap.val());
             } else {
                 const adminSnap = await get(ref(database, 'claim_settings/common'));
                 const adminData = adminSnap.val();
-                if(adminData && adminData.code === code) {
-                    reward = Number(adminData.coins);
-                }
+                if(adminData && adminData.code === code) reward = Number(adminData.coins);
             }
 
             if(reward > 0) {
@@ -1404,7 +1370,7 @@
                 up[`coin_history/${historyRef.key}`] = { reason: `Gift Code: ${code} 🎁`, amount: reward, timestamp: Date.now() };
                 await update(dbRef, up);
                 closeGiftModal();
-                showRewardPopup(reward, "GIFT CODE REDEEMED!", `Promo gift code ${code} claimed successfully!`);
+                showRewardPopup(reward, "GIFT CODE REDEEMED!", `Promo code ${code} claimed successfully!`);
             } else {
                 alert("Invalid Code!");
             }
@@ -1412,7 +1378,7 @@
 
         window.watchAd = () => {
             const btn = document.getElementById('adWatchBtn');
-            if(window.adsWatched >= window.adminConfig.miningAdsReq) return alert("Ads requirement met!");
+            if(window.adsWatched >= window.adminConfig.miningAdsReq) return alert("All required ads watched! Start mining.");
             if(btn.disabled) return;
 
             if (AdController) {
@@ -1430,30 +1396,29 @@
             AudioFX.playCoin();
             window.adsWatched++;
             update(dbRef, { adsWatched: window.adsWatched });
-            const statusEl = document.getElementById('adStatus');
-            if(statusEl) statusEl.innerText = `Ads Required to Mine: ${window.adsWatched}/${window.adminConfig.miningAdsReq}`;
-            if(window.adsWatched < window.adminConfig.miningAdsReq) startAdTimer();
-            else { 
-                showRewardPopup(0, "ADS COMPLETED!", "All required ads watched! You can now start Earth Mining.");
+            updateAdProgressUI();
+
+            if(window.adsWatched < window.adminConfig.miningAdsReq) {
+                startAdTimer();
+            } else { 
+                showRewardPopup(0, "READY TO MINE!", "All ads watched! Earth Mining has unlocked.");
                 updateMiningUI(false); 
             }
         }
 
         function startAdTimer() {
             const btn = document.getElementById('adWatchBtn');
+            const label = document.getElementById('adBtnLabel');
             let timeLeft = 10;
             btn.disabled = true;
-            btn.style.opacity = "0.6";
-            btn.style.filter = "grayscale(1)"; 
+            
             const timerInterval = setInterval(() => {
                 timeLeft--;
-                btn.innerText = `⏳ Wait ${timeLeft}s...`;
+                if (label) label.innerText = `⏳ Next Ad in ${timeLeft}s...`;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     btn.disabled = false;
-                    btn.style.opacity = "1";
-                    btn.style.filter = "none";
-                    btn.innerText = "🎬 Watch Ad (+Progress)";
+                    updateAdProgressUI();
                 }
             }, 1000);
         }
@@ -1503,16 +1468,15 @@
                 if (!hasApprovedTask) {
                     if (hasPendingTask) {
                         document.getElementById('popupTitle').innerText = "⏳ Verification Pending";
-                        document.getElementById('popupMessage').innerText = "Your task is currently under review. Lifetime free withdrawals will unlock automatically once approved.";
+                        document.getElementById('popupMessage').innerText = "Your task is currently under review. Lifetime free withdrawals will unlock once approved.";
                     } else {
                         document.getElementById('popupTitle').innerText = "🎯 1 Task Required";
-                        document.getElementById('popupMessage').innerText = "Complete at least 1 task to unlock lifetime free withdrawals. Tap the 🎯 icon to get started.";
+                        document.getElementById('popupMessage').innerText = "Complete at least 1 task to unlock lifetime withdrawals. Tap the 🎯 icon to get started.";
                     }
                     document.getElementById('globalPopup').style.display = 'flex';
                     return;
                 }
             } catch (error) {
-                console.error("Task check error:", error);
                 return alert("Technical error, please try again.");
             }
 
@@ -1533,7 +1497,7 @@
             updates[`${userPath}/coins`] = window.coins - a;
             
             update(ref(database), updates).then(() => {
-                showRewardPopup(a, "REQUEST SUBMITTED!", "Withdrawal requested successfully! Admin will process your payout shortly.");
+                showRewardPopup(a, "REQUEST SUBMITTED!", "Withdrawal request submitted! Admin will payout shortly.");
                 window.withdrawAdsCounter = 0;
                 document.getElementById('withdrawAmount').value = "";
                 document.getElementById('withdrawAddress').value = "";
@@ -1548,7 +1512,6 @@
             const addrInput = document.getElementById('withdrawAddress');
             const notice = document.getElementById('cryptoNetworkNotice');
 
-            // Agar Crypto select ho toh TON Network ka placeholder aur notice dikhaye
             if (m === 'crypto') {
                 addrInput.placeholder = 'Enter TON Network Deposit Address (USDT-TON)';
                 if (notice) notice.style.display = 'block';
@@ -1562,6 +1525,9 @@
             renderWithdrawalHistory();
         };
 
+        // ==========================================
+        // ⛏️ MINING & 5% COMMISSION TO REFERRER
+        // ==========================================
         async function checkMiningStatus() {
             const now = Date.now();
             const rate = window.adminConfig.miningRatePerHour || 250;
@@ -1569,29 +1535,55 @@
             if (window.miningEndTime && window.miningEndTime > 0) {
                 const calculationTime = Math.min(now, window.miningEndTime);
                 const lastClaim = window.lastClaimTime || window.miningStartTime;
+
                 if (calculationTime > lastClaim) {
                     const secondsPassed = (calculationTime - lastClaim) / 1000;
                     let earnedAmount = Math.floor((secondsPassed / 3600) * rate);
-
                     if (earnedAmount > (rate * 1.5)) earnedAmount = rate; 
 
                     if (earnedAmount > 0) {
                         const userSnap = await get(dbRef);
-                        const currentCoins = userSnap.val().coins || 0;
+                        const curCoins = userSnap.val().coins || 0;
                         const historyRef = push(ref(database, userPath + '/coin_history'));
                         
                         await update(dbRef, {
-                            coins: currentCoins + earnedAmount,
+                            coins: curCoins + earnedAmount,
                             lastClaimTime: calculationTime,
-                            [`coin_history/${historyRef.key}`]: { reason: "Mining Reward ⛏️", amount: earnedAmount, timestamp: Date.now() }
+                            [`coin_history/${historyRef.key}`]: { reason: "Mining Yield ⛏️", amount: earnedAmount, timestamp: Date.now() }
                         });
-                        window.coins = currentCoins + earnedAmount;
+                        window.coins = curCoins + earnedAmount;
+                        window.lastClaimTime = calculationTime;
                         updateCoinDisplays(window.coins);
+
+                        // 👥 5% LIFETIME COMMISSION TO REFERRER
+                        if (window.userReferredBy && window.userReferredBy !== TELEGRAM_USER_ID) {
+                            try {
+                                const commission = Math.max(1, Math.floor(earnedAmount * ((window.adminConfig.refPercent || 5) / 100)));
+                                const refUserRef = ref(database, `users/${window.userReferredBy}`);
+                                const refSnap = await get(refUserRef);
+                                if (refSnap.exists()) {
+                                    const rData = refSnap.val();
+                                    const refHistKey = push(ref(database, `users/${window.userReferredBy}/coin_history`)).key;
+                                    const prevComm = rData.referrals?.[TELEGRAM_USER_ID]?.commissionEarned || 0;
+                                    
+                                    const cUp = {};
+                                    cUp['coins'] = (rData.coins || 0) + commission;
+                                    cUp[`referrals/${TELEGRAM_USER_ID}/commissionEarned`] = prevComm + commission;
+                                    cUp[`coin_history/${refHistKey}`] = {
+                                        reason: `5% Commission from ${TELEGRAM_USER_NAME} ⛏️`,
+                                        amount: commission,
+                                        timestamp: Date.now()
+                                    };
+                                    await update(refUserRef, cUp);
+                                }
+                            } catch(err) { console.error("Commission error:", err); }
+                        }
                     }
                 }
+
                 if (now >= window.miningEndTime) {
                     await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
-                    showRewardPopup(rate, "MINING FINISHED!", "Mining session completed! Coins collected into your wallet.");
+                    showRewardPopup(rate, "MINING COMPLETED!", "Mining session completed and yield collected.");
                     stopLiveCounter();
                     updateMiningUI(false);
                 } else { 
@@ -1605,23 +1597,26 @@
             }
         }
 
-        /* --- ASTEROID, EARTH VIBRATION & ARC FLYING COINS ANIMATION --- */
+        /* --- ASTEROID & VISUAL EFFECTS --- */
         let asteroidInterval = null;
 
         function updateMiningUI(isActive) {
             const earthImg = document.getElementById('earthImg');
             const mineBtn = document.getElementById('mineBtn');
+            const countdown = document.getElementById('miningCountdown');
             
-            mineBtn.disabled = isActive || window.adsWatched < window.adminConfig.miningAdsReq;
+            const adsDone = (window.adsWatched || 0) >= (window.adminConfig.miningAdsReq || 10);
+            mineBtn.disabled = isActive || !adsDone;
 
             if (isActive) {
-                earthImg.style.filter = "drop-shadow(0 0 35px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 70px rgba(0, 255, 128, 0.4))";
+                mineBtn.innerHTML = `<span>⚡</span> Mining In Progress...`;
+                earthImg.style.filter = "drop-shadow(0 0 30px rgba(50, 205, 50, 0.8)) drop-shadow(0 0 60px rgba(0, 255, 128, 0.4))";
                 startAsteroidShower();
-                AudioFX.startMiningAmbient();
             } else {
-                earthImg.style.filter = "drop-shadow(0 0 30px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 60px rgba(0, 110, 255, 0.3))";
+                mineBtn.innerHTML = `<span>⛏️</span> Start Earth Mining`;
+                earthImg.style.filter = "drop-shadow(0 0 25px rgba(0, 160, 255, 0.65)) drop-shadow(0 0 50px rgba(0, 110, 255, 0.3))";
+                countdown.innerText = adsDone ? "Ready to Mine!" : "Watch required ads to start";
                 stopAsteroidShower();
-                AudioFX.stopMiningAmbient();
             }
             updateCoinDisplays(window.coins);
         }
@@ -1629,7 +1624,7 @@
         function startAsteroidShower() {
             if (asteroidInterval) return;
             spawnAsteroid();
-            asteroidInterval = setInterval(() => spawnAsteroid(), 2400);
+            asteroidInterval = setInterval(() => spawnAsteroid(), 3800);
         }
 
         function stopAsteroidShower() {
@@ -1646,18 +1641,16 @@
 
             const angles = [ -45, 30, 135, 210, 0, 80, 190 ];
             const randomAngle = angles[Math.floor(Math.random() * angles.length)];
-            const dist = 170;
-            const center = 140;
+            const dist = 140;
+            const center = 95;
 
             const startX = center + Math.cos(randomAngle * Math.PI / 180) * dist;
             const startY = center + Math.sin(randomAngle * Math.PI / 180) * dist;
-
-            const hitTargetX = center + (Math.random() * 60 - 30);
-            const hitTargetY = center + (Math.random() * 60 - 30);
+            const hitTargetX = center + (Math.random() * 40 - 20);
+            const hitTargetY = center + (Math.random() * 40 - 20);
 
             const flightAngle = Math.atan2(hitTargetY - startY, hitTargetX - startX) * 180 / Math.PI + 90;
             asteroid.style.transform = `rotate(${flightAngle}deg)`;
-
             asteroid.style.left = startX + 'px';
             asteroid.style.top = startY + 'px';
             container.appendChild(asteroid);
@@ -1677,7 +1670,6 @@
             const container = document.getElementById('asteroid-container');
             const earthBox = document.getElementById('earthBox');
 
-            // 1. Shockwave Spark & Bass Impact Sound
             const impact = document.createElement('div');
             impact.className = 'realistic-impact';
             impact.style.left = x + 'px';
@@ -1687,49 +1679,31 @@
 
             AudioFX.playImpact();
 
-            // 2. Earth Vibration & Telegram Haptic Feedback
             earthBox.classList.remove('earth-vibrate');
             void earthBox.offsetWidth;
             earthBox.classList.add('earth-vibrate');
             setTimeout(() => earthBox.classList.remove('earth-vibrate'), 350);
 
-            document.body.classList.add('screen-shake');
-            setTimeout(() => document.body.classList.remove('screen-shake'), 220);
-
-            if (tg && tg.HapticFeedback) {
-                try { tg.HapticFeedback.impactOccurred('medium'); } catch(e){}
-            } else if (navigator.vibrate) {
-                navigator.vibrate([35, 20, 25]);
-            }
-
-            // 3. Scatter Earth Fragments
-            for(let i = 0; i < 5; i++) {
+            for(let i = 0; i < 4; i++) {
                 const rock = document.createElement('div');
                 rock.className = 'rock-fragment';
-                const size = Math.random() * 5 + 3;
+                const size = Math.random() * 4 + 3;
                 rock.style.width = size + 'px';
                 rock.style.height = size + 'px';
                 rock.style.left = x + 'px';
                 rock.style.top = y + 'px';
-                rock.style.setProperty('--tx', `${(Math.random() - 0.5) * 80}px`);
-                rock.style.setProperty('--ty', `${(Math.random() - 0.5) * 80}px`);
+                rock.style.setProperty('--tx', `${(Math.random() - 0.5) * 60}px`);
+                rock.style.setProperty('--ty', `${(Math.random() - 0.5) * 60}px`);
                 container.appendChild(rock);
-                setTimeout(() => rock.remove(), 600);
+                setTimeout(() => rock.remove(), 550);
             }
 
-            // 4. 🪙 Multi-coin burst: Fly directly in the air up into Net Balance card
-            const coinCount = Math.floor(Math.random() * 2) + 3;
-            for(let c = 0; c < coinCount; c++) {
-                setTimeout(() => {
-                    spawnFlyingCoinToBalance(x, y, c);
-                }, c * 90);
+            for(let c = 0; c < 2; c++) {
+                setTimeout(() => spawnFlyingCoinToBalance(x, y), c * 120);
             }
         }
 
-        // ==========================================
-        // 🚀 HAWA ME EARTH SE COINS BALANCE TAK UD KE JANE WALI SCRIPT
-        // ==========================================
-        function spawnFlyingCoinToBalance(relX, relY, index) {
+        function spawnFlyingCoinToBalance(relX, relY) {
             const container = document.getElementById('asteroid-container');
             const target = document.getElementById('balanceCard');
             if (!container || !target) return;
@@ -1739,7 +1713,7 @@
             const startScreenY = cRect.top + relY;
 
             const tRect = target.getBoundingClientRect();
-            const destX = tRect.left + tRect.width / 2 + (Math.random() * 40 - 20);
+            const destX = tRect.left + tRect.width / 2 + (Math.random() * 30 - 15);
             const destY = tRect.top + tRect.height / 2;
 
             const coin = document.createElement('div');
@@ -1747,25 +1721,16 @@
             coin.innerHTML = "🪙";
             coin.style.left = startScreenX + 'px';
             coin.style.top = startScreenY + 'px';
-            
-            const burstX = (Math.random() - 0.5) * 60;
-            const burstY = (Math.random() - 0.5) * 40 - 20;
-
-            coin.style.transform = `translate(${burstX}px, ${burstY}px) scale(0.6)`;
             document.body.appendChild(coin);
 
             requestAnimationFrame(() => {
-                coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.15) rotate(${Math.random() * 540}deg)`;
-                coin.style.opacity = '0.95';
+                coin.style.transform = `translate(${destX - startScreenX}px, ${destY - startScreenY}px) scale(1.1) rotate(${Math.random() * 360}deg)`;
+                coin.style.opacity = '0.9';
             });
 
             setTimeout(() => {
                 coin.remove();
                 AudioFX.playCoin();
-
-                if (tg && tg.HapticFeedback) {
-                    try { tg.HapticFeedback.impactOccurred('light'); } catch(e){}
-                }
 
                 const balanceCard = document.getElementById('balanceCard');
                 if (balanceCard) {
@@ -1774,7 +1739,7 @@
                     balanceCard.classList.add('balance-card-pulse');
                     setTimeout(() => balanceCard.classList.remove('balance-card-pulse'), 180);
                 }
-            }, 880);
+            }, 850);
         }
 
         function startLiveCounter() {
@@ -1784,13 +1749,14 @@
                 const rate = window.adminConfig.miningRatePerHour || 250;
                 
                 if (now < window.miningEndTime) {
-                    const secondsPassed = (now - window.miningStartTime) / 1000;
+                    const baseTime = window.lastClaimTime || window.miningStartTime;
+                    const secondsPassed = Math.max(0, (now - baseTime) / 1000);
                     const liveEarned = (secondsPassed / 3600) * rate;
                     
                     updateCoinDisplays(window.coins + liveEarned);
 
                     const rem = Math.round((window.miningEndTime - now) / 1000);
-                    document.getElementById('miningCountdown').innerText = `Ends in: ${Math.floor(rem / 60)}m ${rem % 60}s`;
+                    document.getElementById('miningCountdown').innerText = `Mining Ends in: ${Math.floor(rem / 60)}m ${rem % 60}s`;
                 } else {
                     stopLiveCounter();
                     checkMiningStatus();
@@ -1811,10 +1777,8 @@
             const ratio = window.adminConfig.coinToInrRatio || 100;
             const usdRate = window.adminConfig.usdToInrRate || 85;
             
-            // Home Balance Card Displays
             document.getElementById('totalCoins').innerText = displayVal;
             
-            // Dual Currency Home Display
             const inrVal = ((v) / ratio).toFixed(2);
             const usdVal = ((v) / (ratio * usdRate)).toFixed(2);
             
@@ -1824,7 +1788,6 @@
             const usdEl = document.getElementById('balanceUsdEqv');
             if (usdEl) usdEl.innerText = `$${usdVal} USD`;
 
-            // Wallet Section 3 Wallets Display
             const walletCoinsEl = document.getElementById('walletCoins');
             if (walletCoinsEl) walletCoinsEl.innerText = Math.floor(v).toLocaleString();
 
@@ -1834,7 +1797,6 @@
             const walletUsdEl = document.getElementById('walletUsd');
             if (walletUsdEl) walletUsdEl.innerText = `$${usdVal}`;
 
-            // Inside Earth circle
             const circleEl = document.getElementById('coinInsideCircle');
             if (circleEl) {
                 circleEl.innerText = isLive ? "+" + Math.max(0, (v - window.coins)).toFixed(2) : Math.floor(v).toLocaleString();
@@ -1842,20 +1804,17 @@
         }
 
         // ==========================================
-        // 💱 LIVE EXCHANGE CALCULATOR LOGIC
+        // 💱 LIVE EXCHANGE CALCULATOR
         // ==========================================
         window.openExchangeModal = () => {
-            const modal = document.getElementById('exchangeModal');
-            modal.style.display = 'flex';
+            document.getElementById('exchangeModal').style.display = 'flex';
             const input = document.getElementById('calcCoinInput');
             input.value = Math.floor(window.coins) || '';
             calculateExchangeValues();
-            AudioFX.playClick();
         };
 
         window.closeExchangeModal = () => {
             document.getElementById('exchangeModal').style.display = 'none';
-            AudioFX.playClick();
         };
 
         window.calculateExchangeValues = () => {
@@ -1876,13 +1835,12 @@
             
             document.getElementById('withdrawAmount').value = inputVal;
             closeExchangeModal();
-            AudioFX.playCoin();
-            showRewardPopup(inputVal, "EXCHANGE APPLIED!", "Coin amount filled into withdrawal input. Enter your payment details to withdraw!");
+            showRewardPopup(inputVal, "EXCHANGE APPLIED!", "Coin amount filled into withdrawal input.");
         };
 
         window.showSection = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
+            document.getElementById(id).style.display = id === 'home' ? 'flex' : 'block';
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             if(id === 'watch') loadAdTasks();
@@ -1896,17 +1854,23 @@
             return `${h}h ${m}m ${s}s`;
         }
 
+        let adTasksListenerActive = false;
         function loadAdTasks() {
+            if (adTasksListenerActive) return;
+            adTasksListenerActive = true;
+
             onValue(ref(database, 'ad_tasks'), (snap) => {
                 const tasks = snap.val();
                 const container = document.getElementById('adTasksContainer');
                 container.innerHTML = "";
                 if(!tasks) return;
+                
                 Object.keys(tasks).forEach(id => {
                     const t = tasks[id];
                     const cardWrapper = document.createElement('div');
                     cardWrapper.id = `task-card-${id}`;
                     container.appendChild(cardWrapper);
+
                     onValue(ref(database, `${userPath}/ad_stats/${id}`), (uSnap) => {
                         const userData = uSnap.val() || { count: 0, lastDone: 0 };
                         const count = userData.count || 0;
@@ -1955,18 +1919,15 @@
             const zId = zoneId || window.adminConfig.monetagZone || "10361814";
             const functionName = "show_" + zId;
             if (typeof window[functionName] === 'function') {
-                window[functionName]().then(callback).catch(() => {
-                    if (callback) callback(); 
-                });
+                window[functionName]().then(callback).catch(() => { if (callback) callback(); });
             } else {
                 const script = document.createElement('script');
                 script.src = 'https://whephiwums.com/vignette.min.js';
                 script.dataset.zone = zId;
                 script.dataset.sdk = functionName;
                 script.onload = () => { 
-                    if (typeof window[functionName] === 'function') {
-                        window[functionName]().then(callback).catch(() => { if (callback) callback(); });
-                    } else if (callback) callback();
+                    if (typeof window[functionName] === 'function') window[functionName]().then(callback).catch(() => { if (callback) callback(); });
+                    else if (callback) callback();
                 };
                 script.onerror = () => { if (callback) callback(); };
                 document.head.appendChild(script);
@@ -1992,21 +1953,16 @@
                 if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
                 else updates[`ad_stats/${id}/count`] = newCount;
                 update(dbRef, updates).then(() => { 
-                    showRewardPopup(reward, "CLAIM SUCCESSFUL!", "Watch Ad task completed. Coins added to your wallet!");
+                    showRewardPopup(reward, "CLAIM SUCCESSFUL!", "Watch Ad task completed. Coins added to wallet!");
                 });
             };
 
             if(adType === 'adexium') {
-                btn.innerText = "Loading Ad...";
+                btn.innerText = "Loading...";
                 btn.disabled = true;
 
                 if (window.myAdexium) {
                     let adClaimed = false;
-
-                    const onAdReceived = (ad) => {
-                        window.myAdexium.displayAd(ad);
-                    };
-
                     const onAdClosed = () => {
                         cleanup();
                         if (!adClaimed) {
@@ -2016,43 +1972,34 @@
                             claim();
                         }
                     };
-
                     const onNoAd = () => {
                         cleanup();
-                        console.log("No Adexium ad found, fallback to Monetag...");
                         runDynamicMonetag(window.adminConfig.monetagZone, () => {
                             btn.disabled = false;
                             btn.innerText = "Watch";
                             claim();
                         });
                     };
-
                     const cleanup = () => {
                         try {
-                            window.myAdexium.off('adReceived', onAdReceived);
                             window.myAdexium.off('adClosed', onAdClosed);
                             window.myAdexium.off('noAdFound', onNoAd);
                         } catch(e) {}
                     };
-
-                    window.myAdexium.on('adReceived', onAdReceived);
                     window.myAdexium.on('adClosed', onAdClosed);
                     window.myAdexium.on('noAdFound', onNoAd);
-
                     window.myAdexium.requestAd('interstitial');
                 } else {
                     runDynamicMonetag(window.adminConfig.monetagZone, claim);
                 }
-            }
-            else if(adType === 'adsgram') {
+            } else if(adType === 'adsgram') {
                 try {
                     const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
                     TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag(window.adminConfig.monetagZone, claim); });
                 } catch(e) {
                     runDynamicMonetag(window.adminConfig.monetagZone, claim);
                 }
-            }
-            else {
+            } else {
                 runDynamicMonetag(adId || window.adminConfig.monetagZone, claim);
             }
         };
@@ -2062,11 +2009,9 @@
             const timerInterval = setInterval(() => {
                 window.activeTimers[taskId]--;
                 const btn = document.getElementById(`btn-${taskId}`);
-
                 if (window.activeTimers[taskId] <= 0) {
                     clearInterval(timerInterval);
                     delete window.activeTimers[taskId];
-                    
                     if (btn) {
                         btn.innerText = "Watch";
                         btn.disabled = false;
@@ -2092,6 +2037,7 @@
             
             updateMiningUI(true);
             startLiveCounter();
+            updateAdProgressUI();
             
             update(dbRef, { 
                 miningStartTime: now, 
@@ -2107,22 +2053,20 @@
             if (!urlPattern.test(linkInput)) return alert("Error: Invalid Link.");
             push(ref(database, `${userPath}/promotions`), { link: linkInput, platform: document.getElementById('promoPlatform').value, status: 'Pending', timestamp: Date.now() });
             document.getElementById('promoLink').value = "";
-            showRewardPopup(0, "SUBMITTED!", "Your promotion link has been submitted for manual admin review.");
+            showRewardPopup(0, "SUBMITTED!", "Promotion submitted for review.");
         };
 
         window.openGiftModal = () => document.getElementById('giftModal').style.display='flex';
         window.closeGiftModal = () => document.getElementById('giftModal').style.display='none';
-        window.shareReferralLink = () => window.open(`https://t.me/share/url?url=${encodeURIComponent(document.getElementById('refLink').innerText)}`);
+        window.shareReferralLink = () => {
+            const link = document.getElementById('refLink').innerText;
+            const text = "Join CoinMine Hub! Mine free coins daily and cash out instantly 🚀";
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+        };
 
-        setInterval(() => {
-            if (typeof TELEGRAM_USER_ID !== "undefined" && TELEGRAM_USER_ID !== "GUEST_USER") {
-                update(ref(database, 'users/' + TELEGRAM_USER_ID), { lastSeen: Date.now() });
-            }
-        }, 120000);
-
+        // Cooldown timer update without duplicate Firebase listeners
         setInterval(() => {
             const now = Date.now();
-            
             const cooldownButtons = document.querySelectorAll('.cooldown-timer');
             cooldownButtons.forEach(btn => {
                 const expireTime = parseInt(btn.getAttribute('data-expire'));
@@ -2134,21 +2078,13 @@
                     btn.disabled = false;
                     btn.style.background = "#fff";
                     btn.style.color = "#000";
-                    if(typeof loadAdTasks === 'function') loadAdTasks();
                 } else {
                     btn.innerText = "Next in " + formatCooldown(timeLeft);
                 }
             });
-
-            if (Math.floor(now / 1000) % 60 === 0) {
-                if (document.getElementById('watch').style.display === 'block') { 
-                    loadAdTasks(); 
-                }
-            }
         }, 1000);
 
         let currentSelectedTask = null;
-
         function listenForTasks() {
             onValue(ref(database, 'admin_tasks'), async (snap) => {
                 const tasks = snap.val();
@@ -2187,38 +2123,32 @@
             const ratio = window.adminConfig?.coinToInrRatio || 100;
 
             let videoUrl = task.videoId || "";
-            if (videoUrl && !videoUrl.startsWith("http")) {
-                videoUrl = "https://t.me/" + videoUrl;
-            }
+            if (videoUrl && !videoUrl.startsWith("http")) videoUrl = "https://t.me/" + videoUrl;
 
             detailContent.innerHTML = `
-                <div style="text-align:center; margin-bottom:20px;">
-                    <img src="${task.logo}" style="width:70px; height:70px; border-radius:15px; border:2px solid #32cd32; margin-bottom:10px;">
-                    <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:18px;">${task.name}</h2>
-                    <p style="color:#32cd32; font-weight:bold; font-size:14px;">Earn ₹${(task.reward / ratio).toFixed(2)}</p>
+                <div style="text-align:center; margin-bottom:16px;">
+                    <img src="${task.logo}" style="width:60px; height:60px; border-radius:12px; border:2px solid #32cd32; margin-bottom:8px;">
+                    <h2 style="font-family:'Orbitron'; color:#ffd700; font-size:16px;">${task.name}</h2>
+                    <p style="color:#32cd32; font-weight:bold; font-size:13px;">Earn ₹${(task.reward / ratio).toFixed(2)}</p>
                 </div>
-                <div style="margin-bottom:20px;">${stepsHtml}</div>
+                <div style="margin-bottom:16px;">${stepsHtml}</div>
                 
-                <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" 
-                    onclick="openVideoGuide('${videoUrl}')">
+                <button class="action-btn" style="background:#0088cc; margin-bottom:10px; color:white; font-weight:bold;" onclick="openVideoGuide('${videoUrl}')">
                     🎬 Watch Video Guide
                 </button>
 
                 <button id="taskDownloadBtn" class="action-btn mine-btn" onclick="handleTaskDownload('${task.link}')">Step 1: Start Task</button>
                 <button id="taskVerifyBtn" class="action-btn ad-btn" style="display:none; margin-top:10px;" onclick="submitTaskForVerify()">Step 2: Verify Now</button>
-                <button class="action-btn" style="background:none; color:#777; margin-top:10px; font-size:12px;" onclick="closeTaskDetails()">Cancel</button>
+                <button class="action-btn" style="background:none; color:#777; margin-top:8px; font-size:11px;" onclick="closeTaskDetails()">Cancel</button>
             `;
             document.getElementById('taskListModal').style.display = 'none';
             document.getElementById('taskDetailModal').style.display = 'flex';
         };
 
         window.openVideoGuide = (url) => {
-            if (!url) return alert("Video guide jald hi upload kiya jayega!");
-            if (window.Telegram?.WebApp?.openTelegramLink && url.includes("t.me")) {
-                window.Telegram.WebApp.openTelegramLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
+            if (!url) return alert("Video guide available soon!");
+            if (window.Telegram?.WebApp?.openTelegramLink && url.includes("t.me")) window.Telegram.WebApp.openTelegramLink(url);
+            else window.open(url, '_blank');
         };
 
         window.handleTaskDownload = (link) => {
@@ -2235,13 +2165,13 @@
 
         window.submitTaskForVerify = async () => {
             if (!currentSelectedTask) return;
-            const taskData = { taskId: currentSelectedTask.id, name: currentSelectedTask.name, reward: currentSelectedTask.reward, status: 'Pending', timestamp: Date.now() };
+            const taskData = { taskId: currentSelectedTask.id, name: currentSelectedTask.name, reward: currentSelectedTask.reward, status: 'Pending', credited: false, timestamp: Date.now() };
             const updates = {};
             updates[`${userPath}/completed_tasks/${currentSelectedTask.id}`] = taskData;
             updates[`admin_review_tasks/${currentSelectedTask.id}_${TELEGRAM_USER_ID}`] = { ...taskData, userId: TELEGRAM_USER_ID, userName: TELEGRAM_USER_NAME };
             await update(ref(database), updates);
             closeTaskDetails();
-            showRewardPopup(0, "VERIFICATION SUBMITTED!", "Your task is sent for review! Once approved by admin, lifetime free withdrawals will unlock.");
+            showRewardPopup(0, "TASK SUBMITTED!", "Task sent for review! Withdrawals unlock upon approval.");
         };
 
         window.openTaskList = () => document.getElementById('taskListModal').style.display = 'flex';
@@ -2251,20 +2181,17 @@
         loadUserData();
         listenForTasks();
         
-        // --- Draggable Icon Logic ---
+        // Draggable floating icon
         const taskIcon = document.getElementById('activeTaskIcon');
         let isDragging = false, isMoved = false;
         let startX, startY, iconX, iconY;
 
         function startDrag(e) {
-            isDragging = true;
-            isMoved = false;
+            isDragging = true; isMoved = false;
             const touch = e.touches ? e.touches[0] : e;
-            startX = touch.clientX;
-            startY = touch.clientY;
+            startX = touch.clientX; startY = touch.clientY;
             const rect = taskIcon.getBoundingClientRect();
-            iconX = rect.left;
-            iconY = rect.top;
+            iconX = rect.left; iconY = rect.top;
             taskIcon.style.transition = 'none';
         }
 
@@ -2273,17 +2200,11 @@
             const touch = e.touches ? e.touches[0] : e;
             let moveX = touch.clientX - startX;
             let moveY = touch.clientY - startY;
-
             if (Math.abs(moveX) > 5 || Math.abs(moveY) > 5) isMoved = true;
-
             if (isMoved) {
                 e.preventDefault();
-                let newX = iconX + moveX;
-                let newY = iconY + moveY;
-                
-                newX = Math.max(0, Math.min(newX, window.innerWidth - 55));
-                newY = Math.max(0, Math.min(newY, window.innerHeight - 55));
-
+                let newX = Math.max(0, Math.min(iconX + moveX, window.innerWidth - 50));
+                let newY = Math.max(0, Math.min(iconY + moveY, window.innerHeight - 50));
                 taskIcon.style.left = newX + 'px';
                 taskIcon.style.top = newY + 'px';
                 taskIcon.style.right = 'auto';
@@ -2300,7 +2221,6 @@
         taskIcon.addEventListener('touchstart', startDrag, { passive: false });
         taskIcon.addEventListener('touchmove', doDrag, { passive: false });
         taskIcon.addEventListener('touchend', endDrag);
-        
         taskIcon.addEventListener('mousedown', startDrag);
         document.addEventListener('mousemove', doDrag);
         document.addEventListener('mouseup', endDrag);
