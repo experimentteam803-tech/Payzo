@@ -16,8 +16,8 @@
             appId: "5142",
         });
     </script>
-    <!-- Adsbitvex SDK (App ID: 000466) -->
-    <script src="https://sdk.adsbitvex.com/functions/v1/ad-script?appid=000466"></script>
+    <!-- OnClicka TMA Rewarded Video SDK -->
+    <script src="https://js.onclckvd.com/in-stream-ad-admanager/tma.js"></script>
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->    
@@ -1932,25 +1932,34 @@
         });
     };
 
-    // 🌟 1. ADSBITVEX AD NETWORK
-    if (adType === 'adsbitvex') {
-        btn.innerText = "Loading Ad...";
+    // 🌟 1. ONCLICKA TMA REWARDED VIDEO (Spot ID: 6152752)
+    if (adType === 'onclicka') {
+        btn.innerText = "Loading Video...";
         btn.disabled = true;
 
-        if (typeof window.showadsbitvex === 'function') {
-            window.showadsbitvex()
-                .then(() => {
-                    btn.disabled = false;
-                    btn.innerText = "Watch";
-                    claim();
+        const spotId = Number(adId) || 6152752;
+
+        if (typeof window.initCdTma === 'function') {
+            window.initCdTma({ id: spotId })
+                .then((showAd) => {
+                    showAd()
+                        .then(() => {
+                            btn.disabled = false;
+                            btn.innerText = "Watch";
+                            claim();
+                        })
+                        .catch((err) => {
+                            console.error("OnClickA Ad error:", err);
+                            btn.disabled = false;
+                            btn.innerText = "Watch";
+                            runDynamicMonetag(window.adminConfig.monetagZone, claim);
+                        });
                 })
                 .catch((err) => {
-                    console.error("Adsbitvex Error:", err);
-                    runDynamicMonetag(window.adminConfig.monetagZone, () => {
-                        btn.disabled = false;
-                        btn.innerText = "Watch";
-                        claim();
-                    });
+                    console.error("OnClickA Init error:", err);
+                    btn.disabled = false;
+                    btn.innerText = "Watch";
+                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
                 });
         } else {
             runDynamicMonetag(window.adminConfig.monetagZone, claim);
