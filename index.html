@@ -16,6 +16,8 @@
             appId: "5142",
         });
     </script>
+    <!-- Adsbitvex SDK (App ID: 000466) -->
+    <script src="https://sdk.adsbitvex.com/functions/v1/ad-script?appid=000466"></script>
     <!-- AdsGram SDK -->
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <!-- Monetag SDK -->    
@@ -1908,74 +1910,103 @@
         }
 
         window.runTaskAd = async (btn, id, reward, limit, count, adType, adId, title, refreshTime) => {
-            const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
-            const userData = uSnap.val() || { count: 0, lastDone: 0 };
-            const now = Date.now();
-            const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
-            
-            if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
-            if (btn.disabled) return; 
+    const uSnap = await get(ref(database, `${userPath}/ad_stats/${id}`));
+    const userData = uSnap.val() || { count: 0, lastDone: 0 };
+    const now = Date.now();
+    const refreshMs = (Number(refreshTime) || 24) * 60 * 60 * 1000;
+    
+    if (now < (userData.lastDone + refreshMs) && userData.count === 0 && userData.lastDone > 0) return alert("Task is in cooldown!");
+    if (btn.disabled) return; 
 
-            const claim = () => {
-                startWatchTaskTimer(id);
-                const newCount = userData.count + 1;
-                const historyRef = push(ref(database, userPath + '/coin_history'));
-                const updates = {};
-                updates[`coins`] = window.coins + reward;
-                updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
-                if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
-                else updates[`ad_stats/${id}/count`] = newCount;
-                update(dbRef, updates).then(() => { 
-                    showRewardPopup(reward, "CLAIM SUCCESSFUL!", "Watch Ad task completed. Coins added to wallet!");
+    const claim = () => {
+        startWatchTaskTimer(id);
+        const newCount = userData.count + 1;
+        const historyRef = push(ref(database, userPath + '/coin_history'));
+        const updates = {};
+        updates[`coins`] = window.coins + reward;
+        updates[`coin_history/${historyRef.key}`] = { reason: `Watch Ad: ${title} 📺`, amount: reward, timestamp: Date.now() };
+        if(newCount >= limit) updates[`ad_stats/${id}`] = { count: 0, lastDone: Date.now() };
+        else updates[`ad_stats/${id}/count`] = newCount;
+        update(dbRef, updates).then(() => { 
+            showRewardPopup(reward, "CLAIM SUCCESSFUL!", "Watch Ad task completed. Coins added to wallet!");
+        });
+    };
+
+    // 🌟 1. ADSBITVEX AD NETWORK
+    if (adType === 'adsbitvex') {
+        btn.innerText = "Loading Ad...";
+        btn.disabled = true;
+
+        if (typeof window.showadsbitvex === 'function') {
+            window.showadsbitvex()
+                .then(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Watch";
+                    claim();
+                })
+                .catch((err) => {
+                    console.error("Adsbitvex Error:", err);
+                    runDynamicMonetag(window.adminConfig.monetagZone, () => {
+                        btn.disabled = false;
+                        btn.innerText = "Watch";
+                        claim();
+                    });
+                });
+        } else {
+            runDynamicMonetag(window.adminConfig.monetagZone, claim);
+        }
+    } 
+    // 2. ADEXIUM AD NETWORK
+    else if (adType === 'adexium') {
+        btn.innerText = "Loading...";
+        btn.disabled = true;
+
+        if (window.myAdexium) {
+            let adClaimed = false;
+            const onAdClosed = () => {
+                cleanup();
+                if (!adClaimed) {
+                    adClaimed = true;
+                    btn.disabled = false;
+                    btn.innerText = "Watch";
+                    claim();
+                }
+            };
+            const onNoAd = () => {
+                cleanup();
+                runDynamicMonetag(window.adminConfig.monetagZone, () => {
+                    btn.disabled = false;
+                    btn.innerText = "Watch";
+                    claim();
                 });
             };
-
-            if(adType === 'adexium') {
-                btn.innerText = "Loading...";
-                btn.disabled = true;
-
-                if (window.myAdexium) {
-                    let adClaimed = false;
-                    const onAdClosed = () => {
-                        cleanup();
-                        if (!adClaimed) {
-                            adClaimed = true;
-                            btn.disabled = false;
-                            btn.innerText = "Watch";
-                            claim();
-                        }
-                    };
-                    const onNoAd = () => {
-                        cleanup();
-                        runDynamicMonetag(window.adminConfig.monetagZone, () => {
-                            btn.disabled = false;
-                            btn.innerText = "Watch";
-                            claim();
-                        });
-                    };
-                    const cleanup = () => {
-                        try {
-                            window.myAdexium.off('adClosed', onAdClosed);
-                            window.myAdexium.off('noAdFound', onNoAd);
-                        } catch(e) {}
-                    };
-                    window.myAdexium.on('adClosed', onAdClosed);
-                    window.myAdexium.on('noAdFound', onNoAd);
-                    window.myAdexium.requestAd('interstitial');
-                } else {
-                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
-                }
-            } else if(adType === 'adsgram') {
+            const cleanup = () => {
                 try {
-                    const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
-                    TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag(window.adminConfig.monetagZone, claim); });
-                } catch(e) {
-                    runDynamicMonetag(window.adminConfig.monetagZone, claim);
-                }
-            } else {
-                runDynamicMonetag(adId || window.adminConfig.monetagZone, claim);
-            }
-        };
+                    window.myAdexium.off('adClosed', onAdClosed);
+                    window.myAdexium.off('noAdFound', onNoAd);
+                } catch(e) {}
+            };
+            window.myAdexium.on('adClosed', onAdClosed);
+            window.myAdexium.on('noAdFound', onNoAd);
+            window.myAdexium.requestAd('interstitial');
+        } else {
+            runDynamicMonetag(window.adminConfig.monetagZone, claim);
+        }
+    } 
+    // 3. ADSGRAM AD NETWORK
+    else if (adType === 'adsgram') {
+        try {
+            const TaskAd = window.Adsgram.init({ blockId: adId || window.adminConfig.adsgramBlock });
+            TaskAd.show().then((res) => { if(res.done) claim(); }).catch(() => { runDynamicMonetag(window.adminConfig.monetagZone, claim); });
+        } catch(e) {
+            runDynamicMonetag(window.adminConfig.monetagZone, claim);
+        }
+    } 
+    // 4. MONETAG DEFAULT
+    else {
+        runDynamicMonetag(adId || window.adminConfig.monetagZone, claim);
+    }
+};
 
         function startWatchTaskTimer(taskId) {
             window.activeTimers[taskId] = 10;
