@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
     // ⚠️ 1. Apna Bot Token yahan daalein
-    const BOT_TOKEN = "8390464598:AAEk04NIJ-hRo62XMdcnSTs7YeKJP_VoY1M"; 
+    const BOT_TOKEN = "8390464598:AAFEplVkKf1MvSWl8O1_cOpHvolviDO1XEc"; 
 
     // 🖼️ 2. Apni Banner Photo ka Direct Link yahan daalein
     const BANNER_IMAGE_URL = "https://i.postimg.cc/9FtdPSWK/IMG-20260928-235341-745.jpg"; 
