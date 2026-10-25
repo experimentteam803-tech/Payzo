@@ -7,8 +7,6 @@
     <!-- 1. Telegram Script (Top Priority) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <meta name="clckd" content="8ebda52ea752886b4caf07e7f84334f2" />
-
     <meta name="monetag" content="dd9c88b75deb0eada20e40bce8074e61">
     <script>(function(s){s.dataset.zone='12060198',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
     
@@ -561,6 +559,32 @@
         .exchange-res-box b { font-family: 'Orbitron'; font-size: 13px; }
         .exchange-trigger-btn { background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(0, 198, 255, 0.18)); border: 1px solid rgba(255, 215, 0, 0.6); color: #ffd700; border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 700; font-family: 'Orbitron'; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
         .wallet-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .criteria-trigger-btn {
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #ffd700;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 13px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+            transition: 0.2s;
+        }
+        .criteria-trigger-btn:active { transform: scale(0.92); }
+        .ref-filter-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+        .ref-filter-btn {
+            flex: 1; padding: 6px 4px; font-size: 10px; font-weight: 700;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05); color: #aaa; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+        .ref-filter-btn.active {
+            background: #ffd700; color: #000; border-color: #ffd700;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -670,10 +694,23 @@
         <!-- 🌟 WALLET -->
         <section id="wallet" class="section">
             <div class="wallet-header-row">
-                <h2 style="font-family:'Orbitron'; font-size:18px; margin:0;">Withdrawal Hub</h2>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <h2 style="font-family:'Orbitron'; font-size:18px; margin:0;">Withdrawal Hub</h2>
+                    <button class="criteria-trigger-btn" onclick="openWithdrawCriteriaModal()" title="View Withdrawal Rules">
+                        <i class="fas fa-shield-alt"></i>
+                    </button>
+                </div>
                 <button class="exchange-trigger-btn" onclick="openExchangeModal()">
                     <i class="fas fa-arrow-right-arrow-left"></i> Exchange 💱
                 </button>
+            </div>
+
+            <!-- ⏰ 24 Hours Payout Guarantee Notice -->
+            <div style="background: linear-gradient(135deg, rgba(50,205,50,0.1) 0%, rgba(6,182,212,0.1) 100%); border: 1px dashed rgba(50,205,50,0.45); border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">⚡</span>
+                <span style="font-size: 10.5px; color: #90ee90; line-height: 1.35;">
+                    <b>Instant Security Processing:</b> All requested withdrawals are verified and credited within <b>up to 24 hours</b>.
+                </span>
             </div>
 
             <div class="wallets-overview-grid">
@@ -743,22 +780,29 @@
                 </div>
             </div>
             
-            <!-- Live Summary Stats -->
-            <div class="ref-stats-grid">
-                <div class="ref-stat-card">
-                    <div class="ref-stat-title">Friends Invited</div>
-                    <div class="ref-stat-num" id="refCountVal">0</div>
+            <!-- Live Summary Stats with 3 Clickable Filter Buttons -->
+            <div class="wallets-overview-grid" style="margin-bottom: 10px;">
+                <div class="wallet-sub-card" style="cursor:pointer;" onclick="filterReferralView('all')">
+                    <div class="w-card-header">TOTAL INVITED</div>
+                    <div class="w-card-amount" id="refCountVal" style="color:#fff;">0</div>
+                    <div class="w-card-sub" style="color:#00c6ff;">Tap to view</div>
                 </div>
-                <div class="ref-stat-card">
-                    <div class="ref-stat-title">Total Earned</div>
-                    <div class="ref-stat-num" id="refTotalEarnedVal">0 🪙</div>
+                <div class="wallet-sub-card" style="cursor:pointer; border-color: rgba(50,205,50,0.35);" onclick="filterReferralView('valid')">
+                    <div class="w-card-header" style="color:#32cd32;">VALID MINERS</div>
+                    <div class="w-card-amount" id="refValidCountVal" style="color:#32cd32;">0</div>
+                    <div class="w-card-sub" style="color:#90ee90;">Min 1 Mining Done</div>
+                </div>
+                <div class="wallet-sub-card" style="cursor:pointer;" onclick="filterReferralView('earnings')">
+                    <div class="w-card-header" style="color:#ffd700;">TOTAL EARNED</div>
+                    <div class="w-card-amount" id="refTotalEarnedVal" style="color:#ffd700;">0</div>
+                    <div class="w-card-sub">Reward + 5% Comm</div>
                 </div>
             </div>
 
-            <!-- Invited Users List -->
+            <!-- Invited Users List with Detail Header -->
             <div class="ref-list-card">
                 <div class="ref-list-header">
-                    <span>👥 My Invited Miners</span>
+                    <span id="refListHeaderTitle">👥 All Invited Miners</span>
                     <span id="refCommissionRateBadge" style="font-size:10px; color:#ffd700;">+5% Lifetime Active</span>
                 </div>
                 <div class="ref-users-box" id="referralsListBox">
@@ -823,6 +867,42 @@
             <button class="action-btn mine-btn" id="joinChannelBtn" data-link="https://t.me/PayZos_Bot" onclick="window.open(this.dataset.link)">📢 JOIN TELEGRAM</button>
             <button class="action-btn ad-btn" style="margin-top:10px;" onclick="redeemGift()">Redeem Code</button>
             <button style="background:none; border:none; color:#666; margin-top:12px; cursor:pointer;" onclick="closeGiftModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- WITHDRAWAL CRITERIA MODAL -->
+    <div id="withdrawCriteriaModal" class="modal-overlay">
+        <div class="modal-content" style="border: 1.5px solid #ffd700; max-width: 360px;">
+            <div style="text-align:center; margin-bottom:12px;">
+                <div style="width:50px; height:50px; border-radius:50%; background:rgba(255,215,0,0.15); border:1.5px solid #ffd700; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:24px;">
+                    🛡️
+                </div>
+                <h3 style="color:#ffd700; font-family:'Orbitron'; font-size:16px;">Withdrawal Policy</h3>
+                <p style="font-size:11px; color:#aaa; margin-top:3px;">Anti-Bot Fraud Protection Guidelines</p>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:9px; font-size:11.5px; color:#e2e8f0; line-height:1.4; margin-bottom:14px;">
+                <div class="task-step" style="border-left-color: #ffd700;">
+                    <b>1. Minimum 5 Valid Referrals:</b>
+                    <div style="font-size:10.5px; color:#bbb; margin-top:2px;">
+                        A referral is marked <b>Valid</b> only after your referred friend completes at least 1 Earth Mining cycle.
+                    </div>
+                </div>
+                <div class="task-step" style="border-left-color: #32cd32;">
+                    <b>2. Watch Required Ads:</b>
+                    <div style="font-size:10.5px; color:#bbb; margin-top:2px;">
+                        Complete the withdrawal security verification ads before submitting.
+                    </div>
+                </div>
+                <div class="task-step" style="border-left-color: #00c6ff;">
+                    <b>3. 24 Hours Delivery:</b>
+                    <div style="font-size:10.5px; color:#bbb; margin-top:2px;">
+                        Approved payouts are credited directly to your account within 24 hours.
+                    </div>
+                </div>
+            </div>
+
+            <button class="action-btn mine-btn" onclick="closeWithdrawCriteriaModal()">I Understand</button>
         </div>
     </div>
 
@@ -1170,46 +1250,86 @@
             startTasksCreditListener();
         }
 
+        window.userReferralsData = {};
+        window.currentRefFilter = 'all';
+
         function startReferralListener() {
             onValue(ref(database, `${userPath}/referrals`), (snap) => {
-                const refs = snap.val();
-                const box = document.getElementById('referralsListBox');
-                const countVal = document.getElementById('refCountVal');
-                const totalEarnedVal = document.getElementById('refTotalEarnedVal');
-
-                if (!refs) {
-                    countVal.innerText = "0";
-                    totalEarnedVal.innerText = "0 🪙";
-                    box.innerHTML = `<p style="font-size:11px; color:#666; text-align:center; padding:10px 0;">No miners referred yet. Share link to earn!</p>`;
-                    return;
-                }
-
-                let totalCount = 0;
-                let totalEarned = 0;
-                let listHtml = "";
-
-                Object.keys(refs).reverse().forEach(uid => {
-                    totalCount++;
-                    const item = refs[uid];
-                    const friendEarned = (item.coinsEarned || 0) + (item.commissionEarned || 0);
-                    totalEarned += friendEarned;
-                    const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Active";
-
-                    listHtml += `
-                        <div class="ref-user-item">
-                            <div>
-                                <b style="color:#fff; font-size:12px;">${item.name || 'Miner'}</b>
-                                <div style="color:#666; font-size:9px;">Joined: ${dateStr}</div>
-                            </div>
-                            <span style="color:#ffd700; font-family:'Orbitron'; font-weight:bold; font-size:11px;">+${friendEarned.toLocaleString()} 🪙</span>
-                        </div>
-                    `;
-                });
-
-                countVal.innerText = totalCount;
-                totalEarnedVal.innerText = `${totalEarned.toLocaleString()} 🪙`;
-                box.innerHTML = listHtml;
+                const refs = snap.val() || {};
+                window.userReferralsData = refs;
+                renderReferralUI();
             });
+        }
+
+        window.filterReferralView = (filterType) => {
+            window.currentRefFilter = filterType;
+            renderReferralUI();
+        };
+
+        function renderReferralUI() {
+            const refs = window.userReferralsData || {};
+            const box = document.getElementById('referralsListBox');
+            const countVal = document.getElementById('refCountVal');
+            const validCountVal = document.getElementById('refValidCountVal');
+            const totalEarnedVal = document.getElementById('refTotalEarnedVal');
+            const headerTitle = document.getElementById('refListHeaderTitle');
+
+            const uids = Object.keys(refs);
+            let totalCount = uids.length;
+            let validCount = 0;
+            let totalEarned = 0;
+
+            uids.forEach(uid => {
+                const item = refs[uid];
+                if (item.isValidUser) validCount++;
+                totalEarned += ((item.coinsEarned || 0) + (item.commissionEarned || 0));
+            });
+
+            if (countVal) countVal.innerText = totalCount;
+            if (validCountVal) validCountVal.innerText = validCount;
+            if (totalEarnedVal) totalEarnedVal.innerText = totalEarned.toLocaleString();
+
+            let filteredUids = uids;
+            if (window.currentRefFilter === 'valid') {
+                if (headerTitle) headerTitle.innerText = "✅ Valid Miners (Completed Mining)";
+                filteredUids = uids.filter(uid => refs[uid].isValidUser);
+            } else if (window.currentRefFilter === 'earnings') {
+                if (headerTitle) headerTitle.innerText = "🪙 Earnings Breakdown";
+            } else {
+                if (headerTitle) headerTitle.innerText = "👥 All Invited Miners";
+            }
+
+            if (filteredUids.length === 0) {
+                box.innerHTML = `<p style="font-size:11px; color:#666; text-align:center; padding:10px 0;">${window.currentRefFilter === 'valid' ? 'No valid miners yet. Friends must finish 1 mining session!' : 'No miners found.'}</p>`;
+                return;
+            }
+
+            let listHtml = "";
+            filteredUids.reverse().forEach(uid => {
+                const item = refs[uid];
+                const friendEarned = (item.coinsEarned || 0) + (item.commissionEarned || 0);
+                const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : "Active";
+                const isValid = item.isValidUser === true;
+
+                listHtml += `
+                    <div class="ref-user-item" style="border-left-color: ${isValid ? '#32cd32' : '#888'};">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <b style="color:#fff; font-size:12px;">${item.name || 'Miner'}</b>
+                                <span style="font-size:9px; padding:1px 5px; border-radius:4px; font-weight:700; background:${isValid ? 'rgba(50,205,50,0.2); color:#90ee90;' : 'rgba(255,255,255,0.08); color:#888;'}">
+                                    ${isValid ? 'VALID' : 'PENDING'}
+                                </span>
+                            </div>
+                            <div style="color:#666; font-size:9px; margin-top:2px;">Joined: ${dateStr}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="color:#ffd700; font-family:'Orbitron'; font-weight:bold; font-size:11px;">+${friendEarned.toLocaleString()} 🪙</span>
+                            <div style="color:${isValid ? '#32cd32' : '#ff9800'}; font-size:8px;">${isValid ? 'Mining done ✓' : 'Mining pending'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            box.innerHTML = listHtml;
         }
 
         function startTasksCreditListener() {
@@ -1239,6 +1359,14 @@
                 }
             });
         }
+
+        window.openWithdrawCriteriaModal = () => {
+            document.getElementById('withdrawCriteriaModal').style.display = 'flex';
+        };
+
+        window.closeWithdrawCriteriaModal = () => {
+            document.getElementById('withdrawCriteriaModal').style.display = 'none';
+        };
 
         window.closeGlobalPopup = () => {
             document.getElementById('globalPopup').style.display = 'none';
@@ -1435,29 +1563,41 @@
             }
 
             try {
+                // 1. Task Criteria Check (Silently validated in background)
                 const taskSnap = await get(ref(database, `${userPath}/completed_tasks`));
                 let hasApprovedTask = false;
-                let hasPendingTask = false;
-
                 if (taskSnap.exists()) {
                     const tasks = taskSnap.val();
                     hasApprovedTask = Object.values(tasks).some(t => t.status === 'Success');
-                    hasPendingTask = Object.values(tasks).some(t => t.status === 'Pending');
                 }
 
-                if (!hasApprovedTask) {
-                    if (hasPendingTask) {
-                        document.getElementById('popupTitle').innerText = "⏳ Verification Pending";
-                        document.getElementById('popupMessage').innerText = "Your task is currently under review. Lifetime free withdrawals will unlock once approved.";
-                    } else {
-                        document.getElementById('popupTitle').innerText = "🎯 1 Task Required";
-                        document.getElementById('popupMessage').innerText = "Complete at least 1 task to unlock lifetime withdrawals. Tap the 🎯 icon to get started.";
-                    }
+                // 2. 5 Valid Referrals Criteria Check
+                const refSnap = await get(ref(database, `${userPath}/referrals`));
+                let validReferralsCount = 0;
+                if (refSnap.exists()) {
+                    const allRefs = refSnap.val();
+                    validReferralsCount = Object.values(allRefs).filter(r => r.isValidUser === true).length;
+                }
+
+                const MIN_VALID_REFS = 5;
+
+                // Agar 5 Valid Referrals nahi hain ya Task pura nahi hai, to User ko Referral Requirement show karein
+                if (validReferralsCount < MIN_VALID_REFS || !hasApprovedTask) {
+                    document.getElementById('popupTitle').innerText = "⚠️ Withdrawal Requirement";
+                    document.getElementById('popupMessage').innerHTML = `
+                        To prevent automated bot activities and process safe payouts, you must have at least <b>${MIN_VALID_REFS} Valid Referrals</b>.<br><br>
+                        <div style="background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; text-align:left; font-size:11px;">
+                            • <b>Current Valid Referrals:</b> <span style="color:#ffd700; font-weight:bold;">${validReferralsCount} / ${MIN_VALID_REFS}</span><br>
+                            • <b>Rule:</b> Your referred friend must complete at least <b>1 Earth Mining session</b> to be counted as Valid.
+                        </div>
+                        <br>Invite friends to unlock instant 24-Hour lifetime withdrawals!
+                    `;
                     document.getElementById('globalPopup').style.display = 'flex';
                     return;
                 }
             } catch (error) {
-                return alert("Technical error, please try again.");
+                console.error("Criteria check error:", error);
+                return alert("Technical verification error, please try again.");
             }
 
             const rData = { 
@@ -1562,7 +1702,24 @@
                 }
 
                 if (now >= window.miningEndTime) {
-                    await update(dbRef, { miningStartTime: 0, miningEndTime: 0, lastClaimTime: 0, adsWatched: 0 });
+                    await update(dbRef, { 
+                        miningStartTime: 0, 
+                        miningEndTime: 0, 
+                        lastClaimTime: 0, 
+                        adsWatched: 0,
+                        hasCompletedFirstMining: true
+                    });
+
+                    // 🌟 Mark as Valid Referral for Referrer on 1st Mining Completion
+                    if (window.userReferredBy && window.userReferredBy !== TELEGRAM_USER_ID) {
+                        try {
+                            const refUserValidRef = ref(database, `users/${window.userReferredBy}/referrals/${TELEGRAM_USER_ID}`);
+                            await update(refUserValidRef, { isValidUser: true });
+                        } catch(err) {
+                            console.error("Valid referral mark error:", err);
+                        }
+                    }
+
                     showRewardPopup(rate, "MINING COMPLETED!", "Mining session completed and yield collected.");
                     stopLiveCounter();
                     updateMiningUI(false);
