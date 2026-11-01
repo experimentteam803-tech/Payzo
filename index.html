@@ -447,6 +447,25 @@
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(10px);
         }
+
+        /* 🎯 Adsgram Task Auto Card Styling */
+        adsgram-task.adsgram-task-card {
+            --adsgram-task-font-size: 13px;
+            --adsgram-task-icon-size: 44px;
+            --adsgram-task-icon-title-gap: 12px;
+            --adsgram-task-button-width: 80px;
+            --adsgram-task-icon-border-radius: 12px;
+            display: block;
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 242, 255, 0.4);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0, 242, 255, 0.12);
+        }
         .ad-task-img { width: 42px; height: 42px; border-radius: 10px; background: #fff; padding: 4px; object-fit: contain; }
         .ad-task-info { flex: 1; }
         .ad-task-info h3 { font-size: 13px; margin-bottom: 2px; }
@@ -659,6 +678,8 @@
 
         <section id="watch" class="section">
             <h2 style="text-align:center; font-family:'Orbitron'; font-size:18px; color:#00f2ff; margin-bottom:15px;">Watch Ads & Earn</h2>
+            <!-- 🎯 Adsgram Auto Task Wrapper -->
+            <div id="adsgramTaskWrapper" style="display:none; margin-bottom:12px;"></div>
             <div id="adTasksContainer"></div>
         </section>
 
@@ -1975,12 +1996,98 @@
             showRewardPopup(inputVal, "EXCHANGE APPLIED!", "Coin amount filled into withdrawal input.");
         };
 
+        // ==========================================
+        // 🎯 ADSGRAM AUTO TASK (Block ID: task-57353)
+        // ==========================================
+        const ADSGRAM_TASK_BLOCK = "task-57353";
+        const ADSGRAM_TASK_REWARD = 20; // Task पूरा करने पर मिलने वाले Coins
+        let adsgramCooldownTimer = null;
+
+        window.initAdsgramTask = function() {
+            const wrapper = document.getElementById('adsgramTaskWrapper');
+            if (!wrapper) return;
+
+            const lastDone = parseInt(localStorage.getItem('adsgram_task_last_done') || '0', 10);
+            const now = Date.now();
+            const cooldownMs = 45 * 1000; // 45 Seconds Cooldown
+
+            // अगर 45 सेकंड पूरे नहीं हुए हैं तो छिपाकर रखें
+            if (now - lastDone < cooldownMs) {
+                wrapper.style.display = 'none';
+                wrapper.innerHTML = '';
+                const remaining = cooldownMs - (now - lastDone);
+                if (adsgramCooldownTimer) clearTimeout(adsgramCooldownTimer);
+                adsgramCooldownTimer = setTimeout(() => {
+                    window.initAdsgramTask();
+                }, remaining);
+                return;
+            }
+
+            // Adsgram Web Component inject करें (Logo, Name Adsgram खुद डालेगा)
+            wrapper.innerHTML = `
+                <adsgram-task data-block-id="${ADSGRAM_TASK_BLOCK}" class="adsgram-task-card">
+                    <span slot="reward" style="color: #ffd700; font-size: 11px; font-weight: bold;">+${ADSGRAM_TASK_REWARD} Coins</span>
+                </adsgram-task>
+            `;
+            wrapper.style.display = 'block';
+
+            const taskEl = wrapper.querySelector('adsgram-task');
+            if (!taskEl) return;
+
+            // ✅ जब यूजर टास्क सफलतापूर्वक पूरा कर ले
+            taskEl.addEventListener('reward', async (event) => {
+                AudioFX.playCoin();
+
+                // Coins Firebase और Wallet में क्रेडिट करें
+                const historyRef = push(ref(database, userPath + '/coin_history'));
+                const updates = {};
+                window.coins = (window.coins || 0) + ADSGRAM_TASK_REWARD;
+                updates['coins'] = window.coins;
+                updates[`coin_history/${historyRef.key}`] = {
+                    reason: "Adsgram Partner Task 🎯",
+                    amount: ADSGRAM_TASK_REWARD,
+                    timestamp: Date.now()
+                };
+                await update(dbRef, updates);
+                updateCoinDisplays(window.coins);
+
+                showRewardPopup(ADSGRAM_TASK_REWARD, "TASK COMPLETED! 🎯", `Adsgram task verified! +${ADSGRAM_TASK_REWARD} Coins added to balance.`);
+
+                // 🔥 तुरंत टास्क को गायब (Hide) कर दें
+                wrapper.style.display = 'none';
+                wrapper.innerHTML = '';
+                localStorage.setItem('adsgram_task_last_done', Date.now().toString());
+
+                // ⏳ ठीक 45 सेकंड बाद फिर से चेक करके नया टास्क लाएगा
+                if (adsgramCooldownTimer) clearTimeout(adsgramCooldownTimer);
+                adsgramCooldownTimer = setTimeout(() => {
+                    window.initAdsgramTask();
+                }, 45000);
+            });
+
+            // अगर Adsgram पर कोई टास्क खाली न हो तो छिपाये रखें
+            taskEl.addEventListener('onBannerNotFound', () => {
+                wrapper.style.display = 'none';
+                if (adsgramCooldownTimer) clearTimeout(adsgramCooldownTimer);
+                adsgramCooldownTimer = setTimeout(() => {
+                    window.initAdsgramTask();
+                }, 45000);
+            });
+
+            taskEl.addEventListener('onError', () => {
+                wrapper.style.display = 'none';
+            });
+        };
+
         window.showSection = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = id === 'home' ? 'flex' : 'block';
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if(id === 'watch') loadAdTasks();
+            if(id === 'watch') {
+                loadAdTasks();
+                window.initAdsgramTask();
+            }
         };
 
         function formatCooldown(ms) {
